@@ -1,20 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
     <title>Sam's Website</title>
 </head>
 <body>
-    <h1>Welcome to the site.</h1>
-    <h2>Click the link of the web demo you'd like to see...</h2>
-    <ul>
-        <li>
-            <a href="./public/gravsim_web/index.html">Universal Gravitation</a>
-        </li>
-        <li>
-            <a href="./public/lettertree_puzzles_web/index.html">A New Type of Binary Tree Word Puzzle</a>
-        </li>
-    </ul>
+    <div class="container">
+        <div class="header">
+            <h1 class="main title">Sam Lederer</h1>
+            <h2 class="sub title">Theoretical Linguist, Web Developer, (Kindergarten) Teacher, AI Pioneer, Blockchain Pizza Baker</h2>
+        </div>
+        <div class="content">
+            <div id="sidebar">
+                <ul>
+                    <li onclick="showContent('demos')">Demos</li>
+                    <li onclick="showContent('portfolio')">Portfolio</li>
+                    <li onclick="showContent('cv')">CV</li>
+                    <li onclick="showContent('contact')">Contact</li>
+                    <li onclick="showContent('blog')">Blog</li>
+                </ul>
+            </div>
+            <div id="display">
+                <!-- The default content -->
+                <p>Welcome! Click on the sidebar to see more content.</p>
+            </div>
+        </div>
+    </div>
+    <div id="cv-content" style="display: none;">
+
+        <ul>
+            <li><strong>ESOL Instructor – YMCA Boston Chinatown</strong> (2023 - Present)
+                <ul>
+                    <li>Deliver engaging English instruction to diverse students, improving comprehension and grammar skills.</li>
+                </ul>
+            </li>
+            <li><strong>Teaching Assistant – University of Massachusetts</strong> (2021 - 2023)
+                <ul>
+                    <li>Provided tutoring, led lectures, and facilitated student understanding in linguistic subjects.</li>
+                </ul>
+            </li>
+            <li><strong>ESOL Tutor – University of Massachusetts</strong> (2020 - 2023)
+                <ul>
+                    <li>Developed individualized English instruction for non-native speakers, improving their proficiency.</li>
+                </ul>
+            </li>
+        </ul>
+    
+        <h3>Education</h3>
+        <p>Bachelor of Arts in Linguistics, Minor in Chinese and Biology</p>
+        <p>University of Massachusetts – Amherst, MA</p>
+    
+        <h3>Certifications</h3>
+        <ul>
+            <li>TESOL Certification</li>
+        </ul>
+    
+        <h3>Technical Skills</h3>
+        <ul>
+            <li>Programming: Python, R, JavaScript, HTML5/CSS, Java, C++</li>
+            <li>NLP/ML Tools: PyTorch, TensorFlow, Numpy, Scipy</li>
+            <li>Applications: ChatGPT, Repl.it, Adobe Firefly, Photoshop</li>
+        </ul>
+    </div>
+    
+    
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,150 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Zain', sans-serif;
+    background-color: #FCFAEE; /* Softer background for a professional feel */
+    color: #384B70;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    flex-direction: column; /* Stack content vertically */
+}
+
+/* Layout */
+.container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Title Section */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    background-color: #507687;
+    border-radius: 8px;
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.main.title {
+    font-size: 3em;
+    color: #FCFAEE;
+    font-weight: 700; /* Keep it bold but balanced */
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
+}
+
+.sub.title {
+    font-size: 1.2em;
+    color: #FCFAEE;
+    letter-spacing: 1px;
+}
+
+/* Content Section */
+.content {
+    display: flex;
+    max-width: 1200px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow for depth */
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.content:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Subtle hover effect */
+}
+
+#sidebar {
+    flex-basis: 20%; /* Slightly wider sidebar for better spacing */
+    background-color: #B8001F; /* Strong sidebar color */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#display {
+    flex-basis: 80%;
+    padding: 40px;
+    background-color: #507687; /* Softer but rich contrast */
+    color: #FCFAEE;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.3em;
+    flex-direction: column;
+}
+
+/* Sidebar Styling */
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+#sidebar ul li {
+    margin: 20px 0;
+    font-size: 1.1em;
+    color: #FCFAEE;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-align: left;
+    width: 100%;
+}
+
+#sidebar ul li:hover {
+    background-color: #FCFAEE;
+    color: #B8001F; /* Hover effect with inverse color */
+    transform: translateX(5px); /* Add a slight movement for interactivity */
+}
+
+/* General Text Styling */
+h1, h2, h3 {
+    font-family: 'Zain', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Box Shadows and Borders for a Professional Feel */
+.content {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+#display p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+#display h3 {
+    font-size: 1.8em;
+    color: #FCFAEE;
+    margin-bottom: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        flex-basis: 100%;
+        padding: 20px;
+    }
+
+    #display {
+        flex-basis: 100%;
+    }
+}
