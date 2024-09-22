@@ -12,11 +12,11 @@ let BASE_DOT_RADIUS = 1;
 let DOT_COUNT = 100;
 let MIN_DISTANCE = 90;
 let MERGE_DISTANCE = 2;
-let G = 11;
-let TRAIL_LENGTH = 25;
+let G = 1;
+let TRAIL_LENGTH = 5;
 let MOMENTUM_LOSS_FACTOR = 0.5;
 const EPSILON = 0.001;
-const SPACE_SIZE = 180;
+const SPACE_SIZE = 200;
 const FOV = 360;
 const INITIAL_VELOCITY_RANGE = 0;
 const BASE_MASS = 1;
@@ -268,4 +268,66 @@ function update() {
       const dot = dots[i];
       const [x, y] = positions_2d[i];
       const distance = Math.hypot(...subtractVectors(dot.position, camera_position));
-      const
+      const radius = Math.max(1, (BASE_DOT_RADIUS * (FOV / (FOV + distance))));
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgb(${dot.color.join(',')})`;
+      ctx.fill();
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// Utility functions
+function crossProduct(a, b) {
+  return [
+    a[1]*b[2] - a[2]*b[1],
+    a[2]*b[0] - a[0]*b[2],
+    a[0]*b[1] - a[1]*b[0]
+  ];
+}
+
+function dotProduct(a, b) {
+  return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+}
+
+function normalize(v) {
+  const len = Math.hypot(...v);
+  return v.map(c => c / len);
+}
+
+function subtractVectors(a, b) {
+  return a.map((c, idx) => c - b[idx]);
+}
+
+function addVectors(a, b) {
+  return a.map((c, idx) => c + b[idx]);
+}
+
+function multiplyVectorByScalar(v, s) {
+  return v.map(c => c * s);
+}
+
+function divideVectorByScalar(v, s) {
+  return v.map(c => c / s);
+}
+
+function multiplyMatrixVector(m, v) {
+  return [
+    dotProduct(m[0], v),
+    dotProduct(m[1], v),
+    dotProduct(m[2], v)
+  ];
+}
+
+// Adjust canvas size on window resize
+window.addEventListener('resize', () => {
+  const newWidth = window.innerWidth - controlPanel.offsetWidth;
+  const newHeight = window.innerHeight;
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+});
+
+// Start the simulation
+update();
