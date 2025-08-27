@@ -3,72 +3,271 @@
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles.css">
-    <title>Sam's Website</title>
+<link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S.F Lederer</title>
+  <style>
+    :root {
+      
+      
+     
+      
+    
+  --bg: #0d0d0d;          /* dark background */
+  --ink: #f5f6fa;         /* LCARS "space-white" */
+  
+  /* LCARS-inspired accents */
+  --accent-green: #999933;   /* olive green */
+  --accent-blue: #5566ff;    /* strong LCARS blue */
+  --accent-purple: #cc55ff;  /* lilac */
+  --accent-yellow: #ffaa00;  /* gold */
+  --accent-red: #ff2200;     /* mars red */
+
+  /* Panels */
+  --card: #222;              /* neutral card backdrop */
+  --card-dark: #2c2c40;
+}
+
+    
+    
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+    margin: 0;
+    font-family: 'Quantico';
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.3;
+    display: flex;
+    }
+
+
+    /* --- Layout --- */
+    .wrap {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 140px auto; /* content | sidebar | name */
+      gap: 8px;
+      padding: 12px;
+      flex: 1;
+    }
+
+    .content-frame {
+      border-radius: 0px;
+      background: #111;
+      padding: 18px;
+      min-height: 65svh;
+      border: 1px solid #222;
+    }
+    .button-frame {
+      border-radius: 0px;
+
+      padding: 5px;
+      border: 1px solid #222;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .navbtn {
+      appearance: none;
+      background: var(--card);
+      color: var(--accent-blue);
+      width: 100px;
+      min-height: 2.5em;
+      padding: 6px 4px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: right;
+      cursor: pointer;
+      border: 1px solid #333;
+      font-family: 'Fira Code', 'JetBrains Mono', monospace;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .navbtn:hover { background: var(--card-dark); color: var(--accent-green); }
+    .navbtn:active { transform: translateY(1px); }
+    .navbtn[aria-current="page"] { background: var(--accent-green); color: #000; }
+
+    /* --- Vertical name column --- */
+    .name-column {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent-purple);
+      white-space: nowrap;
+    }
+
+    /* --- Typography --- */
+    /* Headings: clear visual hierarchy */
+h1, h2, h3 { margin: 0; }
+
+h1 {
+  margin-top: 1.2em;
+  margin-bottom: 0.35em;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);  /* ~32px → 51px */
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--accent-green);
+}
+
+h2 {
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-size: clamp(1.5rem, 3vw, 2.2rem); /* ~24px → 35px */
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+h3 {
+  margin-top: 0.8em;
+  margin-bottom: 0.25em;
+  font-size: clamp(1.125rem, 2vw, 1.5rem); /* ~18px → 24px */
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--accent-purple);
+}
+
+/* Text & links */
+p { margin: 0 0 1em; color: var(--ink);font-size: clamp(1rem, 1.5vw, 1.1rem); /* ~18px → 24px */ }
+
+a {
+  color: var(--accent-yellow);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* Lists: bullets accent, text inherits body color */
+ul { margin: 0 0 1em 1.25em; padding: 0; }
+ul li { margin: 0.25em 0; color: inherit;color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem)}
+
+
+
+    /* --- Footer --- */
+    footer {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: .7;
+      color: #888;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 880px) {
+      .wrap { grid-template-columns: 1fr; }
+      .sidebar { grid-template-columns: repeat(3, 1fr); }
+      .name-column { display: none; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="main title">Sam Lederer</h1>
-            <h2 class="sub title">Theoretical Linguist, Web Developer, (Kindergarten) Teacher, AI Pioneer, Blockchain Pizza Baker</h2>
-        </div>
-        <div class="content">
-            <div id="sidebar">
-                <ul>
-                    <li onclick="showContent('demos')">Demos</li>
-                    <li onclick="showContent('portfolio')">Portfolio</li>
-                    <li onclick="showContent('cv')">CV</li>
-                    <li onclick="showContent('contact')">Contact</li>
-                    <li onclick="showContent('blog')">Blog</li>
-                </ul>
-            </div>
-            <div id="display">
-                <!-- The default content -->
-                <p>Welcome! Click on the sidebar to see more content.</p>
-            </div>
-        </div>
-    </div>
-    <div id="cv-content" style="display: none;">
+  <div class="wrap">
+    <main id="content" class="content-frame" tabindex="-1" aria-live="polite">
+      <!-- Default view injected by JS -->
+    </main>
 
-        <ul>
-            <li><strong>ESOL Instructor – YMCA Boston Chinatown</strong> (2023 - Present)
-                <ul>
-                    <li>Deliver engaging English instruction to diverse students, improving comprehension and grammar skills.</li>
-                </ul>
-            </li>
-            <li><strong>Teaching Assistant – University of Massachusetts</strong> (2021 - 2023)
-                <ul>
-                    <li>Provided tutoring, led lectures, and facilitated student understanding in linguistic subjects.</li>
-                </ul>
-            </li>
-            <li><strong>ESOL Tutor – University of Massachusetts</strong> (2020 - 2023)
-                <ul>
-                    <li>Developed individualized English instruction for non-native speakers, improving their proficiency.</li>
-                </ul>
-            </li>
-        </ul>
-    
-        <h3>Education</h3>
-        <p>Bachelor of Arts in Linguistics, Minor in Chinese and Biology</p>
-        <p>University of Massachusetts – Amherst, MA</p>
-    
-        <h3>Certifications</h3>
-        <ul>
-            <li>TESOL Certification</li>
-        </ul>
-    
-        <h3>Technical Skills</h3>
-        <ul>
-            <li>Programming: Python, R, JavaScript, HTML5/CSS, Java, C++</li>
-            <li>NLP/ML Tools: PyTorch, TensorFlow, Numpy, Scipy</li>
-            <li>Applications: ChatGPT, Repl.it, Adobe Firefly, Photoshop</li>
-        </ul>
-    </div>
-    
-    
-    <script src="script.js"></script>
+    <aside class="sidebar" aria-label="Section navigation">
+        <aside class="button-frame"><button class="navbtn" data-view="me" aria-current="page">Me</button>
+      <button class="navbtn" data-view="projects">Projects</button>
+      <button class="navbtn" data-view="resume">Resume</button>
+      <button class="navbtn" data-view="unresume">What a resume can’t show</button></aside>
+      
+    </aside>
+
+    <div class="name-column">颯 S.F LEDERER</div>
+  </div>
+
+  <script>
+    // --- Content templates ---
+    const VIEWS = {
+      me: `
+        <article>
+          <h1>This is the content text</h1>
+          <h2><em>Do you enjoy content? This is what it looks like!</em></h2>
+
+            <p>contact:</p>
+            <p> <a href="https://github.com/pariothan">github</a> </p>
+          <p><a href="mailto:sflederer@pm.me">sflederer@pm.me</a></p>
+          <footer>© <span id="year"></span> S.F Lederer</footer>
+        </article>
+      `,
+      projects:
+      `
+        <article>
+            <h1> I do these for fun, but you can look </h2>
+                <h3> Sentiment analysis by etymological origin </h3>
+                    <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have!</p>
+                <h3> Experimental binary-tree word puzzles </h3>
+                    <p> Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! </p>
+        </article>
+        `
+        ,
+      resume: `
+        <article>
+          <h2>Resume</h2>
+          
+        </article>
+      `,
+      unresume: `
+        <article>
+            <h1>Unresume</h1>
+            <h3>Importance the resume format doesn't permit</h3>
+            <p>Still, the purpose of a resume is to get things across quickly. So I'll be brief, to make my point. Just with breaking the format.</p>
+            <ul> 
+                <li> I've been in some kind of therapy continuously since I was 10. Turns out, other people struggle just like I did, but mine got caught. So I have unusually very strong emotional intelligence and mental well-being skills. </li>
+                <li> I have a lot of experience with neurodiversity, both personally and professionally. I am ADHD and have tons of experience with autism socially and professionally. This gives me unique power, and I think you know that, even if you're a neurotypical. </li>
+                <li> I have exceptionally strong improvisational skills. I think, talk, and act fast and on my feet. I'm an improv performer in spare time. This is a skill I've had to intentionally develop my entire life, and gives me just as much if not more professional value than any typical skill. </li>
+            </ul>
+        </article>
+      `
+    };
+
+    const content = document.getElementById('content');
+    const year = new Date().getFullYear();
+
+    function render(view) {
+      content.innerHTML = VIEWS[view] || VIEWS.me;
+      const y = content.querySelector('#year');
+      if (y) y.textContent = year;
+      content.focus();
+    }
+
+    // Initial render
+    render('me');
+
+    // Wire sidebar buttons
+    document.querySelectorAll('.navbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.navbtn').forEach(b => b.removeAttribute('aria-current'));
+        btn.setAttribute('aria-current','page');
+        render(btn.dataset.view);
+      });
+    });
+
+    // Optional: deep-link via hash (#me, #resume, #unresume)
+    const hash = location.hash.replace('#','');
+    if (hash && VIEWS[hash]) {
+      document.querySelector(`.navbtn[data-view="${hash}"]`)?.click();
+    }
+  </script>
 </body>
 </html>
