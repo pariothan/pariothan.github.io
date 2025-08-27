@@ -4,6 +4,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,10 +12,6 @@
   <style>
     :root {
       
-      
-     
-      
-    
   --bg: #0d0d0d;          /* dark background */
   --ink: #f5f6fa;         /* LCARS "space-white" */
   
@@ -36,7 +33,7 @@
     html, body { height: 100%; }
     body {
     margin: 0;
-    font-family: 'Quantico';
+    font-family: 'Quantico', sans-serif;
     color: var(--ink);
     background: var(--bg);
     line-height: 1.3;
@@ -47,7 +44,7 @@
     /* --- Layout --- */
     .wrap {
       min-height: 100svh;
-      display: grid;
+      grid-template-columns: 1fr 140px auto; /* content | sidebar | name-column (matches DOM order) */
       grid-template-columns: 1fr 140px auto; /* content | sidebar | name */
       gap: 8px;
       padding: 12px;
@@ -158,7 +155,7 @@ a {
 
 /* Lists: bullets accent, text inherits body color */
 ul { margin: 0 0 1em 1.25em; padding: 0; }
-ul li { margin: 0.25em 0; color: inherit;color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem)}
+ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem)}
 
 
 
@@ -177,7 +174,6 @@ ul li { margin: 0.25em 0; color: inherit;color: var(--accent-red); font-size: cl
       .name-column { display: none; }
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="wrap">
@@ -213,27 +209,29 @@ ul li { margin: 0.25em 0; color: inherit;color: var(--accent-red); font-size: cl
       projects:
       `
         <article>
-            <h1> I do these for fun, but you can look </h2>
+            <h1> I do these for fun, but you can look </h1>
                 <h3> Sentiment analysis by etymological origin </h3>
                     <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More info to be added soon...</p>
                 <h3> Experimental <a href = "./public/lettertree_puzzles_web"> binary-tree word puzzles</a>. </h3>
                     <p> Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
-                <h3> An experiment with how far GPT-4 could go in writing <a href link="<a href="./public/gravsim_web/"> n-body universal gravitation</a>. Outdated now of course.</h3>
+                <h3> An experiment with how far GPT-4 could go in writing <a href ="./public/gravsim_web/"> n-body universal gravitation</a>. Outdated now of course.</h3>
         </article>
         `
         ,
       resume: `
         <article>
           <h1>Samuel Lederer</h1>
-            <h2>Data Linguist</h2>
+            <p><strong>Data Linguist</strong></p>
             <p>English (native), Mandarin Chinese (full professional fluency)</p>
-            <h3>Experience</h3>
-            <ul>
-              <li>
+            <h2><strong>Experience</strong></h2>
+              <h3>
                 <strong>Linguistic Data Annotator (Freelance)</strong>
+              </h3>
                 <p>various clients, 2023-present</p>
-              </li>
-            </ul>
+              <h3>
+                Research Associate (2021-2023)
+              </h3>
+         
 
         </article>
       `,
