@@ -59,7 +59,6 @@
       height: 100%;                 /* ✅ fill sidebar column */
       justify-items: stretch;       /* buttons expand */
       padding: 5px;
-      
       display: grid;
       align-content: start;         /* ✅ pin to top */
       gap: 8px;
@@ -80,7 +79,6 @@
       width: 100%;                 /* ✅ fill sidebar width */
       min-height: 2.5em;
       padding: 6px 4px;
-     
       font-size: 15px;
       font-weight: 700;
       text-align: right;
@@ -159,7 +157,20 @@
       opacity: .7;
       color: #888;
     }
-
+    .headshot {
+    float: right;
+    max-width: 150px;  /* adjust size */
+    margin: 0 0 1em 1em; /* spacing from text */
+    border-radius: 10px; /* optional: rounded corners */
+    border: 5px solid #222;
+    }
+      .screenshot {
+    float: right;
+    max-width: 500px;  /* adjust size */
+    margin: 0 0 1em 1em; /* spacing from text */
+    border-radius: 10px; /* optional: rounded corners */
+    border: 5px solid #222;
+    }
     /* --- Responsive --- */
     @media (max-width: 880px) {
       .wrap {
@@ -183,6 +194,7 @@
         <button class="navbtn" data-view="resume">Resume</button>
         <button class="navbtn" data-view="unresume">What a resume can’t show</button>
       </aside>
+
     </aside>
 
     <div class="name-column">颯 S.F LEDERER</div>
@@ -193,10 +205,10 @@
     const VIEWS = {
       me: `
         <article>
+          <img src="headshot.png" alt="Headshot" class="headshot">
           <h1>My Site</h1>
           <h2><em>If you're looking for info on me this is certainly one place</em></h2>
           <p>Is there something specific you were looking for but can't find?</p>
-
           <p>contact:</p>
           <p><a href="https://github.com/pariothan">github</a></p>
           <p><a href="mailto:sflederer@pm.me+website">sflederer@pm.me</a></p>
@@ -211,8 +223,11 @@
           <h3>Experimental <a href="./public/lettertree_puzzles_web">binary-tree word puzzles</a>.</h3>
           <p>Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
           <h3>An experiment with how far GPT-4 could go in writing <a href="./public/gravsim_web/">n-body universal gravitation</a>. Outdated now of course.</h3>
-          <h3>Ever wished you could sit down with your friends and write a new epsiode of Seinfeld?</h3>
+          <h3>Ever wished you could sit down with your friends and write a new episode of Seinfeld?</h3>
           <p>If you're Larry David that might be easy, but I tried to make it into a game, TTRPG style.</p>
+          <h3>Can you figure out what's going on here?</h3>
+          <p>more on this soon...</p>
+          <img src="guess.png" alt="a map with colored squares each with a sequence of IPA letters" class="screenshot">
         </article>
       `,
       resume: `
