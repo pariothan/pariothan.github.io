@@ -1,89 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>S.F Lederer</title>
   <style>
     :root {
-      
-  --bg: #0d0d0d;          /* dark background */
-  --ink: #f5f6fa;         /* LCARS "space-white" */
-  
-  /* LCARS-inspired accents */
-  --accent-green: #999933;   /* olive green */
-  --accent-blue: #5566ff;    /* strong LCARS blue */
-  --accent-purple: #cc55ff;  /* lilac */
-  --accent-yellow: #ffaa00;  /* gold */
-  --accent-red: #ff2200;     /* mars red */
+      --bg: #0d0d0d;
+      --ink: #f5f6fa;
 
-  /* Panels */
-  --card: #222;              /* neutral card backdrop */
-  --card-dark: #2c2c40;
-}
+      /* LCARS-inspired accents */
+      --accent-green: #999933;
+      --accent-blue: #5566ff;
+      --accent-purple: #cc55ff;
+      --accent-yellow: #ffaa00;
+      --accent-red: #ff2200;
 
-    
-    
+      /* Panels */
+      --card: #222;
+      --card-dark: #2c2c40;
+    }
+
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
-    margin: 0;
-    font-family: 'Quantico', sans-serif;
-    color: var(--ink);
-    background: var(--bg);
-    line-height: 1.3;
-    display: flex;
+      margin: 0;
+      font-family: 'Quantico', sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.3;
+      /* body does not need flex here */
     }
-
 
     /* --- Layout --- */
     .wrap {
       min-height: 100svh;
-      grid-template-columns: 1fr 140px auto; /* content | sidebar | name-column (matches DOM order) */
-      grid-template-columns: 1fr 140px auto; /* content | sidebar | name */
+      display: grid;                           /* ✅ turn grid on */
+      grid-template-columns: 1fr 140px 56px;   /* content | sidebar | name */
       gap: 8px;
       padding: 12px;
-      flex: 1;
     }
 
     .content-frame {
-      border-radius: 0px;
+      border-radius: 0;
       background: #111;
       padding: 18px;
       min-height: 65svh;
       border: 1px solid #222;
     }
-    .button-frame {
-      border-radius: 0px;
 
+    .button-frame {
+      border-radius: 0;
+      height: 100%;                 /* ✅ fill sidebar column */
+      justify-items: stretch;       /* buttons expand */
       padding: 5px;
-      border: 1px solid #222;
+      
       display: grid;
-      align-content: center;
+      align-content: start;         /* ✅ pin to top */
       gap: 8px;
-      justify-items: center;
     }
 
     /* --- Sidebar --- */
     .sidebar {
       display: grid;
       align-content: start;
-      gap: 8px;
-      justify-items: center;
+      
+      /* removed invalid justify/grid-template junk */
     }
 
     .navbtn {
       appearance: none;
       background: var(--card);
       color: var(--accent-blue);
-      width: 100px;
+      width: 100%;                 /* ✅ fill sidebar width */
       min-height: 2.5em;
       padding: 6px 4px;
+     
       font-size: 15px;
       font-weight: 700;
       text-align: right;
@@ -110,54 +107,50 @@
       text-transform: uppercase;
       color: var(--accent-purple);
       white-space: nowrap;
+        
     }
 
     /* --- Typography --- */
-    /* Headings: clear visual hierarchy */
-h1, h2, h3 { margin: 0; }
+    h1, h2, h3 { margin: 0; }
 
-h1 {
-  margin-top: 1.2em;
-  margin-bottom: 0.35em;
-  font-size: clamp(1.75rem, 3.5vw, 2.75rem);  /* ~32px → 51px */
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--accent-green);
-}
+    h1 {
+      margin-top: 1.2em;
+      margin-bottom: 0.35em;
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--accent-green);
+    }
 
-h2 {
-  margin-top: 1em;
-  margin-bottom: 0.3em;
-  font-size: clamp(1.5rem, 3vw, 2.2rem); /* ~24px → 35px */
-  line-height: 1.2;
-  font-weight: 700;
-  color: var(--accent-blue);
-}
+    h2 {
+      margin-top: 1em;
+      margin-bottom: 0.3em;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
 
-h3 {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
-  font-size: clamp(1.125rem, 2vw, 1.5rem); /* ~18px → 24px */
-  line-height: 1.25;
-  font-weight: 600;
-  color: var(--accent-purple);
-}
+    h3 {
+      margin-top: 0.8em;
+      margin-bottom: 0.25em;
+      font-size: clamp(1.125rem, 2vw, 1.5rem);
+      line-height: 1.25;
+      font-weight: 600;
+      color: var(--accent-purple);
+    }
 
-/* Text & links */
-p { margin: 0 0 1em; color: var(--ink);font-size: clamp(1rem, 1.5vw, 1.1rem); /* ~18px → 24px */ }
+    p { margin: 0 0 1em; color: var(--ink); font-size: clamp(1rem, 1.5vw, 1.1rem); }
 
-a {
-  color: var(--accent-yellow);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
-}
+    a {
+      color: var(--accent-yellow);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 2px;
+    }
 
-/* Lists: bullets accent, text inherits body color */
-ul { margin: 0 0 1em 1.25em; padding: 0; }
-ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem)}
-
-
+    ul { margin: 0 0 1em 1.25em; padding: 0; }
+    ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem) }
 
     /* --- Footer --- */
     footer {
@@ -169,9 +162,11 @@ ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw
 
     /* --- Responsive --- */
     @media (max-width: 880px) {
-      .wrap { grid-template-columns: 1fr; }
-      .sidebar { grid-template-columns: repeat(3, 1fr); }
-      .name-column { display: none; }
+      .wrap {
+        grid-template-columns: 1fr;      /* stack */
+      }
+      .name-column { display: none; }    /* hide vertical name on small screens */
+      .button-frame { height: auto; }    /* let sidebar shrink */
     }
   </style>
 </head>
@@ -182,11 +177,12 @@ ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw
     </main>
 
     <aside class="sidebar" aria-label="Section navigation">
-        <aside class="button-frame"><button class="navbtn" data-view="me" aria-current="page">Me</button>
-      <button class="navbtn" data-view="projects">Projects</button>
-      <button class="navbtn" data-view="resume">Resume</button>
-      <button class="navbtn" data-view="unresume">What a resume can’t show</button></aside>
-      
+      <aside class="button-frame">
+        <button class="navbtn" data-view="me" aria-current="page">Me</button>
+        <button class="navbtn" data-view="projects">Projects</button>
+        <button class="navbtn" data-view="resume">Resume</button>
+        <button class="navbtn" data-view="unresume">What a resume can’t show</button>
+      </aside>
     </aside>
 
     <div class="name-column">颯 S.F LEDERER</div>
@@ -197,54 +193,50 @@ ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw
     const VIEWS = {
       me: `
         <article>
-          <h1>This is the content text</h1>
-          <h2><em>Do you enjoy content? This is what it looks like!</em></h2>
+          <h1>My Site</h1>
+          <h2><em>If you're looking for info on me this is certainly one place</em></h2>
+          <p>Is there something specific you were looking for but can't find?</p>
 
-            <p>contact:</p>
-            <p> <a href="https://github.com/pariothan">github</a> </p>
-          <p><a href="mailto:sflederer@pm.me">sflederer@pm.me</a></p>
+          <p>contact:</p>
+          <p><a href="https://github.com/pariothan">github</a></p>
+          <p><a href="mailto:sflederer@pm.me+website">sflederer@pm.me</a></p>
           <footer>© <span id="year"></span> S.F Lederer</footer>
         </article>
       `,
-      projects:
-      `
+      projects: `
         <article>
-            <h1> I do these for fun, but you can look </h1>
-                <h3> Sentiment analysis by etymological origin </h3>
-                    <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More info to be added soon...</p>
-                <h3> Experimental <a href = "./public/lettertree_puzzles_web"> binary-tree word puzzles</a>. </h3>
-                    <p> Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
-                <h3> An experiment with how far GPT-4 could go in writing <a href ="./public/gravsim_web/"> n-body universal gravitation</a>. Outdated now of course.</h3>
+          <h1>I do these for fun, but you can look</h1>
+          <h3>Sentiment analysis by etymological origin</h3>
+          <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More info to be added soon...</p>
+          <h3>Experimental <a href="./public/lettertree_puzzles_web">binary-tree word puzzles</a>.</h3>
+          <p>Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
+          <h3>An experiment with how far GPT-4 could go in writing <a href="./public/gravsim_web/">n-body universal gravitation</a>. Outdated now of course.</h3>
+          <h3>Ever wished you could sit down with your friends and write a new epsiode of Seinfeld?</h3>
+          <p>If you're Larry David that might be easy, but I tried to make it into a game, TTRPG style.</p>
         </article>
-        `
-        ,
+      `,
       resume: `
         <article>
           <h1>Samuel Lederer</h1>
-            <p><strong>Data Linguist</strong></p>
-            <p>English (native), Mandarin Chinese (full professional fluency)</p>
-            <h2><strong>Experience</strong></h2>
-              <h3>
-                <strong>Linguistic Data Annotator (Freelance)</strong>
-              </h3>
-                <p>various clients, 2023-present</p>
-              <h3>
-                Research Associate (2021-2023)
-              </h3>
-         
-
+          <p><strong>Data Linguist</strong></p>
+          <p>English (native), Mandarin Chinese (full professional fluency)</p>
+          <h2><strong>Experience</strong></h2>
+          <h3><strong>Linguistic Data Annotator (Freelance)</strong></h3>
+          <p>various clients, 2023-present</p>
+          <h3>Research Associate (2021-2023)</h3>
+          <p>UMass Amherst Linguistics Grammar and Processing Lab</p>
         </article>
       `,
       unresume: `
         <article>
-            <h1>Unresume</h1>
-            <h3>Importance the resume format doesn't permit</h3>
-            <p>Still, the purpose of a resume is to get things across quickly. So I'll be brief, to make my point. Just with breaking the format.</p>
-            <ul> 
-                <li> I've been in some kind of therapy continuously since I was 10. Turns out, other people struggle just like I did, but mine got caught. So I have unusually very strong emotional intelligence and mental well-being skills. </li>
-                <li> I have a lot of experience with neurodiversity, both personally and professionally. I am ADHD and have tons of experience with autism socially and professionally. This gives me unique power, and I think you know that, even if you're a neurotypical. </li>
-                <li> I have exceptionally strong improvisational skills. I think, talk, and act fast and on my feet. I'm an improv performer in spare time. This is a skill I've had to intentionally develop my entire life, and gives me just as much if not more professional value than any typical skill. </li>
-            </ul>
+          <h1>Unresume</h1>
+          <h3>Importance the resume format doesn't permit</h3>
+          <p>Still, the purpose of a resume is to get things across quickly. So I'll be brief, to make my point. Just with breaking the format.</p>
+          <ul>
+            <li>I've been in some kind of therapy continuously since I was 10. Turns out, other people struggle just like I did, but mine got caught. So I have unusually very strong emotional intelligence and mental well-being skills.</li>
+            <li>I have a lot of experience with neurodiversity, both personally and professionally. I am ADHD and have tons of experience with autism socially and professionally. This gives me unique power, and I think you know that, even if you're a neurotypical.</li>
+            <li>I have exceptionally strong improvisational skills. I think, talk, and act fast and on my feet. I'm an improv performer in spare time. This is a skill I've had to intentionally develop my entire life, and gives me just as much if not more professional value than any typical skill.</li>
+          </ul>
         </article>
       `
     };
