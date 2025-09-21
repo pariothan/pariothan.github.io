@@ -1,209 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>S.F Lederer</title>
-  <style>
-    :root {
-      --bg: #0d0d0d;
-      --ink: #f5f6fa;
-
-      /* LCARS-inspired accents */
-      --accent-green: #999933;
-      --accent-blue: #5566ff;
-      --accent-purple: #cc55ff;
-      --accent-yellow: #ffaa00;
-      --accent-red: #ff2200;
-
-      /* Panels */
-      --card: #222;
-      --card-dark: #2c2c40;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: 'Quantico', sans-serif;
-      color: var(--ink);
-      background: var(--bg);
-      line-height: 1.3;
-      /* body does not need flex here */
-    }
-
-    /* --- Layout --- */
-    .wrap {
-      min-height: 100svh;
-      display: grid;                           /* ✅ turn grid on */
-      grid-template-columns: 1fr 140px 56px;   /* content | sidebar | name */
-      gap: 8px;
-      padding: 12px;
-    }
-
-    .content-frame {
-      border-radius: 0;
-      background: #111;
-      padding: 18px;
-      min-height: 65svh;
-      border: 1px solid #222;
-    }
-
-    .button-frame {
-      border-radius: 0;
-      height: 100%;                 /* ✅ fill sidebar column */
-      justify-items: stretch;       /* buttons expand */
-      padding: 5px;
-      display: grid;
-      align-content: start;         /* ✅ pin to top */
-      gap: 8px;
-    }
-
-    /* --- Sidebar --- */
-    .sidebar {
-      display: grid;
-      align-content: start;
-      
-      /* removed invalid justify/grid-template junk */
-    }
-
-    .navbtn {
-      appearance: none;
-      background: var(--card);
-      color: var(--accent-blue);
-      width: 100%;                 /* ✅ fill sidebar width */
-      min-height: 2.5em;
-      padding: 6px 4px;
-      font-size: 15px;
-      font-weight: 700;
-      text-align: right;
-      cursor: pointer;
-      border: 1px solid #333;
-      font-family: 'Fira Code', 'JetBrains Mono', monospace;
-      white-space: normal;
-      word-break: break-word;
-    }
-    .navbtn:hover { background: var(--card-dark); color: var(--accent-green); }
-    .navbtn:active { transform: translateY(1px); }
-    .navbtn[aria-current="page"] { background: var(--accent-green); color: #000; }
-
-    /* --- Vertical name column --- */
-    .name-column {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      font-weight: 800;
-      font-size: 28px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent-purple);
-      white-space: nowrap;
-        
-    }
-
-    /* --- Typography --- */
-    h1, h2, h3 { margin: 0; }
-
-    h1 {
-      margin-top: 1.2em;
-      margin-bottom: 0.35em;
-      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-      line-height: 1.1;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      color: var(--accent-green);
-    }
-
-    h2 {
-      margin-top: 1em;
-      margin-bottom: 0.3em;
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      line-height: 1.2;
-      font-weight: 700;
-      color: var(--accent-blue);
-    }
-
-    h3 {
-      margin-top: 0.8em;
-      margin-bottom: 0.25em;
-      font-size: clamp(1.125rem, 2vw, 1.5rem);
-      line-height: 1.25;
-      font-weight: 600;
-      color: var(--accent-purple);
-    }
-
-    p { margin: 0 0 1em; color: var(--ink); font-size: clamp(1rem, 1.5vw, 1.1rem); }
-
-    a {
-      color: var(--accent-yellow);
-      text-decoration-thickness: 2px;
-      text-underline-offset: 2px;
-    }
-
-    ul { margin: 0 0 1em 1.25em; padding: 0; }
-    ul li { margin: 0.25em 0; color: var(--accent-red); font-size: clamp(1rem, 1.5vw, 1.1rem) }
-
-    /* --- Footer --- */
-    footer {
-      margin-top: 14px;
-      font-size: 13px;
-      opacity: .7;
-      color: #888;
-    }
-    .headshot {
-    float: right;
-    max-width: 150px;  /* adjust size */
-    margin: 0 0 1em 1em; /* spacing from text */
-    border-radius: 10px; /* optional: rounded corners */
-    border: 5px solid #222;
-    }
-      .screenshot {
-    float: right;
-    max-width: 500px;  /* adjust size */
-    margin: 0 0 1em 1em; /* spacing from text */
-    border-radius: 10px; /* optional: rounded corners */
-    border: 5px solid #222;
-    }
-    /* --- Responsive --- */
-    @media (max-width: 880px) {
-      .wrap {
-        grid-template-columns: 1fr;      /* stack */
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>S.F Lederer</title>
+    <style>
+      :root {
+        --bg: #0d0d0d;
+        --ink: #f5f6fa;
+        /* LCARS-inspired accents */
+        --accent-green: #999933;
+        --accent-blue: #5566ff;
+        --accent-purple: #cc55ff;
+        --accent-yellow: #ffaa00;
+        --accent-red: #ff2200;
+        /* Panels aple*/
+        --card: #222;
+        --card-dark: #2c2c40;
       }
-      .name-column { display: none; }    /* hide vertical name on small screens */
-      .button-frame { height: auto; }    /* let sidebar shrink */
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <main id="content" class="content-frame" tabindex="-1" aria-live="polite">
-      <!-- Default view injected by JS -->
-    </main>
 
-    <aside class="sidebar" aria-label="Section navigation">
-      <aside class="button-frame">
-        <button class="navbtn" data-view="me" aria-current="page">Me</button>
-        <button class="navbtn" data-view="projects">Projects</button>
-        <button class="navbtn" data-view="resume">Resume</button>
-        <button class="navbtn" data-view="unresume">What a resume can’t show</button>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: "Quantico", sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.3;
+      }
+
+      /* --- Layout --- */
+      .wrap {
+        min-height: 100svh;
+        display: grid; /* ✅ turn grid on */
+        grid-template-columns: 1fr 140px 56px; /* content | sidebar | name */
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .content-frame {
+        border-radius: 0;
+        background: #111;
+        padding: 18px;
+        min-height: 65svh;
+        border: 1px solid #222;
+      }
+
+      .button-frame {
+        border-radius: 0;
+        height: 100%; /* ✅ fill sidebar column */
+        justify-items: stretch; /* buttons expand */
+        padding: 5px;
+        display: grid;
+        align-content: start; /* ✅ pin to top */
+        gap: 8px;
+      }
+
+      /* --- Sidebar --- */
+      .sidebar {
+        display: grid;
+        align-content: start;
+      }
+
+      .navbtn {
+        appearance: none;
+        background: var(--card);
+        color: var(--accent-blue);
+        width: 100%; /* ✅ fill sidebar width */
+        min-height: 2.5em;
+        padding: 6px 4px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: right;
+        cursor: pointer;
+        border: 1px solid #333;
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        white-space: normal;
+        word-break: break-word;
+      }
+      .navbtn:hover {
+        background: var(--card-dark);
+        color: var(--accent-green);
+      }
+      .navbtn:active {
+        transform: translateY(1px);
+      }
+      .navbtn[aria-current="page"] {
+        background: var(--accent-green);
+        color: #000;
+      }
+
+      /* --- Vertical name column --- */
+      .name-column {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+        font-weight: 800;
+        font-size: 28px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--accent-purple);
+        white-space: nowrap;
+      }
+
+      /* --- Typography --- */
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 1.2em;
+        margin-bottom: 0.35em;
+        font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+        line-height: 1.1;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--accent-green);
+      }
+
+      h2 {
+        margin-top: 1em;
+        margin-bottom: 0.3em;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        line-height: 1.2;
+        font-weight: 700;
+        color: var(--accent-blue);
+      }
+
+      h3 {
+        margin-top: 0.8em;
+        margin-bottom: 0.25em;
+        font-size: clamp(1.125rem, 2vw, 1.5rem);
+        line-height: 1.25;
+        font-weight: 600;
+        color: var(--accent-purple);
+      }
+
+      p {
+        margin: 0 0 1em;
+        color: var(--ink);
+        font-size: clamp(1rem, 1.5vw, 1.1rem);
+      }
+
+      a {
+        color: var(--accent-yellow);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 2px;
+      }
+
+      ul {
+        margin: 0 0 1em 1.25em;
+        padding: 0;
+      }
+      ul li {
+        margin: 0.25em 0;
+        color: var(--accent-red);
+        font-size: clamp(1rem, 1.5vw, 1.1rem);
+      }
+
+      /* --- Footer --- */
+      footer {
+        margin-top: 14px;
+        font-size: 13px;
+        opacity: 0.7;
+        color: #888;
+      }
+      .headshot {
+        float: right;
+        max-width: 150px; /* adjust size */
+        margin: 0 0 1em 1em; /* spacing from text */
+        border-radius: 10px; /* optional: rounded corners */
+        border: 5px solid #222;
+      }
+      .screenshot {
+        float: right;
+        max-width: 500px; /* adjust size */
+        margin: 0 0 1em 1em; /* spacing from text */
+        border-radius: 10px; /* optional: rounded corners */
+        border: 5px solid #222;
+      }
+      /* --- Responsive --- */
+      @media (max-width: 880px) {
+        .wrap {
+          grid-template-columns: 1fr; /* stack */
+        }
+        .name-column {
+          display: none;
+        } /* hide vertical name on small screens */
+        .button-frame {
+          height: auto;
+        } /* let sidebar shrink */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <main id="content" class="content-frame" tabindex="-1" aria-live="polite">
+        <!-- Default view injected by JS -->
+      </main>
+
+      <aside class="sidebar" aria-label="Section navigation">
+        <aside class="button-frame">
+          <button class="navbtn" data-view="me" aria-current="page">Me</button>
+          <button class="navbtn" data-view="projects">Projects</button>
+          <button class="navbtn" data-view="resume">Resume</button>
+          <button class="navbtn" data-view="unresume">
+            What a resume can’t show
+          </button>
+        </aside>
       </aside>
 
-    </aside>
+      <div class="name-column">颯 S.F LEDERER</div>
+    </div>
 
-    <div class="name-column">颯 S.F LEDERER</div>
-  </div>
-
-  <script>
-    // --- Content templates ---
-    const VIEWS = {
-      me: `
+    <script>
+      // --- Content templates ---
+      const VIEWS = {
+        me: `
         <article>
           <img src="headshot.png" alt="Headshot" class="headshot">
           <h1>My Site</h1>
@@ -215,7 +247,7 @@
           <footer>© <span id="year"></span> S.F Lederer</footer>
         </article>
       `,
-      projects: `
+        projects: `
         <article>
           <h1>I do these for fun, but you can look</h1>
           <h3>Sentiment analysis by etymological origin</h3>
@@ -232,7 +264,7 @@
           <img src="guess.png" alt="a map with colored squares each with a sequence of IPA letters" class="screenshot">
         </article>
       `,
-      resume: `
+        resume: `
         <article>
           <h1>Samuel Lederer</h1>
           <p><strong>Data Linguist</strong></p>
@@ -244,7 +276,7 @@
           <p>UMass Amherst Linguistics Grammar and Processing Lab</p>
         </article>
       `,
-      unresume: `
+        unresume: `
         <article>
           <h1>Unresume</h1>
           <h3>Importance the resume format doesn't permit</h3>
@@ -255,36 +287,38 @@
             <li>I have exceptionally strong improvisational skills. I think, talk, and act fast and on my feet. I'm an improv performer in spare time. This is a skill I've had to intentionally develop my entire life, and gives me just as much if not more professional value than any typical skill.</li>
           </ul>
         </article>
-      `
-    };
+      `,
+      };
 
-    const content = document.getElementById('content');
-    const year = new Date().getFullYear();
+      const content = document.getElementById("content");
+      const year = new Date().getFullYear();
 
-    function render(view) {
-      content.innerHTML = VIEWS[view] || VIEWS.me;
-      const y = content.querySelector('#year');
-      if (y) y.textContent = year;
-      content.focus();
-    }
+      function render(view) {
+        content.innerHTML = VIEWS[view] || VIEWS.me;
+        const y = content.querySelector("#year");
+        if (y) y.textContent = year;
+        content.focus();
+      }
 
-    // Initial render
-    render('me');
+      // Initial render
+      render("me");
 
-    // Wire sidebar buttons
-    document.querySelectorAll('.navbtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.navbtn').forEach(b => b.removeAttribute('aria-current'));
-        btn.setAttribute('aria-current','page');
-        render(btn.dataset.view);
+      // Wire sidebar buttons
+      document.querySelectorAll(".navbtn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".navbtn")
+            .forEach((b) => b.removeAttribute("aria-current"));
+          btn.setAttribute("aria-current", "page");
+          render(btn.dataset.view);
+        });
       });
-    });
 
-    // Optional: deep-link via hash (#me, #resume, #unresume)
-    const hash = location.hash.replace('#','');
-    if (hash && VIEWS[hash]) {
-      document.querySelector(`.navbtn[data-view="${hash}"]`)?.click();
-    }
-  </script>
-</body>
+      // Optional: deep-link via hash (#me, #resume, #unresume)
+      const hash = location.hash.replace("#", "");
+      if (hash && VIEWS[hash]) {
+        document.querySelector(`.navbtn[data-view="${hash}"]`)?.click();
+      }
+    </script>
+  </body>
 </html>
