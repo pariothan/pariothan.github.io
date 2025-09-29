@@ -55,23 +55,10 @@
 
       .content-frame {
         border-radius: 0;
-        background: linear-gradient(145deg, #111, #1a1a1a);
+        background: #111;
         padding: 18px;
         min-height: 65svh;
-        border: 1px solid #333;
-        box-shadow: 
-          inset 0 1px 0 rgba(255, 255, 255, 0.05),
-          0 8px 25px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(2px);
-        transition: all 0.3s ease;
-      }
-      
-      .content-frame:hover {
-        border-color: rgba(85, 102, 255, 0.3);
-        box-shadow: 
-          inset 0 1px 0 rgba(255, 255, 255, 0.08),
-          0 12px 35px rgba(0, 0, 0, 0.4),
-          0 0 20px rgba(85, 102, 255, 0.1);
+        border: 1px solid #222;
       }
 
       .button-frame {
@@ -105,29 +92,17 @@
         font-family: "Fira Code", "JetBrains Mono", monospace;
         white-space: normal;
         word-break: break-word;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
       }
       .navbtn:hover {
         background: var(--card-dark);
         color: var(--accent-green);
-        border-color: var(--accent-green);
-        box-shadow: 
-          0 0 15px rgba(153, 153, 51, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        transform: translateX(-2px);
       }
       .navbtn:active {
-        transform: translateY(1px) translateX(-2px);
+        transform: translateY(1px);
       }
       .navbtn[aria-current="page"] {
         background: var(--accent-green);
         color: #000;
-        box-shadow: 
-          0 0 20px rgba(153, 153, 51, 0.5),
-          inset 0 2px 0 rgba(255, 255, 255, 0.2);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
       }
 
       /* --- Vertical name column --- */
@@ -143,15 +118,6 @@
         text-transform: uppercase;
         color: var(--accent-purple);
         white-space: nowrap;
-        text-shadow: 
-          0 0 10px rgba(204, 85, 255, 0.5),
-          0 0 20px rgba(204, 85, 255, 0.3);
-        animation: subtlePulse 4s ease-in-out infinite alternate;
-      }
-      
-      @keyframes subtlePulse {
-        0% { text-shadow: 0 0 10px rgba(204, 85, 255, 0.5), 0 0 20px rgba(204, 85, 255, 0.3); }
-        100% { text-shadow: 0 0 15px rgba(204, 85, 255, 0.7), 0 0 25px rgba(204, 85, 255, 0.4); }
       }
 
       /* --- Typography --- */
@@ -169,16 +135,6 @@
         font-weight: 800;
         letter-spacing: -0.01em;
         color: var(--accent-green);
-        text-shadow: 
-          0 0 8px rgba(153, 153, 51, 0.4),
-          0 0 16px rgba(153, 153, 51, 0.2);
-        transition: all 0.3s ease;
-      }
-
-      h1:hover {
-        text-shadow: 
-          0 0 12px rgba(153, 153, 51, 0.6),
-          0 0 24px rgba(153, 153, 51, 0.3);
       }
 
       h2 {
@@ -188,16 +144,6 @@
         line-height: 1.2;
         font-weight: 700;
         color: var(--accent-blue);
-        text-shadow: 
-          0 0 6px rgba(85, 102, 255, 0.4),
-          0 0 12px rgba(85, 102, 255, 0.2);
-        transition: all 0.3s ease;
-      }
-
-      h2:hover {
-        text-shadow: 
-          0 0 10px rgba(85, 102, 255, 0.6),
-          0 0 20px rgba(85, 102, 255, 0.3);
       }
 
       h3 {
@@ -207,16 +153,6 @@
         line-height: 1.25;
         font-weight: 600;
         color: var(--accent-purple);
-        text-shadow: 
-          0 0 5px rgba(204, 85, 255, 0.4),
-          0 0 10px rgba(204, 85, 255, 0.2);
-        transition: all 0.3s ease;
-      }
-
-      h3:hover {
-        text-shadow: 
-          0 0 8px rgba(204, 85, 255, 0.6),
-          0 0 16px rgba(204, 85, 255, 0.3);
       }
 
       p {
@@ -229,21 +165,6 @@
         color: var(--accent-yellow);
         text-decoration-thickness: 2px;
         text-underline-offset: 2px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        text-shadow: 0 0 4px rgba(255, 170, 0, 0.3);
-        position: relative;
-      }
-      
-      a:hover {
-        color: #ffcc33;
-        text-shadow: 
-          0 0 8px rgba(255, 170, 0, 0.6),
-          0 0 16px rgba(255, 170, 0, 0.3);
-        transform: translateY(-1px);
-      }
-      
-      a:active {
-        transform: translateY(0);
       }
 
       ul {
