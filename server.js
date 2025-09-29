@@ -38,6 +38,7 @@ const server = createServer((req, res) => {
   const { pathname } = parse(req.url);
   let filePath = join(__dirname, pathname === '/' ? 'index.html' : `.${pathname}`);
   
+  
   // Check if file exists
   if (!existsSync(filePath)) {
     res.writeHead(404, { 'Content-Type': 'text/html' });
@@ -45,8 +46,15 @@ const server = createServer((req, res) => {
     return;
   }
 
-  // If it's a directory, try to serve index.html
+  // If it's a directory, redirect to add trailing slash or serve index.html
   if (statSync(filePath).isDirectory()) {
+    // If the URL doesn't end with a slash, redirect to add one
+    if (!pathname.endsWith('/')) {
+      res.writeHead(301, { 'Location': pathname + '/' });
+      res.end();
+      return;
+    }
+    
     const indexPath = join(filePath, 'index.html');
     if (existsSync(indexPath) && statSync(indexPath).isFile()) {
       filePath = indexPath;
