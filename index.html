@@ -198,6 +198,19 @@
         border-radius: 10px; /* optional: rounded corners */
         border: 5px solid #222;
       }
+      /* --- Deprecated projects styling --- */
+      .deprecated {
+        opacity: 0.6;
+        color: #888;
+      }
+      .deprecated h3 {
+        color: var(--accent-red);
+      }
+      .deprecated a {
+        color: #cc8800;
+        text-decoration-style: dashed;
+      }
+
       /* --- Responsive --- */
       @media (max-width: 880px) {
         .wrap {
@@ -257,8 +270,10 @@
           <img src="sigbreakdown.png" alt="a bar chart showing sentiment analysis by etymological origin" class="screenshot">
           <h3>Experimental <a href="./public/lettertree_puzzles_web">binary-tree word puzzles</a>.</h3>
           <p>Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
-          <h3><em>Deprecated:</em> <a href="./public/gravsim_web/">Early gravity experiment</a></h3>
-          <p>My first attempt at n-body universal gravitation - an experiment with how far GPT-4 could go in writing physics simulations. Kept here for historical interest, but the new version above is much better.</p>
+          <div class="deprecated">
+            <h3><em>Deprecated:</em> <a href="./public/gravsim_web/">Early gravity experiment</a></h3>
+            <p>My first attempt at n-body universal gravitation - an experiment with how far GPT-4 could go in writing physics simulations. Kept here for historical interest, but the new version above is much better.</p>
+          </div>
           <h3>Ever wished you could sit down with your friends and write a new episode of Seinfeld?</h3>
           <p>If you're Larry David that might be easy, but I tried to make it into a game, TTRPG style.</p>
           <h3>Can you figure out what's going on here?</h3>
