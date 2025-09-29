@@ -38,6 +38,9 @@ const server = createServer((req, res) => {
   const { pathname } = parse(req.url);
   let filePath = join(__dirname, pathname === '/' ? 'index.html' : `.${pathname}`);
   
+  // Debug logging
+  console.log(`Request: ${req.method} ${pathname} -> ${filePath}`);
+  
   // Check if file exists
   if (!existsSync(filePath)) {
     res.writeHead(404, { 'Content-Type': 'text/html' });
