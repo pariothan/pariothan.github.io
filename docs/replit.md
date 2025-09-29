@@ -1,7 +1,7 @@
-# S.F. Lederer Portfolio Website
+# Samuel Lederer Portfolio Website
 
 ## Overview
-This is a personal portfolio website for S.F. Lederer, featuring a modern dark theme with LCARS-inspired design elements. The site includes multiple interactive sub-projects showcasing various programming and linguistic skills.
+This is a personal portfolio website for Samuel Lederer, featuring a modern dark theme with LCARS-inspired design elements. The site includes multiple interactive sub-projects showcasing various programming and linguistic skills.
 
 ## Project Structure
 - **Main Portfolio** (`index.html`) - Personal information, projects overview, resume
