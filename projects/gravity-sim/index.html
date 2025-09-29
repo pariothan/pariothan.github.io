@@ -4,118 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mathematical Principles - Gravity Simulator | Samuel Lederer</title>
+    <title>Mathematical Principles - Gravity Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script type="module" crossorigin src="/projects/gravity-sim/assets/index-0kqcG0FM.js"></script>
     <link rel="stylesheet" crossorigin href="/projects/gravity-sim/assets/index-_un-6o2M.css">
-    <style>
-      /* Enhanced LCARS-inspired styling for gravity simulator */
-      
-      /* Enhanced button animations and glow effects */
-      button, [role="button"] {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        position: relative;
-        overflow: hidden;
-      }
-      
-      button:hover, [role="button"]:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 
-          0 0 15px rgba(153, 153, 51, 0.4),
-          0 4px 20px rgba(0, 0, 0, 0.3) !important;
-      }
-      
-      button:active, [role="button"]:active {
-        transform: translateY(0) !important;
-      }
-      
-      /* Enhanced slider styling */
-      input[type="range"] {
-        position: relative;
-      }
-      
-      input[type="range"]:hover {
-        filter: brightness(1.1) !important;
-      }
-      
-      /* Pulse animation for active buttons */
-      button[aria-pressed="true"], button.active {
-        animation: lcarsGlow 2s ease-in-out infinite alternate !important;
-      }
-      
-      @keyframes lcarsGlow {
-        0% { box-shadow: 0 0 10px rgba(153, 153, 51, 0.3); }
-        100% { box-shadow: 0 0 20px rgba(153, 153, 51, 0.6); }
-      }
-      
-      /* Enhanced typography with portfolio fonts */
-      h1, h2, h3, .heading {
-        font-family: "Quantico", sans-serif !important;
-        text-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
-      }
-      
-      /* Monospace elements */
-      .font-mono, code, pre, .numeric {
-        font-family: "Fira Code", "JetBrains Mono", monospace !important;
-      }
-      
-      /* Enhanced control panel effects */
-      .control-panel, .sidebar, aside {
-        backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      }
-      
-      /* Subtle hover effects for interactive elements */
-      .interactive:hover, .clickable:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
-        transition: background 0.3s ease !important;
-      }
-      
-      /* Enhanced text inputs */
-      input[type="text"], input[type="number"] {
-        transition: all 0.3s ease !important;
-        border: 1px solid rgba(153, 153, 51, 0.3) !important;
-      }
-      
-      input[type="text"]:focus, input[type="number"]:focus {
-        border-color: #999933 !important;
-        box-shadow: 0 0 8px rgba(153, 153, 51, 0.4) !important;
-        outline: none !important;
-      }
-      
-      /* Particle glow enhancement */
-      canvas {
-        filter: contrast(1.05) brightness(1.02) !important;
-      }
-      
-      /* Title enhancement */
-      [class*="title"], [class*="header"] {
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
-      }
-      
-      /* Subtle background enhancements */
-      body {
-        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 50%, #16213e 100%) !important;
-      }
-      
-      /* Control panel specific enhancements */
-      [class*="panel"], [class*="control"] {
-        border-radius: 8px !important;
-        box-shadow: 
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          0 8px 30px rgba(0, 0, 0, 0.4) !important;
-      }
-      
-      /* Enhanced metrics displays */
-      [class*="metric"], [class*="stat"], [class*="count"] {
-        font-family: "Fira Code", monospace !important;
-        text-shadow: 0 0 6px rgba(255, 255, 255, 0.3) !important;
-      }
-    </style>
   </head>
   <body>
     <div id="root"></div>
