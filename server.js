@@ -40,13 +40,19 @@ const server = createServer((req, res) => {
   
   // Check if file exists
   if (!existsSync(filePath)) {
-    // If it's a directory, try to serve index.html
+    res.writeHead(404, { 'Content-Type': 'text/html' });
+    res.end('<h1>404 Not Found</h1>');
+    return;
+  }
+
+  // If it's a directory, try to serve index.html
+  if (statSync(filePath).isDirectory()) {
     const indexPath = join(filePath, 'index.html');
     if (existsSync(indexPath) && statSync(indexPath).isFile()) {
       filePath = indexPath;
     } else {
       res.writeHead(404, { 'Content-Type': 'text/html' });
-      res.end('<h1>404 Not Found</h1>');
+      res.end('<h1>404 Not Found - No index.html in directory</h1>');
       return;
     }
   }
