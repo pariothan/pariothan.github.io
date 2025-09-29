@@ -20,7 +20,7 @@
           // Only prevent scroll when directly over a canvas element
           if (event.target.tagName === 'CANVAS') {
             event.preventDefault();
-            event.stopPropagation();
+            // Note: We don't call stopPropagation() so the simulation can still handle zoom
           }
         }
         
