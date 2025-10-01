@@ -110,7 +110,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-4xl font-cinzel font-semibold text-parchment">
-                MATHEMATICAL PRINCIPLES OF NATURAL PHILOSOPHY
+                PHILOSOPHIÆ NATURALIS PRINCIPIA MATHEMATICA
               </h1>
               <p className="text-parchment-dark mt-1 font-crimson italic">
                 Interactive Gravity Simulation · Real-time Physics
