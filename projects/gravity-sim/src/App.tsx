@@ -180,55 +180,7 @@ function App() {
           </div>
         </div>
 
-        {/* Physics Information */}
-        <div className="mt-12 bg-manuscript rounded-lg p-6 border-2 border-gold hover-lift">
-          <h2 className="text-2xl font-cinzel font-semibold text-parchment mb-4">PHYSICS IMPLEMENTATION</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
-            <div className="bg-parchment-dark p-4 rounded border border-gold/30 hover-lift">
-              <h3 className="font-cinzel font-medium text-copper mb-2">Gravitational Force</h3>
-              <p className="text-ink font-crimson">F = G × (m₁ × m₂) / r²</p>
-              <p className="text-xs text-ink-fade mt-2 font-crimson italic">
-                Newton's universal law of gravitation applied to all particles
-              </p>
-            </div>
-            
-            <div className="bg-parchment-dark p-4 rounded border border-gold/30 hover-lift">
-              <h3 className="font-cinzel font-medium text-copper mb-2">Particle Collision</h3>
-              <p className="text-ink font-crimson">Momentum conservation</p>
-              <p className="text-xs text-ink-fade mt-2 font-crimson italic">
-                When particles collide, they merge while preserving total momentum
-              </p>
-            </div>
-            
-            <div className="bg-parchment-dark p-4 rounded border border-gold/30 hover-lift">
-              <h3 className="font-cinzel font-medium text-copper mb-2">Boundary Physics</h3>
-              <p className="text-ink font-crimson">70% energy retention</p>
-              <p className="text-xs text-ink-fade mt-2 font-crimson italic">
-                Particles bounce off walls with realistic energy loss
-              </p>
-            </div>
-            
-            <div className="bg-parchment-dark p-4 rounded border border-gold/30 hover-lift">
-              <h3 className="font-cinzel font-medium text-copper mb-2">3D Projection</h3>
-              <p className="text-ink font-crimson">Perspective rendering</p>
-              <p className="text-xs text-ink-fade mt-2 font-crimson italic">
-                Real-time 3D to 2D projection with depth sorting
-              </p>
-            </div>
-          </div>
-        </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-manuscript mt-16 border-t-2 border-gold">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="text-center text-parchment-dark">
-            <p className="text-sm font-crimson italic">
-              Built with React, TypeScript, and HTML5 Canvas • Real-time physics simulation
-            </p>
-          </div>
-        </div>
-      </footer>
 
       {/* Benchmark Modal */}
       {showBenchmark && (
