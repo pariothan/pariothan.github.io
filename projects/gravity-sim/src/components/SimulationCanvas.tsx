@@ -75,15 +75,27 @@ export function SimulationCanvas({
     isDraggingRef.current = false;
   }, []);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent) => {
     if (!simulationState.settings.is3D) return;
-    
+
     e.preventDefault();
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const newZoom = Math.max(0.1, Math.min(5, simulationState.camera.zoom * zoomFactor));
-    
+
     onCameraUpdate({ zoom: newZoom });
   }, [simulationState.camera.zoom, simulationState.settings.is3D, onCameraUpdate]);
+
+  // Add wheel event listener with passive: false to allow preventDefault
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleWheel]);
 
   // Initialize renderer
   useEffect(() => {
@@ -97,11 +109,11 @@ export function SimulationCanvas({
     const dpr = window.devicePixelRatio || 1;
     const displayWidth = 800;
     const displayHeight = 600;
-    
+
     canvas.width = displayWidth * dpr;
     canvas.height = displayHeight * dpr;
     ctx.scale(dpr, dpr);
-    
+
     canvas.style.width = displayWidth + 'px';
     canvas.style.height = displayHeight + 'px';
 
@@ -212,7 +224,6 @@ export function SimulationCanvas({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onClick={handleMouseClick}
-        onWheel={handleWheel}
         style={{ width: '800px', height: '600px' }}
       />
       

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="0; url=./dist/">
+    <link rel="canonical" href="./dist/" />
+    <title>Redirecting...</title>
+</head>
+<body>
+    <p>Redirecting to <a href="./dist/">gravity simulation</a>...</p>
+    <script>
+        window.location.href = './dist/';
+    </script>
+</body>
+</html>

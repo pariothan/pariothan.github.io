@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Settings, ChevronDown, ChevronUp, Shapes, Eye, EyeOff, Activity } from 'lucide-react';
+import { Play, Pause, RotateCcw, Settings, ChevronDown, ChevronUp, Shapes, Eye, EyeOff } from 'lucide-react';
 import { SimulationSettings } from '../types/simulation';
 
 interface ControlPanelProps {
@@ -12,20 +12,18 @@ interface ControlPanelProps {
   showEllipsoid: boolean;
   onToggleParticles: () => void;
   showParticles: boolean;
-  onOpenBenchmark: () => void;
 }
 
-export function ControlPanel({ 
-  settings, 
-  onSettingsChange, 
-  onReset, 
+export function ControlPanel({
+  settings,
+  onSettingsChange,
+  onReset,
   particleCount,
   performance,
   onToggleEllipsoid,
   showEllipsoid,
   onToggleParticles,
-  showParticles,
-  onOpenBenchmark
+  showParticles
 }: ControlPanelProps) {
   const [showPhysicsPanel, setShowPhysicsPanel] = useState(false);
 
@@ -102,13 +100,6 @@ export function ControlPanel({
           {showParticles ? 'HIDE DOTS' : 'SHOW DOTS'}
         </button>
         
-        <button
-          onClick={onOpenBenchmark}
-          className="flex items-center gap-2 px-4 py-2 bg-parchment-dark hover:bg-parchment text-manuscript rounded border border-manuscript transition-colors"
-        >
-          <Activity size={18} />
-          BENCHMARK
-        </button>
       </div>
 
       {/* Performance Stats */}

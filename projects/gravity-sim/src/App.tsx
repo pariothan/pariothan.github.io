@@ -1,16 +1,12 @@
 
-import { useState } from 'react';
 import { useSimulation } from './hooks/useSimulation';
-import { useBenchmark } from './hooks/useBenchmark';
 import { SimulationCanvas } from './components/SimulationCanvas';
 import { ControlPanel } from './components/ControlPanel';
 import { DotCreationPanel } from './components/DotCreationPanel';
-import { BenchmarkPanel } from './components/BenchmarkPanel';
 import { Atom } from 'lucide-react';
 
 function App() {
   console.log('App rendering');
-  const [showBenchmark, setShowBenchmark] = useState(false);
   
   const {
     simulationState,
@@ -25,79 +21,8 @@ function App() {
     toggleEllipsoid,
     showEllipsoid,
     toggleParticles,
-    showParticles,
-    generateRandomParticles
+    showParticles
   } = useSimulation();
-
-  const handleBenchmark = async (algorithm: string, particleCount: number, duration: number, highQuality?: boolean) => {
-    // For rendering benchmarks, measure FPS
-    if (highQuality !== undefined) {
-      const originalPaused = simulationState.settings.isPaused;
-      
-      // Start simulation
-      updateSettings({ 
-        isPaused: false
-      });
-      
-      // Wait a bit for settings to apply
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Measure FPS over the duration
-      const fpsValues: number[] = [];
-      const frameTimeValues: number[] = [];
-      const startTime = performance.now();
-      
-      return new Promise<any>((resolve) => {
-        let lastTime = performance.now();
-        
-        const measure = () => {
-          const currentTime = performance.now();
-          const frameTime = currentTime - lastTime;
-          const fps = frameTime > 0 ? 1000 / frameTime : 60;
-          
-          fpsValues.push(fps);
-          frameTimeValues.push(frameTime);
-          lastTime = currentTime;
-          
-          const elapsed = (currentTime - startTime) / 1000;
-          if (elapsed >= duration) {
-            // Restore original settings
-            updateSettings({ 
-              isPaused: originalPaused
-            });
-            
-            resolve({
-              algorithm,
-              particleCount: simulationState.particles.length,
-              avgFps: fpsValues.reduce((a, b) => a + b, 0) / fpsValues.length,
-              minFps: Math.min(...fpsValues),
-              maxFps: Math.max(...fpsValues),
-              avgFrameTime: frameTimeValues.reduce((a, b) => a + b, 0) / frameTimeValues.length,
-              duration: elapsed,
-              renderQuality: 'Fast Mode'
-            });
-          } else {
-            requestAnimationFrame(measure);
-          }
-        };
-        
-        requestAnimationFrame(measure);
-      });
-    }
-    
-    // For algorithm benchmarks, use the existing hook
-    return runBenchmark(algorithm, particleCount, duration, highQuality);
-  };
-
-  const { runBenchmark } = useBenchmark(
-    (count: number) => generateRandomParticles(
-      count,
-      simulationState.canvas.internalWidth,
-      simulationState.canvas.internalHeight,
-      simulationState.settings.is3D
-    ),
-    simulationState.settings
-  );
 
   return (
     <div className="min-h-screen bg-parchment text-ink">
@@ -161,7 +86,6 @@ function App() {
                 showEllipsoid={showEllipsoid}
                 onToggleParticles={toggleParticles}
                 showParticles={showParticles}
-                onOpenBenchmark={() => setShowBenchmark(true)}
               />
               
               <DotCreationPanel
@@ -175,16 +99,6 @@ function App() {
         </div>
 
       </main>
-
-      {/* Benchmark Modal */}
-      {showBenchmark && (
-        <BenchmarkPanel
-          onClose={() => setShowBenchmark(false)}
-          onRunBenchmark={handleBenchmark}
-          currentFps={simulationState.performance.fps}
-          currentFrameTime={simulationState.performance.frameTime}
-        />
-      )}
     </div>
   );
 }
