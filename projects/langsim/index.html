@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Evolution Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header Controls -->
+        <header class="controls">
+            <div class="control-group">
+                <h1>Language Evolution Simulator</h1>
+                <div class="simulation-stats">
+                    <span id="tick-counter">Tick: 0</span>
+                    <span id="language-count">Languages: 0</span>
+                    <span id="community-count">Communities: 0</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <button id="play-pause-btn" class="control-btn">⏸️ Pause</button>
+                <button id="reset-btn" class="control-btn">🔄 Reset</button>
+                <button id="new-world-btn" class="control-btn">🌍 New World</button>
+                <button id="settings-btn" class="control-btn">⚙️ Settings</button>
+            </div>
+
+            <div class="control-group">
+                <label for="mapmode-select">Map Mode:</label>
+                <select id="mapmode-select" class="control-select">
+                    <option value="language_name">Language Names</option>
+                    <option value="vocabulary_item">Vocabulary</option>
+                    <option value="phonological_rules">Phonological Rules</option>
+                    <option value="language_family">Language Families</option>
+                    <option value="phoneme_count">Phoneme Count</option>
+                    <option value="speaker_count">Speaker Count</option>
+                    <option value="prestige">Prestige</option>
+                </select>
+
+                <label for="vocabulary-select" id="vocabulary-label" style="display:none;">Word:</label>
+                <select id="vocabulary-select" class="control-select" style="display:none;">
+                    <option value="water">water</option>
+                    <option value="fire">fire</option>
+                    <option value="tree">tree</option>
+                    <option value="stone">stone</option>
+                    <option value="fish">fish</option>
+                    <option value="bird">bird</option>
+                    <option value="sun">sun</option>
+                    <option value="moon">moon</option>
+                    <option value="hand">hand</option>
+                    <option value="head">head</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- World Canvas -->
+            <div class="canvas-container">
+                <canvas id="world-canvas" width="1400" height="900"></canvas>
+                <div id="canvas-overlay" class="canvas-overlay"></div>
+            </div>
+
+            <!-- Language Detail Panel -->
+            <div id="language-panel" class="language-panel hidden">
+                <div class="panel-header">
+                    <h2 id="language-title">Language Details</h2>
+                    <button id="close-panel-btn" class="close-btn">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="language-overview">
+                        <h3>Overview</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="label">ID:</span>
+                                <span id="lang-id" class="value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Generation:</span>
+                                <span id="lang-generation" class="value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Prestige:</span>
+                                <span id="lang-prestige" class="value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Conservatism:</span>
+                                <span id="lang-conservatism" class="value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Phonemes:</span>
+                                <span id="lang-phonemes" class="value">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Vocabulary:</span>
+                                <span id="lang-vocabulary" class="value">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phonology-section">
+                        <h3>Phonological System</h3>
+                        <div class="phoneme-categories">
+                            <div class="phoneme-category">
+                                <h4>Vowels (<span id="vowel-count">0</span>)</h4>
+                                <div id="vowel-list" class="phoneme-list"></div>
+                            </div>
+                            <div class="phoneme-category">
+                                <h4>Consonants (<span id="consonant-count">0</span>)</h4>
+                                <div id="consonant-list" class="phoneme-list"></div>
+                            </div>
+                        </div>
+                        <div class="constraints-info">
+                            <h4>Phonotactic Rules</h4>
+                            <div id="constraints-summary" class="constraints-text"></div>
+                        </div>
+                    </div>
+
+                    <div class="vocabulary-section">
+                        <h3>Vocabulary</h3>
+                        <div class="vocab-search">
+                            <input type="text" id="vocab-search" placeholder="Search vocabulary...">
+                        </div>
+                        <div id="vocabulary-list" class="vocabulary-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Simulation Settings</h2>
+                    <button id="close-settings-btn" class="close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>World Generation</h3>
+                        <div class="setting-item">
+                            <label for="grid-width">Grid Width:</label>
+                            <input type="number" id="grid-width" value="60" min="20" max="200">
+                        </div>
+                        <div class="setting-item">
+                            <label for="grid-height">Grid Height:</label>
+                            <input type="number" id="grid-height" value="60" min="20" max="200">
+                        </div>
+                        <div class="setting-item">
+                            <label for="land-prob">Land Probability:</label>
+                            <input type="range" id="land-prob" min="0.01" max="0.15" step="0.01" value="0.08">
+                            <span id="land-prob-value">0.08</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="island-bias">Island Bias:</label>
+                            <input type="range" id="island-bias" min="0.1" max="1.0" step="0.1" value="0.5">
+                            <span id="island-bias-value">0.5</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="smooth-steps">Smooth Steps:</label>
+                            <input type="number" id="smooth-steps" value="4" min="1" max="20">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Evolution Probabilities</h3>
+                        <div class="setting-item">
+                            <label for="p-mutate">Mutation Rate:</label>
+                            <input type="range" id="p-mutate" min="0.01" max="0.2" step="0.01" value="0.05">
+                            <span id="p-mutate-value">0.05</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="p-spread">Spread Rate:</label>
+                            <input type="range" id="p-spread" min="0.05" max="0.8" step="0.01" value="0.48">
+                            <span id="p-spread-value">0.48</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="p-borrow">Borrowing Rate:</label>
+                            <input type="range" id="p-borrow" min="0.01" max="0.3" step="0.01" value="0.12">
+                            <span id="p-borrow-value">0.12</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="p-split">Language Split Rate:</label>
+                            <input type="range" id="p-split" min="0.001" max="0.1" step="0.001" value="0.03">
+                            <span id="p-split-value">0.03</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="p-long-distance">Long Distance Spread:</label>
+                            <input type="range" id="p-long-distance" min="0.001" max="0.05" step="0.001" value="0.01">
+                            <span id="p-long-distance-value">0.01</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Display</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="draw-boundaries" checked>
+                                Draw Language Boundaries
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="print-stats" checked>
+                                Print Statistics
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label for="simulation-speed">Simulation Speed:</label>
+                            <input type="range" id="simulation-speed" min="1" max="100" value="20">
+                            <span id="simulation-speed-value">20 FPS</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="apply-settings-btn" class="btn btn-primary">Apply Settings</button>
+                    <button id="reset-settings-btn" class="btn btn-secondary">Reset to Defaults</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Generating World...</div>
+                <div class="loading-progress">
+                    <div id="loading-bar" class="loading-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div id="stats-panel" class="stats-panel">
+            <h3>Statistics</h3>
+            <div id="top-languages" class="top-languages">
+                <h4>Top Languages</h4>
+                <div id="language-leaderboard" class="language-leaderboard"></div>
+            </div>
+            <div id="sample-words" class="sample-words">
+                <h4>Sample Words</h4>
+                <div id="sample-words-list" class="sample-words-list"></div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Help -->
+        <div id="help-overlay" class="help-overlay hidden">
+            <div class="help-content">
+                <h2>Keyboard Shortcuts</h2>
+                <div class="shortcut-list">
+                    <div class="shortcut"><kbd>Space</kbd> - Pause/Resume simulation</div>
+                    <div class="shortcut"><kbd>R</kbd> - Reset simulation</div>
+                    <div class="shortcut"><kbd>N</kbd> - Generate new world</div>
+                    <div class="shortcut"><kbd>M</kbd> - Cycle map modes</div>
+                    <div class="shortcut"><kbd>V</kbd> - Cycle vocabulary words</div>
+                    <div class="shortcut"><kbd>S</kbd> - Toggle statistics panel</div>
+                    <div class="shortcut"><kbd>H</kbd> or <kbd>?</kbd> - Show/hide this help</div>
+                    <div class="shortcut"><kbd>Escape</kbd> - Close panels/modals</div>
+                    <div class="shortcut"><kbd>Click</kbd> - View language details</div>
+                </div>
+                <button id="close-help-btn" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/phonology.js"></script>
+    <script src="js/vocabulary.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/language.js"></script>
+    <script src="js/simulation.js"></script>
+    <script src="js/visualization.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

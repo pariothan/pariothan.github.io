@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Evolution Simulator - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .launch-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .launch-button:hover {
+            background: #0056b3;
+        }
+        .console-output {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Language Evolution Simulator - System Test</h1>
+        <p>Testing all core modules and systems before launching the full application.</p>
+
+        <div id="test-results"></div>
+
+        <div id="console-section" style="display: none;">
+            <h3>Console Output</h3>
+            <div id="console-output" class="console-output"></div>
+        </div>
+
+        <a href="index.html" class="launch-button" id="launch-button" style="display: none;">
+            🚀 Launch Full Application
+        </a>
+    </div>
+
+    <script>
+        // Capture console output
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        const consoleOutput = [];
+        const maxConsoleLines = 100;
+
+        ['log', 'error', 'warn'].forEach(method => {
+            console[method] = function(...args) {
+                consoleOutput.push(`[${method.toUpperCase()}] ${args.join(' ')}`);
+                if (consoleOutput.length > maxConsoleLines) {
+                    consoleOutput.shift();
+                }
+                updateConsoleDisplay();
+                originalConsole[method].apply(console, args);
+            };
+        });
+
+        function updateConsoleDisplay() {
+            const consoleDiv = document.getElementById('console-output');
+            if (consoleDiv) {
+                consoleDiv.textContent = consoleOutput.join('\n');
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            }
+        }
+
+        // Test runner
+        class TestRunner {
+            constructor() {
+                this.results = [];
+                this.testContainer = document.getElementById('test-results');
+            }
+
+            addResult(name, success, message = '', details = '') {
+                this.results.push({ name, success, message, details });
+                this.renderResults();
+            }
+
+            renderResults() {
+                const container = this.testContainer;
+                container.innerHTML = '';
+
+                this.results.forEach(result => {
+                    const section = document.createElement('div');
+                    section.className = 'test-section';
+
+                    const title = document.createElement('h3');
+                    title.textContent = result.name;
+                    section.appendChild(title);
+
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = `test-result ${result.success ? 'test-success' : 'test-error'}`;
+                    resultDiv.textContent = result.success ? '✓ Pass' : '✗ Fail';
+                    if (result.message) {
+                        resultDiv.textContent += ': ' + result.message;
+                    }
+                    section.appendChild(resultDiv);
+
+                    if (result.details) {
+                        const details = document.createElement('div');
+                        details.textContent = result.details;
+                        details.style.fontSize = '14px';
+                        details.style.marginTop = '10px';
+                        section.appendChild(details);
+                    }
+
+                    container.appendChild(section);
+                });
+
+                // Show console and launch button if all tests pass
+                const allPassed = this.results.every(r => r.success);
+                if (this.results.length > 0) {
+                    document.getElementById('console-section').style.display = 'block';
+                    if (allPassed) {
+                        document.getElementById('launch-button').style.display = 'inline-block';
+                    }
+                }
+            }
+        }
+
+        const testRunner = new TestRunner();
+
+        // Load and test modules
+        async function runTests() {
+            // Test 1: Load CONFIG module
+            try {
+                const script1 = document.createElement('script');
+                script1.src = 'js/config.js';
+                document.head.appendChild(script1);
+
+                await new Promise((resolve, reject) => {
+                    script1.onload = resolve;
+                    script1.onerror = reject;
+                });
+
+                if (typeof CONFIG !== 'undefined') {
+                    testRunner.addResult('Config Module', true, 'CONFIG loaded successfully');
+                } else {
+                    testRunner.addResult('Config Module', false, 'CONFIG not found');
+                }
+            } catch (error) {
+                testRunner.addResult('Config Module', false, error.message);
+            }
+
+            // Test 2: Load Phonology module
+            try {
+                const script2 = document.createElement('script');
+                script2.src = 'js/phonology.js';
+                document.head.appendChild(script2);
+
+                await new Promise((resolve, reject) => {
+                    script2.onload = resolve;
+                    script2.onerror = reject;
+                });
+
+                if (typeof PhonologyModule !== 'undefined' && PhonologyModule.PHONEMES) {
+                    const phonemeCount = Object.keys(PhonologyModule.PHONEMES).length;
+                    testRunner.addResult('Phonology Module', true,
+                        `Loaded ${phonemeCount} phonemes with distinctive features`);
+                } else {
+                    testRunner.addResult('Phonology Module', false, 'PhonologyModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Phonology Module', false, error.message);
+            }
+
+            // Test 3: Load Vocabulary module
+            try {
+                const script3 = document.createElement('script');
+                script3.src = 'js/vocabulary.js';
+                document.head.appendChild(script3);
+
+                await new Promise((resolve, reject) => {
+                    script3.onload = resolve;
+                    script3.onerror = reject;
+                });
+
+                if (typeof VocabularyModule !== 'undefined' && VocabularyModule.CORE_VOCABULARY) {
+                    const vocabCount = VocabularyModule.CORE_VOCABULARY.length;
+                    testRunner.addResult('Vocabulary Module', true,
+                        `Loaded ${vocabCount} core vocabulary items`);
+                } else {
+                    testRunner.addResult('Vocabulary Module', false, 'VocabularyModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Vocabulary Module', false, error.message);
+            }
+
+            // Test 4: Load World module
+            try {
+                const script4 = document.createElement('script');
+                script4.src = 'js/world.js';
+                document.head.appendChild(script4);
+
+                await new Promise((resolve, reject) => {
+                    script4.onload = resolve;
+                    script4.onerror = reject;
+                });
+
+                if (typeof WorldModule !== 'undefined' && WorldModule.World) {
+                    // Test world generation
+                    const testMask = WorldModule.generateProceduralWorld(20, 20, 0.1, 0.6, 3);
+                    const world = new WorldModule.World(testMask);
+                    testRunner.addResult('World Module', true,
+                        `World generation successful, ${world.communities.length} communities created`);
+                } else {
+                    testRunner.addResult('World Module', false, 'WorldModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('World Module', false, error.message);
+            }
+
+            // Test 5: Load Language module
+            try {
+                const script5 = document.createElement('script');
+                script5.src = 'js/language.js';
+                document.head.appendChild(script5);
+
+                await new Promise((resolve, reject) => {
+                    script5.onload = resolve;
+                    script5.onerror = reject;
+                });
+
+                if (typeof LanguageModule !== 'undefined' && LanguageModule.Language) {
+                    // Test language creation
+                    const testLang = new LanguageModule.Language();
+                    testRunner.addResult('Language Module', true,
+                        `Language creation successful, ID: ${testLang.id}, phonemes: ${testLang.getPhonemeCount()}`);
+                } else {
+                    testRunner.addResult('Language Module', false, 'LanguageModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Language Module', false, error.message);
+            }
+
+            // Test 6: Load Simulation module
+            try {
+                const script6 = document.createElement('script');
+                script6.src = 'js/simulation.js';
+                document.head.appendChild(script6);
+
+                await new Promise((resolve, reject) => {
+                    script6.onload = resolve;
+                    script6.onerror = reject;
+                });
+
+                if (typeof SimulationModule !== 'undefined' && SimulationModule.LanguageEvolutionSimulation) {
+                    testRunner.addResult('Simulation Module', true, 'Simulation engine loaded successfully');
+                } else {
+                    testRunner.addResult('Simulation Module', false, 'SimulationModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Simulation Module', false, error.message);
+            }
+
+            // Test 7: Load Visualization module
+            try {
+                const script7 = document.createElement('script');
+                script7.src = 'js/visualization.js';
+                document.head.appendChild(script7);
+
+                await new Promise((resolve, reject) => {
+                    script7.onload = resolve;
+                    script7.onerror = reject;
+                });
+
+                if (typeof VisualizationModule !== 'undefined' && VisualizationModule.LanguageRenderer) {
+                    testRunner.addResult('Visualization Module', true, 'Rendering system loaded successfully');
+                } else {
+                    testRunner.addResult('Visualization Module', false, 'VisualizationModule not properly loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Visualization Module', false, error.message);
+            }
+
+            // Test 8: Integration test
+            try {
+                if (typeof WorldModule !== 'undefined' && typeof SimulationModule !== 'undefined') {
+                    const testMask = WorldModule.generateProceduralWorld(10, 10, 0.15, 0.7, 2);
+                    const world = new WorldModule.World(testMask);
+                    const simulation = new SimulationModule.LanguageEvolutionSimulation(world);
+
+                    // Run a few simulation steps
+                    for (let i = 0; i < 5; i++) {
+                        simulation.step();
+                    }
+
+                    const stats = simulation.getDetailedStats();
+                    testRunner.addResult('Integration Test', true,
+                        `Simulation ran successfully for 5 steps, tick: ${stats.tick}, languages: ${stats.languages}`);
+                } else {
+                    testRunner.addResult('Integration Test', false, 'Required modules not loaded');
+                }
+            } catch (error) {
+                testRunner.addResult('Integration Test', false, error.message);
+            }
+
+            console.log('All tests completed!');
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 100);
+        });
+    </script>
+</body>
+</html>
