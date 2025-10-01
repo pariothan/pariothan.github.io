@@ -135,9 +135,6 @@ function App() {
             
             {/* Canvas Info */}
             <div className="mt-4 text-center text-ink-fade">
-              <p className="text-sm font-crimson">
-                Real-time Simulation • {simulationState.canvas.width}×{simulationState.canvas.height} canvas
-              </p>
               {simulationState.settings.is3D && (
                 <p className="text-xs mt-1 font-crimson italic">
                   Drag mouse to rotate camera and scroll to zoom in 3D mode
