@@ -66,12 +66,12 @@ export function ControlPanel({
         <button
           onClick={toggle3D}
           className={`px-4 py-2 rounded border border-manuscript transition-colors ${
-            settings.is3D 
-              ? 'bg-manuscript hover:bg-manuscript-dark text-parchment' 
+            settings.is3D
+              ? 'bg-manuscript hover:bg-manuscript-dark text-parchment'
               : 'bg-parchment-dark hover:bg-parchment text-manuscript'
           }`}
         >
-          {settings.is3D ? '3D MODE' : '2D MODE'}
+          {settings.is3D ? '2D MODE' : '3D MODE'}
         </button>
         
         {settings.is3D && (
