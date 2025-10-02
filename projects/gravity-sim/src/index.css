@@ -59,6 +59,7 @@ canvas {
   border: var(--elegant-border);
   border-radius: 4px;
   box-shadow: var(--manuscript-shadow);
+  box-sizing: border-box;
 }
 
 /* Classical manuscript styling */
