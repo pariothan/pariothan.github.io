@@ -212,11 +212,11 @@ export function SimulationCanvas({
         ref={canvasRef}
         width={800}
         height={600}
-        className={`w-full h-full ${
-          isClickModeActive 
-            ? 'cursor-crosshair' 
-            : simulationState.settings.is3D 
-              ? 'cursor-grab active:cursor-grabbing' 
+        className={`${
+          isClickModeActive
+            ? 'cursor-crosshair'
+            : simulationState.settings.is3D
+              ? 'cursor-grab active:cursor-grabbing'
               : 'cursor-default'
         }`}
         onMouseDown={handleMouseDown}
@@ -224,7 +224,7 @@ export function SimulationCanvas({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onClick={handleMouseClick}
-        style={{ width: '800px', height: '600px' }}
+        style={{ width: '800px', height: '600px', display: 'block' }}
       />
       
       {isClickModeActive && (
