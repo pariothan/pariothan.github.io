@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05070f">
+    <title>LCARS Chess Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="lcars-frame">
+        <div class="lcars-main">
+            <header class="lcars-header">
+                <div class="lcars-header__center">
+                    <span class="lcars-title">Chess</span>
+                </div>
+                <div class="lcars-header__right">
+                    <div class="lcars-status" id="player-tags" data-player="white">
+                        <span class="lcars-status__name">Black</span>
+                        <span class="lcars-status__name">White</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="lcars-core">
+                <section class="lcars-panel lcars-panel--board">
+                    <div class="lcars-panel__body board-wrapper">
+                        <div class="board-surface">
+                            <div id="chessboard" aria-label="Chessboard"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="lcars-side">
+                    <section class="lcars-panel lcars-panel--status" id="status-card" data-player="white">
+                        <div class="lcars-panel__body">
+                            <div class="lcars-readout" id="current-player">White's Turn</div>
+                            <div class="lcars-alert" id="game-status"></div>
+                        </div>
+                    </section>
+
+                    <section class="lcars-panel lcars-panel--briefing" id="rules-briefing" style="display: none;">
+                        <header class="lcars-panel__header">
+                            <span class="lcars-panel__title">Active Variants</span>
+                        </header>
+                        <div class="lcars-panel__body">
+                            <div class="rules-briefing-content" id="briefing-content"></div>
+                        </div>
+                    </section>
+
+                    <section class="lcars-panel lcars-panel--controls">
+                        <div class="lcars-panel__body lcars-controls">
+                            <button id="new-game" class="lcars-btn lcars-btn--primary">New Game</button>
+                            <button id="random-game" class="lcars-btn lcars-btn--accent">Random Rules</button>
+                            <button id="undo-move" class="lcars-btn lcars-btn--secondary">Undo</button>
+                            <button id="open-rules" class="lcars-btn lcars-btn--tertiary">Rules</button>
+                        </div>
+                    </section>
+
+                    <section class="lcars-panel lcars-panel--history">
+                        <header class="lcars-panel__header">
+                            <span class="lcars-panel__title">Moves</span>
+                        </header>
+                        <div class="lcars-panel__body lcars-history" id="moves-list"></div>
+                    </section>
+                </aside>
+            </main>
+
+        </div>
+    </div>
+
+    <div id="promotion-modal" class="modal">
+        <div class="modal-content modal-content--promotion">
+            <header class="modal-header">
+                <h3>Promote Pawn</h3>
+            </header>
+            <div class="promotion-pieces">
+                <div class="promotion-piece" data-piece="queen" aria-label="Promote to Queen">
+                    <span class="promotion-piece__icon">♕</span>
+                    <span class="promotion-piece__label">Queen</span>
+                </div>
+                <div class="promotion-piece" data-piece="rook" aria-label="Promote to Rook">
+                    <span class="promotion-piece__icon">♖</span>
+                    <span class="promotion-piece__label">Rook</span>
+                </div>
+                <div class="promotion-piece" data-piece="bishop" aria-label="Promote to Bishop">
+                    <span class="promotion-piece__icon">♗</span>
+                    <span class="promotion-piece__label">Bishop</span>
+                </div>
+                <div class="promotion-piece" data-piece="knight" aria-label="Promote to Knight">
+                    <span class="promotion-piece__icon">♘</span>
+                    <span class="promotion-piece__label">Knight</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rules-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="rules-heading">
+        <div class="modal-content modal-content--rules">
+            <header class="modal-header">
+                <h3 id="rules-heading">Rules &amp; Variants</h3>
+                <button type="button" class="modal-close" id="rules-close" aria-label="Close rules menu">&times;</button>
+            </header>
+
+            <form id="rules-form" class="rules-form">
+                <section class="rule-section">
+                    <h4>Board Setup</h4>
+                    <label class="rule-field" for="rule-board-size">
+                        <div class="rule-copy">
+                            <span class="rule-title">Board Dimensions</span>
+                            <span class="rule-hint">Choose between compact duels and sweeping battlegrounds.</span>
+                        </div>
+                        <select id="rule-board-size" name="board-size">
+                            <option value="6">6 × 6 — Rapid skirmish</option>
+                            <option value="8">8 × 8 — Classic setup</option>
+                            <option value="10">10 × 10 — Grand arena</option>
+                            <option value="12">12 × 12 — Colossal warzone</option>
+                        </select>
+                    </label>
+                </section>
+
+                <section class="rule-section">
+                    <h4>Core Rules</h4>
+                    <div class="rule-list">
+                        <label class="rule-option" for="rule-allow-castling">
+                            <input type="checkbox" id="rule-allow-castling" name="allow-castling">
+                            <span class="rule-copy">
+                                <span class="rule-title">Allow Castling</span>
+                                <span class="rule-hint">Turn off to remove king rook swaps.</span>
+                            </span>
+                            <span class="rule-toggle" aria-hidden="true"></span>
+                        </label>
+
+                        <label class="rule-option" for="rule-allow-en-passant">
+                            <input type="checkbox" id="rule-allow-en-passant" name="allow-en-passant">
+                            <span class="rule-copy">
+                                <span class="rule-title">Allow En Passant</span>
+                                <span class="rule-hint">Control whether pawn ambush captures are legal.</span>
+                            </span>
+                            <span class="rule-toggle" aria-hidden="true"></span>
+                        </label>
+
+                        <label class="rule-option" for="rule-threefold">
+                            <input type="checkbox" id="rule-threefold" name="enable-threefold">
+                            <span class="rule-copy">
+                                <span class="rule-title">Enable Threefold Repetition</span>
+                                <span class="rule-hint">Detects repeat positions as draws.</span>
+                            </span>
+                            <span class="rule-toggle" aria-hidden="true"></span>
+                        </label>
+
+                        <label class="rule-option" for="rule-fifty">
+                            <input type="checkbox" id="rule-fifty" name="enable-fifty-move">
+                            <span class="rule-copy">
+                                <span class="rule-title">Enable Fifty-Move Rule</span>
+                                <span class="rule-hint">Draw after 50 moves without captures or pawn pushes.</span>
+                            </span>
+                            <span class="rule-toggle" aria-hidden="true"></span>
+                        </label>
+
+                        <label class="rule-option" for="rule-insufficient">
+                            <input type="checkbox" id="rule-insufficient" name="enable-insufficient">
+                            <span class="rule-copy">
+                                <span class="rule-title">Check Insufficient Material</span>
+                                <span class="rule-hint">Stops games that cannot reach checkmate.</span>
+                            </span>
+                            <span class="rule-toggle" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="rule-section">
+                    <h4>Piece Behaviors</h4>
+
+                    <div class="rule-subsection">
+                        <h5>Pawns</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-pawn-long">
+                                <input type="checkbox" id="mod-pawn-long" name="mod-pawn-long">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Long Stride</span>
+                                    <span class="rule-hint">First move may jump three squares if the path is clear.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-pawn-back">
+                                <input type="checkbox" id="mod-pawn-back" name="mod-pawn-back">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Backstep</span>
+                                    <span class="rule-hint">Retreat one square onto an empty file.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-pawn-side">
+                                <input type="checkbox" id="mod-pawn-side" name="mod-pawn-side">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Side-Step</span>
+                                    <span class="rule-hint">Slide left or right into open squares.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-pawn-diagonal">
+                                <input type="checkbox" id="mod-pawn-diagonal" name="mod-pawn-diagonal">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Diagonal Advance</span>
+                                    <span class="rule-hint">Push diagonally without capturing.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-pawn-forward-cap">
+                                <input type="checkbox" id="mod-pawn-forward-cap" name="mod-pawn-forward-cap">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Forward Capture</span>
+                                    <span class="rule-hint">Allow captures straight ahead.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rule-subsection">
+                        <h5>Rooks</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-rook-diagonal">
+                                <input type="checkbox" id="mod-rook-diagonal" name="mod-rook-diagonal">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Diagonal Step</span>
+                                    <span class="rule-hint">Add one-square diagonal dodges.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-rook-knight">
+                                <input type="checkbox" id="mod-rook-knight" name="mod-rook-knight">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Knight Hop</span>
+                                    <span class="rule-hint">Grant rook the classic L-shape leap.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rule-subsection">
+                        <h5>Bishops</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-bishop-orthogonal">
+                                <input type="checkbox" id="mod-bishop-orthogonal" name="mod-bishop-orthogonal">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Orthogonal Rays</span>
+                                    <span class="rule-hint">Let bishops slide up, down, left, and right.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-bishop-knight">
+                                <input type="checkbox" id="mod-bishop-knight" name="mod-bishop-knight">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Knight Hop</span>
+                                    <span class="rule-hint">Add the L-shape leap to bishops.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rule-subsection">
+                        <h5>Knights</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-knight-diagonal">
+                                <input type="checkbox" id="mod-knight-diagonal" name="mod-knight-diagonal">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Diagonal Step</span>
+                                    <span class="rule-hint">Allow one-square diagonal moves.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-knight-orthogonal">
+                                <input type="checkbox" id="mod-knight-orthogonal" name="mod-knight-orthogonal">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Orthogonal Step</span>
+                                    <span class="rule-hint">Let knights step one square in the cross.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rule-subsection">
+                        <h5>Queens</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-queen-knight">
+                                <input type="checkbox" id="mod-queen-knight" name="mod-queen-knight">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Knight Hop</span>
+                                    <span class="rule-hint">Give the queen a jumping option.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-queen-rook">
+                                <input type="checkbox" id="mod-queen-rook" name="mod-queen-rook">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Rook-Only</span>
+                                    <span class="rule-hint">Restrict queens to orthogonal slides.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-queen-bishop">
+                                <input type="checkbox" id="mod-queen-bishop" name="mod-queen-bishop">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Bishop-Only</span>
+                                    <span class="rule-hint">Restrict queens to diagonal slides.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="rule-subsection">
+                        <h5>Kings</h5>
+                        <div class="rule-list rule-list--compact">
+                            <label class="rule-option" for="mod-king-knight">
+                                <input type="checkbox" id="mod-king-knight" name="mod-king-knight">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Knight Hop</span>
+                                    <span class="rule-hint">Let the king leap in an L-shape.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+
+                            <label class="rule-option" for="mod-king-double">
+                                <input type="checkbox" id="mod-king-double" name="mod-king-double">
+                                <span class="rule-copy">
+                                    <span class="rule-title">Double Step</span>
+                                    <span class="rule-hint">Allow two-square lunges when the path is open.</span>
+                                </span>
+                                <span class="rule-toggle" aria-hidden="true"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rule-section">
+                    <h4>Pawn Promotion</h4>
+                    <div class="rule-radio-group">
+                        <label class="rule-radio">
+                            <input type="radio" name="promotion-mode" value="choice">
+                            <span class="rule-copy">
+                                <span class="rule-title">Show Selection Menu</span>
+                                <span class="rule-hint">Choose a piece every time a pawn promotes.</span>
+                            </span>
+                            <span class="rule-bullet" aria-hidden="true"></span>
+                        </label>
+                        <label class="rule-radio">
+                            <input type="radio" name="promotion-mode" value="auto-queen">
+                            <span class="rule-copy">
+                                <span class="rule-title">Auto-Queen</span>
+                                <span class="rule-hint">Skip the dialog and promote to a queen instantly.</span>
+                            </span>
+                            <span class="rule-bullet" aria-hidden="true"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="modal-actions">
+                    <button type="button" class="lcars-btn lcars-btn--secondary" id="rules-cancel">Cancel</button>
+                    <button type="submit" class="lcars-btn lcars-btn--primary">Apply Rules</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="chess.js"></script>
+</body>
+</html>

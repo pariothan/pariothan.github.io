@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Debug</title>
+</head>
+<body>
+    <script src="rule-framework.js"></script>
+    <script src="rule-examples.js"></script>
+    <script src="chess.js"></script>
+    <script>
+        // Debug script to test piece selection
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Testing piece move generation...');
+
+            // Test pawn moves
+            const pawnMoves = window.game.ruleEngine.getValidMoves(window.game.board, 6, 0, 'white', []);
+            console.log('White pawn (6,0) moves:', pawnMoves);
+
+            // Test knight moves
+            const knightMoves = window.game.ruleEngine.getValidMoves(window.game.board, 7, 1, 'white', []);
+            console.log('White knight (7,1) moves:', knightMoves);
+
+            // Test king moves
+            const kingMoves = window.game.ruleEngine.getValidMoves(window.game.board, 7, 4, 'white', []);
+            console.log('White king (7,4) moves:', kingMoves);
+
+            // Test bishop moves
+            const bishopMoves = window.game.ruleEngine.getValidMoves(window.game.board, 7, 2, 'white', []);
+            console.log('White bishop (7,2) moves:', bishopMoves);
+        });
+    </script>
+</body>
+</html>
