@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05070f">
+    <title>LCARS Chess Test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --lcars-bg: #05070f;
+            --lcars-panel: #0f1525;
+            --lcars-text: #f4f7ff;
+            --lcars-muted: #9aa5c2;
+            --lcars-orange: #ff9f65;
+            --lcars-blue: #58b6ff;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Share Tech Mono', system-ui, sans-serif;
+            background: radial-gradient(180% 140% at 20% 20%, rgba(255, 159, 101, 0.12) 0%, transparent 60%),
+                        radial-gradient(160% 120% at 80% -10%, rgba(168, 123, 255, 0.14) 0%, transparent 65%),
+                        var(--lcars-bg);
+            color: var(--lcars-text);
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 0.32em;
+            color: var(--lcars-orange);
+            margin-bottom: 32px;
+            font-size: 2rem;
+        }
+
+        .test-board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 0;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            width: fit-content;
+        }
+
+        .test-square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 40px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .light { background: #f3ecd7; }
+        .dark { background: #776255; }
+        .test-square:hover { transform: scale(1.05); filter: brightness(1.08); }
+        .selected {
+            outline: 3px solid var(--lcars-blue);
+            outline-offset: -3px;
+            z-index: 1;
+        }
+
+        #debug-output {
+            background: var(--lcars-panel);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-top: 24px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.12em;
+            color: var(--lcars-blue);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>LCARS Chess Test Console</h1>
+    <div id="test-board" class="test-board"></div>
+    <div id="debug-output">System ready. Select a piece...</div>
+
+    <script>
+        // Simple test without external files
+        class TestPiece {
+            constructor(color, type, row, col) {
+                this.color = color;
+                this.type = type;
+                this.row = row;
+                this.col = col;
+            }
+
+            getSymbol() {
+                const symbols = {
+                    white: { pawn: '♙', rook: '♖', knight: '♘', bishop: '♗', queen: '♕', king: '♔' },
+                    black: { pawn: '♟', rook: '♜', knight: '♞', bishop: '♝', queen: '♛', king: '♚' }
+                };
+                return symbols[this.color][this.type];
+            }
+        }
+
+        class TestGame {
+            constructor() {
+                this.board = this.initBoard();
+                this.selected = null;
+                this.render();
+            }
+
+            initBoard() {
+                const board = Array(8).fill(null).map(() => Array(8).fill(null));
+                const pieces = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+
+                for (let col = 0; col < 8; col++) {
+                    board[0][col] = new TestPiece('black', pieces[col], 0, col);
+                    board[1][col] = new TestPiece('black', 'pawn', 1, col);
+                    board[6][col] = new TestPiece('white', 'pawn', 6, col);
+                    board[7][col] = new TestPiece('white', pieces[col], 7, col);
+                }
+                return board;
+            }
+
+            render() {
+                const boardEl = document.getElementById('test-board');
+                boardEl.innerHTML = '';
+
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `test-square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+
+                        const piece = this.board[row][col];
+                        if (piece) {
+                            square.textContent = piece.getSymbol();
+                        }
+
+                        if (this.selected && this.selected.row === row && this.selected.col === col) {
+                            square.classList.add('selected');
+                        }
+
+                        square.addEventListener('click', () => this.handleClick(row, col));
+                        boardEl.appendChild(square);
+                    }
+                }
+            }
+
+            handleClick(row, col) {
+                console.log('Clicked:', row, col);
+                const piece = this.board[row][col];
+
+                if (piece) {
+                    this.selected = { row, col };
+                    document.getElementById('debug-output').innerHTML =
+                        `Selected: ${piece.color} ${piece.type} at (${row}, ${col})`;
+                } else {
+                    this.selected = null;
+                    document.getElementById('debug-output').innerHTML = 'No piece selected';
+                }
+
+                this.render();
+            }
+        }
+
+        // Start the test game
+        console.log('Starting test game...');
+        const testGame = new TestGame();
+        console.log('Test game created');
+    </script>
+</body>
+</html>
