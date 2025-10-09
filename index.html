@@ -11,257 +11,10 @@
       href="https://fonts.googleapis.com/css2?family=Fira+Code&family=JetBrains+Mono&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="style.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Samuel Lederer</title>
-    <style>
-      :root {
-        --bg: #0a0a0a;
-        --ink: #e8eaed;
-        /* LCARS-inspired accents - refined */
-        --accent-green: #7cb342;
-        --accent-blue: #4285f4;
-        --accent-purple: #9c27b0;
-        --accent-yellow: #ff9800;
-        --accent-red: #f44336;
-        /* Panels */
-        --card: #1a1a1a;
-        --card-dark: #252525;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
-        color: var(--ink);
-        background: var(--bg);
-        line-height: 1.3;
-        font-weight: 400;
-        text-rendering: optimizeLegibility;
-        font-feature-settings: "liga" 0;
-      }
-
-      /* --- Layout --- */
-      .wrap {
-        min-height: 100svh;
-        display: grid; /* ✅ turn grid on */
-        grid-template-columns: 1fr 140px 56px; /* content | sidebar | name */
-        gap: 8px;
-        padding: 12px;
-      }
-
-      .content-frame {
-        background: #141414;
-        padding: 24px;
-        min-height: 65svh;
-        border: 1px solid #333;
-        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-        position: relative;
-      }
-
-      .button-frame {
-        border-radius: 0;
-        height: 100%; /* ✅ fill sidebar column */
-        justify-items: stretch; /* buttons expand */
-        padding: 5px;
-        display: grid;
-        align-content: start; /* ✅ pin to top */
-        gap: 8px;
-      }
-
-      /* --- Sidebar --- */
-      .sidebar {
-        display: grid;
-        align-content: start;
-      }
-
-      .navbtn {
-        appearance: none;
-        background: var(--card);
-        color: var(--accent-blue);
-        width: 100%; /* ✅ fill sidebar width */
-        min-height: 2.8em;
-        padding: 10px 8px;
-        font-size: 14px;
-        font-weight: 500;
-        text-align: right;
-        cursor: pointer;
-        border: 1px solid #333;
-        font-family: "JetBrains Mono", "Fira Code", monospace;
-        white-space: normal;
-        word-break: break-word;
-        transition: background 0.1s ease;
-        clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
-        position: relative;
-      }
-
-      .navbtn:hover {
-        background: var(--card-dark);
-        color: var(--accent-green);
-      }
-
-      .navbtn:active {
-        background: var(--card-dark);
-      }
-
-      .navbtn[aria-current="page"] {
-        background: var(--accent-green);
-        color: #000;
-      }
-
-      .navbtn:focus {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: 2px;
-      }
-
-      /* --- Vertical name column --- */
-      .name-column {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        writing-mode: vertical-rl;
-        text-orientation: upright;
-        font-weight: 800;
-        font-size: 28px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--accent-purple);
-        white-space: nowrap;
-      }
-
-      /* --- Typography --- */
-      h1,
-      h2,
-      h3 {
-        margin: 0;
-      }
-
-      h1 {
-        margin-top: 0.8em;
-        margin-bottom: 0.5em;
-        font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-        line-height: 1.2;
-        font-weight: 800;
-        letter-spacing: 0.01em;
-        color: var(--accent-green);
-      }
-
-      h2 {
-        margin-top: 1.5em;
-        margin-bottom: 0.4em;
-        font-size: clamp(1.5rem, 3vw, 2.2rem);
-        line-height: 1.3;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-        color: var(--accent-blue);
-      }
-
-      h3 {
-        margin-top: 1.2em;
-        margin-bottom: 0.4em;
-        font-size: clamp(1.125rem, 2vw, 1.5rem);
-        line-height: 1.4;
-        font-weight: 600;
-        letter-spacing: 0.005em;
-        color: var(--accent-purple);
-      }
-
-      p {
-        margin: 0 0 1.2em;
-        color: var(--ink);
-        font-size: clamp(1rem, 1.5vw, 1.1rem);
-        line-height: 1.5;
-      }
-
-      a {
-        color: var(--accent-yellow);
-        text-decoration-thickness: 2px;
-        text-underline-offset: 3px;
-      }
-
-      a:hover {
-        color: var(--accent-purple);
-      }
-
-      a:focus {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: 2px;
-      }
-
-      ul {
-        margin: 0 0 1.2em 1.5em;
-        padding: 0;
-      }
-      ul li {
-        margin: 0.4em 0;
-        color: var(--accent-red);
-        font-size: clamp(1rem, 1.5vw, 1.1rem);
-        line-height: 1.4;
-      }
-
-      /* --- Footer --- */
-      footer {
-        margin-top: 2.5em;
-        padding-top: 1.2em;
-        border-top: 1px solid #333;
-        font-size: 12px;
-        opacity: 0.6;
-        color: #888;
-        font-family: "JetBrains Mono", "Fira Code", monospace;
-      }
-      .headshot {
-        float: right;
-        max-width: 150px; /* adjust size */
-        margin: 0 0 1.2em 1.5em; /* spacing from text */
-        border: 2px solid #444;
-        clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-      }
-      .screenshot {
-        float: right;
-        max-width: 500px; /* adjust size */
-        margin: 0 0 1.2em 1.5em; /* spacing from text */
-        border: 2px solid #444;
-        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-      }
-      /* --- Deprecated projects styling --- */
-      .deprecated {
-        opacity: 0.65;
-        color: #888;
-        padding: 1.2em;
-        margin: 1.5em 0;
-        border-left: 3px solid #555;
-        background: rgba(80, 80, 80, 0.03);
-        clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%);
-      }
-      .deprecated h3 {
-        color: #999;
-        margin-top: 0;
-      }
-      .deprecated a {
-        color: #aaa;
-        text-decoration-style: dotted;
-      }
-
-
-      /* --- Responsive --- */
-      @media (max-width: 880px) {
-        .wrap {
-          grid-template-columns: 1fr; /* stack */
-        }
-        .name-column {
-          display: none;
-        } /* hide vertical name on small screens */
-        .button-frame {
-          height: auto;
-        } /* let sidebar shrink */
-      }
-    </style>
   </head>
   <body>
     <div class="wrap">
@@ -291,7 +44,7 @@
           <img src="./assets/images/headshot.png" alt="Headshot" class="headshot">
           <h1>My Site</h1>
           <h2><em>If you're looking for info on me this is certainly one place</em></h2>
-          <p>Is there something specific you were looking for but can't find?</p>
+          
 
           <h3>What I Do</h3>
           <p>Freelance linguist working at the intersection of language, data, and technology. Currently doing linguistic data annotation for NLP systems, but I use language science to solve complex problems across a pretty wide range of domains. Driven by curiosity. I never want to take the easy answer when I can look further.</p>
@@ -300,8 +53,8 @@
           <p>B.A. Linguistics from UMass Amherst with minors in Chinese and Biology. Full professional proficiency in Mandarin Chinese gained through immersive study in Shanghai. Experience in psycholinguistics research, ESL instruction, and academic library systems.</p>
 
           <h3>Technical Skills</h3>
-          <p>Python (numpy, pandas, SciPy), R, SQL, data analysis, experimental design. Comfortable with syntax trees, phonological analysis, and corpus linguistics. Always building things for fun.</p>
-
+          <p>Python (numpy, pandas, SciPy), R, SQL, data analysis, experimental design. Comfortable with syntax trees, phonological analysis, and corpus linguistics. Always building for fun.</p>
+          <h3>Is there something specific you were looking for but can't find?</h3>
           <p>contact:</p>
           <p><a href="https://github.com/pariothan">github</a></p>
           <p><a href="https://www.linkedin.com/in/lederersamuel/">linkedin</a></p>
@@ -361,12 +114,12 @@
           </ul>
           
           <h3><strong>Research Assistant</strong> | Oct 2020 - May 2023</h3>
-          <p><em>University of Massachusetts | GAP (Grammar and Processing) Lab, CSAAL (Center for the Study of African American English) Lab</em></p>
+          <p><em>University of Massachusetts | GAP (Grammar and Processing) Lab, various</em></p>
           <ul>
             <li>Aided in survey-based experiment design, collection of research data, data annotation and analysis, and theoretical work in psycholinguistics</li>
             <li>Designed and conducted psycholinguistic experiments, gathering participants and handling requirements to organize research efforts and obtain proper research authorization</li>
             <li>Analyzed data using R</li>
-            <li>Annotated data for addition into CORAAL (Corpus of Regional African American Language) and aided in syntax, semantic, and phonemic analysis as well as POS tagging, taking care to maintain best practices that the data was maximally beneficial to later researchers</li>
+            <li>Annotated data for addition into databases and aided in syntax, semantic, and phonemic analysis as well as POS tagging, taking care to maintain best practices that the data was maximally beneficial to later researchers</li>
           </ul>
           
           <h3><strong>ESL Instructor (Freelance / YMCA Boston)</strong> | Nov 2023 - Present</h3>
