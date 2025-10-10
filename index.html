@@ -209,6 +209,11 @@
             .forEach((b) => b.removeAttribute("aria-current"));
           btn.setAttribute("aria-current", "page");
           render(btn.dataset.view);
+
+          // Rebuild tree when switching tabs
+          if (window.rebuildTree) {
+            window.rebuildTree();
+          }
         });
       });
 
@@ -232,6 +237,21 @@
         const ctx = canvas.getContext('2d');
         const COLOR = '#7cb342'; // --accent-green
         const FONT = 'bold 16px JetBrains Mono, Fira Code, monospace';
+
+        // ===== CONFIGURABLE ANIMATION SPEEDS =====
+        // Adjust these values to control animation timing
+        // Lower values = faster animation
+
+        const BRANCH_INTERVAL = 120;      // Milliseconds between branching attempts (tree growth speed)
+        const FADE_IN_FRAMES = 30;        // Frames for new nodes to fade in
+        const CROSS_OUT_DURATION = 20;    // Frames to draw cross-out lines on duplicate tones
+        const DELETE_DURATION = 10;       // Frames to fade out deleted nodes
+        const TONE_MOVE_DURATION = 30;    // Frames to move tone to final mu
+        const ASSOCIATION_DURATION = 40;  // Frames to draw association lines
+        const CENTERING_DURATION = 30;    // Frames to center tones between mus
+        const POSITION_LERP = 0.15;       // Smooth movement speed (0.05=slow, 0.3=fast)
+
+        // ============================================
 
         // Prosodic level names
         const LEVELS = {
@@ -264,14 +284,13 @@
           }
 
           get opacity() {
-            return Math.min(1, this.age / 30); // fade in over 30 frames
+            return Math.min(1, this.age / FADE_IN_FRAMES);
           }
 
           // Smoothly move towards target position
           updatePosition() {
-            const lerp = 0.15; // Smoothing factor (higher = faster)
-            this.x += (this.targetX - this.x) * lerp;
-            this.y += (this.targetY - this.y) * lerp;
+            this.x += (this.targetX - this.x) * POSITION_LERP;
+            this.y += (this.targetY - this.y) * POSITION_LERP;
           }
         }
 
@@ -303,6 +322,7 @@
 
           // Create root
           root = new TreeNode('PHI', 0, levelYPositions['PHI']);
+          root.age = FADE_IN_FRAMES; // Start with full opacity (no fade-in)
           allNodes.push(root);
 
           lastBranchAttempt = Date.now();
@@ -323,7 +343,7 @@
         // Attempt branching for all eligible nodes
         function attemptBranching() {
           const now = Date.now();
-          if (now - lastBranchAttempt < 240) return; // 240ms interval (5x faster)
+          if (now - lastBranchAttempt < BRANCH_INTERVAL) return;
           lastBranchAttempt = now;
 
           // Get all non-terminal leaves
@@ -382,11 +402,8 @@
                 }
               }
             } else {
-              // General branching for non-MU nodes
-              const branchType = Math.random();
-
-              if (branchType < 0.7) {
-                // Binary branch (70%)
+              // Special rule for FOOT: always binary branch
+              if (node.level === 'FOOT') {
                 const offset = 70 + Math.random() * 40;
                 const left = new TreeNode(nextLevel, node.x - offset, node.y);
                 const right = new TreeNode(nextLevel, node.x + offset, node.y);
@@ -395,20 +412,35 @@
                 left.parent = right.parent = node;
                 node.children.push(left, right);
                 allNodes.push(left, right);
-              } else if (branchType < 0.85) {
-                // Left only (15%)
-                const child = new TreeNode(nextLevel, node.x, node.y);
-                child.targetY = levelYPositions[nextLevel];
-                child.parent = node;
-                node.children.push(child);
-                allNodes.push(child);
               } else {
-                // Right only (15%)
-                const child = new TreeNode(nextLevel, node.x, node.y);
-                child.targetY = levelYPositions[nextLevel];
-                child.parent = node;
-                node.children.push(child);
-                allNodes.push(child);
+                // General branching for other non-MU nodes
+                const branchType = Math.random();
+
+                if (branchType < 0.7) {
+                  // Binary branch (70%)
+                  const offset = 70 + Math.random() * 40;
+                  const left = new TreeNode(nextLevel, node.x - offset, node.y);
+                  const right = new TreeNode(nextLevel, node.x + offset, node.y);
+                  left.targetY = levelYPositions[nextLevel];
+                  right.targetY = levelYPositions[nextLevel];
+                  left.parent = right.parent = node;
+                  node.children.push(left, right);
+                  allNodes.push(left, right);
+                } else if (branchType < 0.85) {
+                  // Left only (15%)
+                  const child = new TreeNode(nextLevel, node.x, node.y);
+                  child.targetY = levelYPositions[nextLevel];
+                  child.parent = node;
+                  node.children.push(child);
+                  allNodes.push(child);
+                } else {
+                  // Right only (15%)
+                  const child = new TreeNode(nextLevel, node.x, node.y);
+                  child.targetY = levelYPositions[nextLevel];
+                  child.parent = node;
+                  node.children.push(child);
+                  allNodes.push(child);
+                }
               }
             }
           });
@@ -522,6 +554,26 @@
               // Skip connectors to nodes being deleted
               if (transformPhase === 'deleting' && nodesToCrossOut.includes(child)) return;
 
+              // Calculate opacity for rebuild fade-out
+              let lineOpacity = Math.min(node.opacity, child.opacity);
+
+              if (rebuildPhase === 'fading-out' && (node.level !== 'PHI' || child.level !== 'PHI')) {
+                const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+                const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+                const yRange = maxY - minY;
+
+                // Use the child's Y position for fade timing (bottom to top)
+                if (child.level !== 'PHI') {
+                  const nodeProgress = yRange > 0 ? 1 - (child.y - minY) / yRange : 0;
+                  const overallProgress = fadeOutProgress / FADE_OUT_DURATION;
+                  const fadeStart = nodeProgress * 0.7;
+                  const fadeDuration = 0.3;
+                  const nodeFade = Math.max(0, Math.min(1, (overallProgress - fadeStart) / fadeDuration));
+
+                  lineOpacity = lineOpacity * (1 - nodeFade);
+                }
+              }
+
               // During centering and after, tones with association lines get their solid parent line redrawn
               // (this happens automatically as the child.x updates)
 
@@ -587,24 +639,52 @@
                 const endX = childPos.x - (dx / dist) * gap;
                 const endY = childPos.y - (dy / dist) * gap;
 
-                ctx.globalAlpha = Math.min(node.opacity, child.opacity);
+                // Use dashed line for default tones
+                if (child.isDefault) {
+                  ctx.setLineDash([5, 5]);
+                }
+
+                ctx.globalAlpha = lineOpacity;
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(endX, endY);
                 ctx.stroke();
+
+                // Reset to solid line
+                if (child.isDefault) {
+                  ctx.setLineDash([]);
+                }
               }
             });
           });
 
           // Draw nodes
           allNodes.forEach(node => {
-            // Handle deletion phase - fade out
-            if (transformPhase === 'deleting' && nodesToCrossOut.includes(node)) {
-              const fadeProgress = deleteProgress / DELETE_DURATION;
-              ctx.globalAlpha = node.opacity * (1 - fadeProgress);
-            } else {
-              ctx.globalAlpha = node.opacity;
+            let nodeOpacity = node.opacity;
+
+            // Handle rebuild fade-out (bottom to top)
+            if (rebuildPhase === 'fading-out' && node.level !== 'PHI') {
+              const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+              const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+              const yRange = maxY - minY;
+
+              // Calculate fade progress based on node's Y position (inverted for bottom-up)
+              // Higher Y values (bottom nodes) should fade first (progress closer to 0)
+              const nodeProgress = yRange > 0 ? 1 - (node.y - minY) / yRange : 0;
+              const overallProgress = fadeOutProgress / FADE_OUT_DURATION;
+              const fadeStart = nodeProgress * 0.7; // Stagger the fades
+              const fadeDuration = 0.3;
+              const nodeFade = Math.max(0, Math.min(1, (overallProgress - fadeStart) / fadeDuration));
+
+              nodeOpacity = node.opacity * (1 - nodeFade);
             }
+            // Handle deletion phase - fade out
+            else if (transformPhase === 'deleting' && nodesToCrossOut.includes(node)) {
+              const fadeProgress = deleteProgress / DELETE_DURATION;
+              nodeOpacity = node.opacity * (1 - fadeProgress);
+            }
+
+            ctx.globalAlpha = nodeOpacity;
 
             const pos = worldToScreen(node.x, node.y);
             ctx.fillStyle = COLOR;
@@ -631,8 +711,8 @@
           });
 
           // Draw association lines (tone to non-tone mus)
-          if (transformPhase === 'drawing-associations' || transformPhase === 'centering-tones' || transformPhase === 'complete') {
-            const progress = (transformPhase === 'centering-tones' || transformPhase === 'complete') ? 1 : (associationProgress / ASSOCIATION_DURATION);
+          if (transformPhase === 'drawing-associations' || transformPhase === 'complete') {
+            const progress = transformPhase === 'complete' ? 1 : (associationProgress / ASSOCIATION_DURATION);
             ctx.strokeStyle = COLOR;
             ctx.lineWidth = 2;
             ctx.setLineDash([5, 5]); // Dashed line to distinguish from tree structure
@@ -660,7 +740,24 @@
                 const currentEndX = startX + lineDx * progress;
                 const currentEndY = startY + lineDy * progress;
 
-                ctx.globalAlpha = 0.8;
+                // Calculate fade for rebuild
+                let assocOpacity = 0.8;
+                if (rebuildPhase === 'fading-out') {
+                  const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+                  const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+                  const yRange = maxY - minY;
+
+                  // Use tone's Y position for fade timing
+                  const nodeProgress = yRange > 0 ? 1 - (fromTone.y - minY) / yRange : 0;
+                  const overallProgress = fadeOutProgress / FADE_OUT_DURATION;
+                  const fadeStart = nodeProgress * 0.7;
+                  const fadeDuration = 0.3;
+                  const nodeFade = Math.max(0, Math.min(1, (overallProgress - fadeStart) / fadeDuration));
+
+                  assocOpacity = 0.8 * (1 - nodeFade);
+                }
+
+                ctx.globalAlpha = assocOpacity;
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(currentEndX, currentEndY);
@@ -681,7 +778,7 @@
 
         // State for post-build transformation
         let transformStarted = false;
-        let transformPhase = 'none'; // 'none', 'crossing-out', 'deleting', 'moving-tone', 'drawing-associations', 'centering-tones', 'complete'
+        let transformPhase = 'none'; // 'none', 'crossing-out', 'deleting', 'moving-tone', 'adding-default-tone', 'drawing-associations', 'centering-tones', 'complete'
         let nodesToCrossOut = [];
         let crossOutProgress = 0;
         let deleteProgress = 0;
@@ -693,11 +790,23 @@
         let associationProgress = 0;
         let toneCenteringData = []; // Array of {tone, originalX, targetX}
         let centeringProgress = 0;
-        const CROSS_OUT_DURATION = 60; // frames
-        const DELETE_DURATION = 30; // frames
-        const TONE_MOVE_DURATION = 60; // frames
-        const ASSOCIATION_DURATION = 60; // frames
-        const CENTERING_DURATION = 60; // frames
+        let defaultTone = null; // Default L tone for first mu
+        let defaultToneProgress = 0;
+        const DEFAULT_TONE_DURATION = 30; // frames to fade in default tone
+
+        // State for rebuild fade-out animation
+        let isRebuilding = false;
+        let rebuildPhase = 'none'; // 'none', 'fading-out', 'complete'
+        let fadeOutProgress = 0;
+        const FADE_OUT_DURATION = 30; // frames for fade-out (phi moves during this time)
+
+        // Start rebuild animation sequence
+        function startRebuild() {
+          if (isRebuilding) return;
+          isRebuilding = true;
+          rebuildPhase = 'fading-out';
+          fadeOutProgress = 0;
+        }
 
         // Get all tone nodes in left-to-right order
         function getToneNodesInOrder() {
@@ -749,6 +858,32 @@
               originalTonePos = { x: toneToMove.x, y: toneToMove.y };
               return true;
             }
+          }
+
+          return false;
+        }
+
+        // Check if we need to add a default L tone to the first mu
+        function checkDefaultTone() {
+          const muNodes = allNodes.filter(n => n.level === 'MU').sort((a, b) => a.x - b.x);
+          if (muNodes.length === 0) return false;
+
+          const firstMu = muNodes[0];
+          const hasTone = firstMu.children.some(c =>
+            c.level === 'TONE_H' || c.level === 'TONE_L'
+          );
+
+          if (!hasTone) {
+            // Create default L tone at first mu's position
+            defaultTone = new TreeNode('TONE_L', firstMu.x, firstMu.y);
+            defaultTone.targetY = levelYPositions['TONE_L'];
+            defaultTone.parent = firstMu;
+            defaultTone.isTerminal = true;
+            defaultTone.age = 0; // Start from transparent
+            defaultTone.isDefault = true; // Mark as default tone
+            firstMu.children.push(defaultTone);
+            allNodes.push(defaultTone);
+            return true;
           }
 
           return false;
@@ -820,6 +955,9 @@
           if (nodesToCrossOut.length > 0) {
             transformPhase = 'crossing-out';
             crossOutProgress = 0;
+          } else if (checkDefaultTone()) {
+            transformPhase = 'adding-default-tone';
+            defaultToneProgress = 0;
           } else if (checkToneMovement()) {
             transformPhase = 'moving-tone';
             toneMovementProgress = 0;
@@ -837,18 +975,79 @@
 
         // Animation loop
         function animate() {
-          // Age all nodes for fade-in and update positions
-          allNodes.forEach(n => {
-            n.age++;
-            n.updatePosition();
-          });
+          // Always update phi position (during and after rebuild)
+          if (root) {
+            root.updatePosition();
+          }
 
-          // Attempt branching
-          if (!isAnimationComplete()) {
-            attemptBranching();
-          } else if (!transformStarted) {
-            // Tree is complete, start transformation
-            startTransformation();
+          // Handle rebuild animation phases
+          if (isRebuilding) {
+            if (rebuildPhase === 'fading-out') {
+              fadeOutProgress++;
+
+              // Move phi to center during fade-out
+              root.targetX = 0;
+
+              if (fadeOutProgress >= FADE_OUT_DURATION) {
+                // Remove all non-phi nodes
+                allNodes = allNodes.filter(n => n.level === 'PHI');
+                root.children = [];
+                associationLines = [];
+
+                // Snap phi to final X position
+                root.x = 0;
+                root.targetX = 0;
+
+                // Reset transformation state and start new tree
+                transformStarted = false;
+                transformPhase = 'none';
+                nodesToCrossOut = [];
+                crossOutProgress = 0;
+                deleteProgress = 0;
+                toneToMove = null;
+                targetMu = null;
+                associationProgress = 0;
+                toneCenteringData = [];
+                centeringProgress = 0;
+
+                // Re-initialize tree (new random configuration)
+                includeSigma = Math.random() < 0.6;
+                activeLevels = ['PHI', 'OMEGA', 'FOOT'];
+                if (includeSigma) activeLevels.push('SIGMA');
+                activeLevels.push('MU', 'TONE_H');
+
+                const spacing = 1000 / (activeLevels.length - 1);
+                activeLevels.forEach((level, i) => {
+                  levelYPositions[level] = i * spacing;
+                });
+                levelYPositions['TONE_L'] = levelYPositions['TONE_H'];
+
+                // Smoothly move phi to new Y position (if it changed)
+                root.targetY = levelYPositions['PHI'];
+
+                lastBranchAttempt = Date.now();
+                isRebuilding = false;
+                rebuildPhase = 'none';
+              }
+            }
+          } else {
+            // Normal animation (not rebuilding)
+
+            // Age all nodes for fade-in and update positions (except root which was already updated)
+            allNodes.forEach(n => {
+              n.age++;
+              if (n !== root) {
+                n.updatePosition();
+              }
+            });
+
+            // Attempt branching
+            if (!isAnimationComplete()) {
+              attemptBranching();
+            } else if (!transformStarted) {
+              // Tree is complete, start transformation
+              startTransformation();
+            }
           }
 
           // Handle transformation phases
@@ -875,12 +1074,16 @@
                   }
                 }
               });
-              // After deletion, check if we need to move a tone
+              // After deletion, check tone movement first, THEN default tone
               if (checkToneMovement()) {
                 transformPhase = 'moving-tone';
                 toneMovementProgress = 0;
+              } else if (checkDefaultTone()) {
+                // Only add default tone if we didn't need to move one
+                transformPhase = 'adding-default-tone';
+                defaultToneProgress = 0;
               } else {
-                // No tone movement needed, go straight to associations
+                // No tone movement or default needed, go straight to associations
                 calculateAssociationLines();
                 if (associationLines.length > 0) {
                   transformPhase = 'drawing-associations';
@@ -891,6 +1094,21 @@
               }
               // Update layout after deletion
               updateLayout();
+            }
+          } else if (transformPhase === 'adding-default-tone') {
+            defaultToneProgress++;
+
+            if (defaultToneProgress >= DEFAULT_TONE_DURATION) {
+              // Default tone fully faded in, go straight to associations
+              // (tone movement was already checked before adding default)
+              calculateAssociationLines();
+              if (associationLines.length > 0) {
+                transformPhase = 'drawing-associations';
+                associationProgress = 0;
+                centeringProgress = 0;
+              } else {
+                transformPhase = 'complete';
+              }
             }
           } else if (transformPhase === 'moving-tone') {
             toneMovementProgress++;
@@ -921,41 +1139,46 @@
               toneToMove.parent = targetMu;
               targetMu.children.push(toneToMove);
 
-              // After moving tone, calculate and draw association lines
-              calculateAssociationLines();
-              if (associationLines.length > 0) {
-                transformPhase = 'drawing-associations';
-                associationProgress = 0;
+              // After moving tone, check if we need to add a default tone
+              if (checkDefaultTone()) {
+                transformPhase = 'adding-default-tone';
+                defaultToneProgress = 0;
               } else {
-                transformPhase = 'complete';
+                // No default needed, go to associations
+                calculateAssociationLines();
+                if (associationLines.length > 0) {
+                  transformPhase = 'drawing-associations';
+                  associationProgress = 0;
+                  centeringProgress = 0;
+                } else {
+                  transformPhase = 'complete';
+                }
               }
               updateLayout();
             }
           } else if (transformPhase === 'drawing-associations') {
             associationProgress++;
-            if (associationProgress >= ASSOCIATION_DURATION) {
-              // After drawing associations, center the tones
-              calculateToneCentering();
-              if (toneCenteringData.length > 0) {
-                transformPhase = 'centering-tones';
-                centeringProgress = 0;
-              } else {
-                transformPhase = 'complete';
-              }
-            }
-          } else if (transformPhase === 'centering-tones') {
             centeringProgress++;
 
-            // Animate each tone to its center position
-            const progress = centeringProgress / CENTERING_DURATION;
-            const easeProgress = progress * progress * (3 - 2 * progress); // smooth easing
+            // Calculate tone centering if not yet done
+            if (toneCenteringData.length === 0) {
+              calculateToneCentering();
+            }
 
-            toneCenteringData.forEach(({ tone, originalX, targetX }) => {
-              tone.targetX = originalX + (targetX - originalX) * easeProgress;
-            });
+            // Animate tone centering simultaneously with association drawing
+            if (toneCenteringData.length > 0) {
+              const progress = centeringProgress / CENTERING_DURATION;
+              const easeProgress = progress * progress * (3 - 2 * progress); // smooth easing
 
-            if (centeringProgress >= CENTERING_DURATION) {
-              // Finalize positions
+              toneCenteringData.forEach(({ tone, originalX, targetX }) => {
+                tone.targetX = originalX + (targetX - originalX) * easeProgress;
+              });
+            }
+
+            // Complete when both animations are done
+            const maxDuration = Math.max(ASSOCIATION_DURATION, CENTERING_DURATION);
+            if (associationProgress >= maxDuration) {
+              // Finalize tone positions
               toneCenteringData.forEach(({ tone, targetX }) => {
                 tone.targetX = targetX;
                 tone.x = targetX; // Snap to final position
@@ -983,6 +1206,12 @@
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
+
+        // Expose rebuild function globally
+        window.rebuildTree = function() {
+          // Start the animated rebuild sequence
+          startRebuild();
+        };
 
         // Start animation
         initTree();
