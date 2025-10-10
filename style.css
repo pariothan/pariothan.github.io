@@ -361,4 +361,16 @@ footer {
   .button-frame {
     height: auto;
   } /* let sidebar shrink */
+
+  /* Make sidebar scrollable instead of fixed */
+  .sidebar {
+    position: static;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* Hide tree animation on small screens */
+  .tree-section {
+    display: none;
+  }
 }
