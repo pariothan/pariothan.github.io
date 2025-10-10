@@ -235,7 +235,10 @@
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        const COLOR = '#7cb342'; // --accent-green
+        // Get tree color and opacity from CSS variables
+        const treeStyles = getComputedStyle(document.querySelector('.tree-section'));
+        const COLOR = treeStyles.getPropertyValue('--tree-color').trim() || '#cccccc';
+        const BASE_OPACITY = parseFloat(treeStyles.getPropertyValue('--tree-opacity').trim()) || 1.0;
         const FONT = 'bold 16px JetBrains Mono, Fira Code, monospace';
 
         // ===== CONFIGURABLE ANIMATION SPEEDS =====
@@ -244,6 +247,7 @@
 
         const BRANCH_INTERVAL = 120;      // Milliseconds between branching attempts (tree growth speed)
         const FADE_IN_FRAMES = 30;        // Frames for new nodes to fade in
+        const FADE_OUT_DURATION = 15;     // Frames for tree rebuild fade-out (bottom-up)
         const CROSS_OUT_DURATION = 20;    // Frames to draw cross-out lines on duplicate tones
         const DELETE_DURATION = 10;       // Frames to fade out deleted nodes
         const TONE_MOVE_DURATION = 30;    // Frames to move tone to final mu
@@ -322,7 +326,7 @@
 
           // Create root
           root = new TreeNode('PHI', 0, levelYPositions['PHI']);
-          root.age = FADE_IN_FRAMES; // Start with full opacity (no fade-in)
+          root.age = 0; // Start with zero opacity (fade in)
           allNodes.push(root);
 
           lastBranchAttempt = Date.now();
@@ -557,21 +561,19 @@
               // Calculate opacity for rebuild fade-out
               let lineOpacity = Math.min(node.opacity, child.opacity);
 
-              if (rebuildPhase === 'fading-out' && (node.level !== 'PHI' || child.level !== 'PHI')) {
-                const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
-                const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+              if (rebuildPhase === 'fading-out') {
+                const maxY = Math.max(...allNodes.map(n => n.y));
+                const minY = Math.min(...allNodes.map(n => n.y));
                 const yRange = maxY - minY;
 
                 // Use the child's Y position for fade timing (bottom to top)
-                if (child.level !== 'PHI') {
-                  const nodeProgress = yRange > 0 ? 1 - (child.y - minY) / yRange : 0;
-                  const overallProgress = fadeOutProgress / FADE_OUT_DURATION;
-                  const fadeStart = nodeProgress * 0.7;
-                  const fadeDuration = 0.3;
-                  const nodeFade = Math.max(0, Math.min(1, (overallProgress - fadeStart) / fadeDuration));
+                const nodeProgress = yRange > 0 ? 1 - (child.y - minY) / yRange : 0;
+                const overallProgress = fadeOutProgress / FADE_OUT_DURATION;
+                const fadeStart = nodeProgress * 0.7;
+                const fadeDuration = 0.3;
+                const nodeFade = Math.max(0, Math.min(1, (overallProgress - fadeStart) / fadeDuration));
 
-                  lineOpacity = lineOpacity * (1 - nodeFade);
-                }
+                lineOpacity = lineOpacity * (1 - nodeFade);
               }
 
               // During centering and after, tones with association lines get their solid parent line redrawn
@@ -595,7 +597,7 @@
                   const endX = oldChildPos.x - (dx1 / dist1) * gap;
                   const endY = oldChildPos.y - (dy1 / dist1) * gap;
 
-                  ctx.globalAlpha = (1 - progress);
+                  ctx.globalAlpha = (1 - progress) * BASE_OPACITY;
                   ctx.beginPath();
                   ctx.moveTo(startX, startY);
                   ctx.lineTo(endX, endY);
@@ -615,7 +617,7 @@
                   const endX = currentChildPos.x - (dx2 / dist2) * gap;
                   const endY = currentChildPos.y - (dy2 / dist2) * gap;
 
-                  ctx.globalAlpha = progress;
+                  ctx.globalAlpha = progress * BASE_OPACITY;
                   ctx.beginPath();
                   ctx.moveTo(startX, startY);
                   ctx.lineTo(endX, endY);
@@ -644,7 +646,7 @@
                   ctx.setLineDash([5, 5]);
                 }
 
-                ctx.globalAlpha = lineOpacity;
+                ctx.globalAlpha = lineOpacity * BASE_OPACITY;
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(endX, endY);
@@ -662,10 +664,10 @@
           allNodes.forEach(node => {
             let nodeOpacity = node.opacity;
 
-            // Handle rebuild fade-out (bottom to top)
-            if (rebuildPhase === 'fading-out' && node.level !== 'PHI') {
-              const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
-              const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+            // Handle rebuild fade-out (bottom to top, including PHI at the end)
+            if (rebuildPhase === 'fading-out') {
+              const maxY = Math.max(...allNodes.map(n => n.y));
+              const minY = Math.min(...allNodes.map(n => n.y));
               const yRange = maxY - minY;
 
               // Calculate fade progress based on node's Y position (inverted for bottom-up)
@@ -684,7 +686,7 @@
               nodeOpacity = node.opacity * (1 - fadeProgress);
             }
 
-            ctx.globalAlpha = nodeOpacity;
+            ctx.globalAlpha = nodeOpacity * BASE_OPACITY;
 
             const pos = worldToScreen(node.x, node.y);
             ctx.fillStyle = COLOR;
@@ -695,7 +697,7 @@
               const progress = crossOutProgress / CROSS_OUT_DURATION;
               ctx.strokeStyle = COLOR;
               ctx.lineWidth = 2;
-              ctx.globalAlpha = node.opacity;
+              ctx.globalAlpha = node.opacity * BASE_OPACITY;
 
               // Measure text width
               const textWidth = ctx.measureText(node.label).width;
@@ -743,8 +745,8 @@
                 // Calculate fade for rebuild
                 let assocOpacity = 0.8;
                 if (rebuildPhase === 'fading-out') {
-                  const maxY = Math.max(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
-                  const minY = Math.min(...allNodes.filter(n => n.level !== 'PHI').map(n => n.y));
+                  const maxY = Math.max(...allNodes.map(n => n.y));
+                  const minY = Math.min(...allNodes.map(n => n.y));
                   const yRange = maxY - minY;
 
                   // Use tone's Y position for fade timing
@@ -757,7 +759,7 @@
                   assocOpacity = 0.8 * (1 - nodeFade);
                 }
 
-                ctx.globalAlpha = assocOpacity;
+                ctx.globalAlpha = assocOpacity * BASE_OPACITY;
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(currentEndX, currentEndY);
@@ -798,7 +800,6 @@
         let isRebuilding = false;
         let rebuildPhase = 'none'; // 'none', 'fading-out', 'complete'
         let fadeOutProgress = 0;
-        const FADE_OUT_DURATION = 30; // frames for fade-out (phi moves during this time)
 
         // Start rebuild animation sequence
         function startRebuild() {
@@ -936,8 +937,30 @@
             // Get the parent mu of the tone
             const parentMu = fromTone.parent;
             if (parentMu) {
-              // Calculate midpoint between parent mu and target mu
-              const centerX = (parentMu.x + toMu.x) / 2;
+              // If parent mu has multiple children (tones), use the rightmost one's X position
+              // (because we want to center between the last mora of the source and first mora of target)
+              let parentX = parentMu.x;
+              if (parentMu.children.length > 1) {
+                // Find rightmost child (highest X value) - this is the last mora
+                const rightmostChild = parentMu.children.reduce((max, child) =>
+                  child.x > max.x ? child : max
+                );
+                parentX = rightmostChild.x;
+              }
+
+              // If target mu has multiple children, use the leftmost one's X position
+              // (the first mora of the target mu)
+              let targetX = toMu.x;
+              if (toMu.children.length > 1) {
+                // Find leftmost child (lowest X value) - this is the first mora
+                const leftmostChild = toMu.children.reduce((min, child) =>
+                  child.x < min.x ? child : min
+                );
+                targetX = leftmostChild.x;
+              }
+
+              // Calculate midpoint between parent position and target position
+              const centerX = (parentX + targetX) / 2;
               toneCenteringData.push({
                 tone: fromTone,
                 originalX: fromTone.x,
@@ -1024,6 +1047,9 @@
 
                 // Smoothly move phi to new Y position (if it changed)
                 root.targetY = levelYPositions['PHI'];
+
+                // Reset phi age to 0 so it fades back in
+                root.age = 0;
 
                 lastBranchAttempt = Date.now();
                 isRebuilding = false;
