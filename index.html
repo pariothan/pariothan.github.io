@@ -18,6 +18,7 @@
   </head>
   <body>
     <div class="wrap">
+      <div class="left-column" aria-hidden="true"></div>
       <main id="content" class="content-frame" tabindex="-1" aria-live="polite">
         <!-- Default view injected by JS -->
       </main>
@@ -68,25 +69,27 @@
       const VIEWS = {
         me: `
         <article>
-          <img src="./assets/images/headshot.png" alt="Headshot" class="headshot">
-          <h1>If you seek info on me this is a place</h1>
-          <h2>Samuel Lederer <em>(he/him)</em></h2>
-          
+            <img src="./assets/images/headshot.png" alt="Headshot" class="headshot">
+            <div>
+              <h1>Samuel Lederer <em>(he/him)</em></h1>
+              <h2>If you seek info on me this is a place</h2>
+            </div>
+   
 
-          <h3>What I Do</h3>
-          <p>Freelance linguist working at the intersection of language, data, and technology. Currently doing linguistic data annotation for NLP systems, but I use language science to solve complex problems across a pretty wide range of domains. Driven by curiosity. I never want to take the easy answer when I can look further.</p>
+        
+            <h3>What I Do</h3>
+            <p>Freelance linguist working at the intersection of language, data, and technology. Currently doing linguistic data annotation for NLP systems, but I use language science to solve complex problems across a pretty wide range of domains. Driven by curiosity. I never want to take the easy answer when I can look further.</p>
+   
 
-          <h3>Background</h3>
-          <p>B.A. Linguistics from UMass Amherst with minors in Chinese and Biology. Full professional proficiency in Mandarin Chinese gained through immersive study in Shanghai.</p>
+            <h3>Background</h3>
+            <p>B.A. Linguistics from UMass Amherst with minors in Chinese and Biology. Full professional proficiency in Mandarin Chinese gained through immersive study in Shanghai.</p>
 
-          <h3>Technical Skills</h3>
-          <p>Python (numpy, pandas, SciPy), R, SQL, data analysis, experimental design. Comfortable with syntax trees, phonological analysis, and corpus linguistics. Always building for fun.</p>
-          <h3>Is there something specific you were looking for but can't find?</h3>
-          <p>contact:</p>
-          <p><a href="https://github.com/pariothan">github</a></p>
-          <p><a href="https://www.linkedin.com/in/lederersamuel/">linkedin</a></p>
-          <p><a href="mailto:slederer@pm.me+website">sflederer@pm.me</a></p>
-          <footer>© <span id="year"></span> Samuel Lederer</footer>
+
+
+            <h3>Technical Skills</h3>
+            <p>Python (numpy, pandas, SciPy), R, SQL, data analysis, experimental design. Comfortable with syntax trees, phonological analysis, and corpus linguistics. Always building for fun.</p>
+
+
         </article>
       `,
         projects: `

@@ -10,6 +10,7 @@
   /* Panels */
   --card: #1a1a1a;
   --card-dark: #252525;
+  --edge-column-width: 56px;
 }
 
 * {
@@ -34,19 +35,64 @@ body {
 .wrap {
   min-height: 100svh;
   display: grid; /* ✅ turn grid on */
-  grid-template-columns: 1fr 140px 56px; /* content | sidebar | name */
+  grid-template-columns: var(--edge-column-width) minmax(0, 1fr) 140px var(--edge-column-width); /* left bar | content | sidebar | name */
   gap: 8px;
   padding: 12px;
 }
 
 .content-frame {
+  grid-column: 2;
   background: #141414;
   padding: 24px;
   min-height: 65svh;
   border: 1px solid #333;
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   position: relative;
+  overflow: hidden;
 }
+
+.content-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+ 
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 2;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.story-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.story-card {
+  background: var(--card);
+  border: 1px solid #333;
+  padding: 20px;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+
+.story-card--intro {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.story-card--intro .headshot {
+  float: none;
+  margin: 0;
+}
+
+.left-column {
+  grid-column: 1;
+  width: var(--edge-column-width);
+  min-height: 100vh;
+  pointer-events: none;
+}
+
 
 .button-frame {
   border-radius: 0;
@@ -60,6 +106,7 @@ body {
 
 /* --- Sidebar --- */
 .sidebar {
+  grid-column: 3;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -210,6 +257,7 @@ body {
 
 /* --- Vertical name column --- */
 .name-column {
+  grid-column: 4;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -225,6 +273,8 @@ body {
   right: 20px;
   top: 0;
   height: 100vh;
+  width: var(--edge-column-width);
+  background: transparent;
 }
 
 .outline {
@@ -354,6 +404,9 @@ footer {
 @media (max-width: 880px) {
   .wrap {
     grid-template-columns: 1fr; /* stack */
+  }
+  .left-column {
+    display: none;
   }
   .name-column {
     display: none;
