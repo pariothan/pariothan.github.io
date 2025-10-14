@@ -108,11 +108,16 @@ body {
 .story-card {
   background: var(--card);
   border: 1px solid #333;
-  padding: 20px;
+  padding: 16px 20px;
   clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   opacity: 0.95;
   width: 100%;
   align-self: start;
+}
+
+.story-card h2:first-child,
+.story-card h3:first-child {
+  margin-top: 0;
 }
 
 .title-card {
@@ -223,7 +228,7 @@ body {
 
 .story-card--intro {
   display: flex;
-  gap: 16px;
+  gap: 0px;
   align-items: center;
   flex-wrap: wrap;
 }
