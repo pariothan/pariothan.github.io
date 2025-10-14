@@ -164,21 +164,6 @@ body {
   color: var(--accent-green);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: all 0.2s ease;
-}
-
-.tech-badge:hover {
-  background: rgba(124, 179, 66, 0.25);
-  border-color: var(--accent-green);
-}
-
-/* Project card hover effect */
-.project-card {
-  transition: box-shadow 0.2s ease;
-}
-
-.project-card:hover {
-  box-shadow: 0 4px 12px rgba(124, 179, 66, 0.2);
 }
 
 .title-card {
