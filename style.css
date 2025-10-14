@@ -170,16 +170,14 @@ body {
 .tech-badge:hover {
   background: rgba(124, 179, 66, 0.25);
   border-color: var(--accent-green);
-  transform: translateY(-1px);
 }
 
 /* Project card hover effect */
 .project-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .project-card:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(124, 179, 66, 0.2);
 }
 
