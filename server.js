@@ -1,6 +1,6 @@
 const { createServer } = require('http');
 const { parse } = require('url');
-const { readFileSync, existsSync, statSync } = require('fs');
+const { readFileSync, existsSync, statSync, watch } = require('fs');
 const { join, extname } = require('path');
 
 const port = 5000;
@@ -81,4 +81,27 @@ const server = createServer((req, res) => {
 
 server.listen(port, host, () => {
   console.log(`Server running at http://${host}:${port}/`);
+  console.log(`\nWatching for file changes...`);
 });
+
+// Watch for file changes and log them (simple hot reload notification)
+const watchDirs = ['.'];
+const watchExtensions = ['.html', '.css', '.js', '.json'];
+
+function watchDirectory(dir) {
+  try {
+    watch(dir, { recursive: false }, (_eventType, filename) => {
+      if (filename) {
+        const ext = extname(filename).toLowerCase();
+        if (watchExtensions.includes(ext)) {
+          console.log(`\n[${new Date().toLocaleTimeString()}] File changed: ${filename}`);
+          console.log('Refresh your browser to see changes.\n');
+        }
+      }
+    });
+  } catch (err) {
+    // Silently fail if watch is not supported
+  }
+}
+
+watchDirs.forEach(watchDirectory);
