@@ -46,7 +46,22 @@ body {
 
 .content-frame {
   grid-column: 2;
-  background: #141414;
+  background: transparent;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(124, 179, 66, 0.08),
+      rgba(124, 179, 66, 0.08) 6px,
+      transparent 1px,
+      transparent 48px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(124, 179, 66, 0.06),
+      rgba(124, 179, 66, 0.06) 6px,
+      transparent 1px,
+      transparent 48px
+    );
   padding: 24px;
   min-height: 65svh;
   border: 1px solid #333;
@@ -59,16 +74,35 @@ body {
   content: "";
   position: absolute;
   inset: 0;
- 
   pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(124, 179, 66, 0.18),
+      rgba(124, 179, 66, 0.18) 1px,
+      transparent 1px,
+      transparent 48px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(124, 179, 66, 0.14),
+      rgba(124, 179, 66, 0.14) 1px,
+      transparent 1px,
+      transparent 48px
+    );
+  filter: blur(6px);
   mix-blend-mode: screen;
-  z-index: 2;
+  opacity: 0.5;
+  z-index: 0;
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 
 .story-grid {
   display: grid;
   gap: 16px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
 .story-card {
@@ -76,6 +110,115 @@ body {
   border: 1px solid #333;
   padding: 20px;
   clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  opacity: 0.95;
+  width: 100%;
+  align-self: start;
+}
+
+.title-card {
+  background: rgba(20, 32, 52, 0.92);
+  border: 1px solid rgba(66, 133, 244, 0.4);
+  padding: 28px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 12px, 100% 100%, 10px 100%, 0 calc(100% - 12px));
+  box-shadow:
+    0 6px 26px rgba(66, 133, 244, 0.28),
+    inset 0 0 0 1px rgba(66, 133, 244, 0.32);
+  position: relative;
+  width: 100%;
+  color: var(--ink);
+  align-self: start;
+  overflow: hidden;
+}
+
+.title-card h1,
+.title-card h2 {
+  margin: 0;
+}
+
+.title-card h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: 0.015em;
+}
+
+.title-card h2 {
+  margin-top: 0.6em;
+  font-weight: 500;
+  color: rgba(232, 234, 237, 0.8);
+}
+
+.title-card .note {
+  display: inline-block;
+  margin-top: 1em;
+  font-size: 0.85rem;
+  color: rgba(232, 234, 237, 0.65);
+  letter-spacing: 0.18em;
+}
+
+.story-card.span-2 {
+  grid-column: span 2;
+}
+
+.title-card {
+  grid-column: 1 / -1;
+}
+
+.story-grid.masonry {
+  display: block;
+  column-count: 2;
+  column-gap: 16px;
+}
+
+.story-grid.masonry .story-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+.story-grid.masonry .story-card.span-2 {
+  column-span: all;
+  width: 100%;
+  display: block;
+}
+
+.story-grid.masonry .title-card {
+  column-span: all;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.story-grid.masonry .story-card--ghost {
+  display: none;
+}
+
+.story-card--ghost {
+  background: transparent;
+  border: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.story-grid.grid-two,
+.story-grid.grid-three {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.story-grid.grid-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.story-grid.auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: stretch;
+  justify-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  grid-auto-columns: 1fr;
+}
+
+.story-grid.auto-fit .story-card--intro {
+  grid-column: 1 / -1;
 }
 
 .story-card--intro {
@@ -86,6 +229,18 @@ body {
 }
 
 .story-card--intro .headshot {
+  float: none;
+  margin: 0;
+}
+
+.title-card--intro {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.title-card--intro .headshot {
   float: none;
   margin: 0;
 }
