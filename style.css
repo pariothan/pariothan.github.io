@@ -315,7 +315,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   --tree-color: var(--accent-green);
-  --tree-opacity: .3;
+  --tree-opacity: .5;
 }
 
 .links-section {
@@ -542,10 +542,11 @@ a:focus {
 ul {
   margin: 0 0 1.2em 1.5em;
   padding: 0;
+
 }
 ul li {
   margin: 0.4em 0;
-  color: var(--accent-red);
+  color: var(--ink);
   font-size: clamp(1rem, 1.5vw, 1.1rem);
   line-height: 1.4;
 }
