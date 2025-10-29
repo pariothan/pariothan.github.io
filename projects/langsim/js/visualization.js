@@ -380,8 +380,8 @@ class LanguageRenderer {
 
     _getPrestigeInfo(language) {
         const prestigeInt = Math.round(language.prestige * 1000);
-        const prestigeDisplay = `${Math.round(language.prestige * 100)}%`;
-        return [prestigeInt.toString(), prestigeDisplay];
+        // No text labels in prestige mode - color is sufficient
+        return [prestigeInt.toString(), ""];
     }
 
     draw() {
