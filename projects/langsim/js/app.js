@@ -60,6 +60,11 @@ class LanguageEvolutionApp {
         this.helpOverlay = document.getElementById('help-overlay');
         this.closeHelpBtn = document.getElementById('close-help-btn');
 
+        // World generation modal
+        this.worldGenModal = document.getElementById('world-gen-modal');
+        this.generateWorldBtn = document.getElementById('generate-world-btn');
+        this.cancelGenBtn = document.getElementById('cancel-gen-btn');
+
         // Bind event listeners
         this.bindEventListeners();
     }
@@ -68,7 +73,7 @@ class LanguageEvolutionApp {
         // Control buttons
         this.playPauseBtn.addEventListener('click', () => this.toggleSimulation());
         this.resetBtn.addEventListener('click', () => this.resetSimulation());
-        this.newWorldBtn.addEventListener('click', () => this.generateNewWorld());
+        this.newWorldBtn.addEventListener('click', () => this.showWorldGenModal());
         this.settingsBtn.addEventListener('click', () => this.showSettings());
 
         // Map mode controls
@@ -85,6 +90,10 @@ class LanguageEvolutionApp {
 
         // Help
         this.closeHelpBtn.addEventListener('click', () => this.hideHelp());
+
+        // World generation modal
+        this.generateWorldBtn.addEventListener('click', () => this.confirmGenerateWorld());
+        this.cancelGenBtn.addEventListener('click', () => this.hideWorldGenModal());
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -119,6 +128,48 @@ class LanguageEvolutionApp {
         });
     }
 
+    showWorldGenModal() {
+        this.worldGenModal.classList.remove('hidden');
+        // Update input values with current settings
+        document.getElementById('gen-grid-width').value = this.getSettingValue('grid-width', CONFIG.GRID_W);
+        document.getElementById('gen-grid-height').value = this.getSettingValue('grid-height', CONFIG.GRID_H);
+        document.getElementById('gen-land-prob').value = this.getSettingValue('land-prob', CONFIG.LAND_PROB_INIT);
+        document.getElementById('gen-land-prob-value').textContent = document.getElementById('gen-land-prob').value;
+    }
+
+    hideWorldGenModal() {
+        this.worldGenModal.classList.add('hidden');
+    }
+
+    async confirmGenerateWorld() {
+        this.hideWorldGenModal();
+
+        // Get values from modal
+        const width = parseInt(document.getElementById('gen-grid-width').value);
+        const height = parseInt(document.getElementById('gen-grid-height').value);
+        const landProb = parseFloat(document.getElementById('gen-land-prob').value);
+        const seedLanguages = parseInt(document.getElementById('gen-seed-languages').value);
+
+        // Temporarily update config
+        const originalWidth = CONFIG.GRID_W;
+        const originalHeight = CONFIG.GRID_H;
+        const originalLandProb = CONFIG.LAND_PROB_INIT;
+
+        CONFIG.GRID_W = width;
+        CONFIG.GRID_H = height;
+        CONFIG.LAND_PROB_INIT = landProb;
+
+        // Store seed languages count for simulation
+        this.seedLanguageCount = seedLanguages;
+
+        await this.generateNewWorld();
+
+        // Restore original config
+        CONFIG.GRID_W = originalWidth;
+        CONFIG.GRID_H = originalHeight;
+        CONFIG.LAND_PROB_INIT = originalLandProb;
+    }
+
     setupModalHandling() {
         // Close modals on escape key
         document.addEventListener('keydown', (e) => {
@@ -126,6 +177,7 @@ class LanguageEvolutionApp {
                 this.hideSettings();
                 this.hideLanguagePanel();
                 this.hideHelp();
+                this.hideWorldGenModal();
             }
         });
 
@@ -139,6 +191,12 @@ class LanguageEvolutionApp {
         this.helpOverlay.addEventListener('click', (e) => {
             if (e.target === this.helpOverlay) {
                 this.hideHelp();
+            }
+        });
+
+        this.worldGenModal.addEventListener('click', (e) => {
+            if (e.target === this.worldGenModal) {
+                this.hideWorldGenModal();
             }
         });
     }
@@ -203,7 +261,8 @@ class LanguageEvolutionApp {
             await this.sleep(50);
 
             console.log('Creating simulation...');
-            this.simulation = new SimulationModule.LanguageEvolutionSimulation(world);
+            const seedCount = this.seedLanguageCount || CONFIG.STARTER_WORDS.length;
+            this.simulation = new SimulationModule.LanguageEvolutionSimulation(world, seedCount);
             console.log(`Simulation created with ${this.simulation.languages.size} languages`);
             this.updateProgress(85);
             await this.sleep(50);
@@ -249,8 +308,9 @@ class LanguageEvolutionApp {
         try {
             await this.sleep(100);
 
-            // Create new simulation with same world
-            this.simulation = new SimulationModule.LanguageEvolutionSimulation(this.simulation.world);
+            // Create new simulation with same world and seed count
+            const seedCount = this.seedLanguageCount || CONFIG.STARTER_WORDS.length;
+            this.simulation = new SimulationModule.LanguageEvolutionSimulation(this.simulation.world, seedCount);
             this.renderer.simulation = this.simulation;
 
             this.renderer.draw();

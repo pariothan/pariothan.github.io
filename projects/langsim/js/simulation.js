@@ -8,10 +8,11 @@
  * Main simulation managing languages, communities, and evolution
  */
 class LanguageEvolutionSimulation {
-    constructor(world) {
+    constructor(world, seedLanguageCount = null) {
         this.world = world;
         this.languages = new Map();
         this.tickCount = 0;
+        this.seedLanguageCount = seedLanguageCount || CONFIG.STARTER_WORDS.length;
 
         // Contiguity tracking
         this.dirtyLanguages = new Set();
@@ -32,8 +33,8 @@ class LanguageEvolutionSimulation {
     }
 
     _initializeLanguages() {
-        // Create initial languages
-        for (const starterWord of CONFIG.STARTER_WORDS) {
+        // Create initial languages based on seedLanguageCount
+        for (let i = 0; i < this.seedLanguageCount; i++) {
             const lang = new LanguageModule.Language();
             this.languages.set(lang.id, lang);
 
@@ -41,10 +42,11 @@ class LanguageEvolutionSimulation {
             const community = this.world.getRandomCommunity();
             if (community) {
                 community.languageId = lang.id;
-                // Add the starter word to vocabulary if meaning exists
-                if (VocabularyModule.CORE_VOCABULARY.length > 0) {
+                // Add a starter word to vocabulary if meaning exists
+                if (VocabularyModule.CORE_VOCABULARY.length > 0 && i < CONFIG.STARTER_WORDS.length) {
                     const meaning = VocabularyModule.CORE_VOCABULARY[
                         Math.floor(Math.random() * VocabularyModule.CORE_VOCABULARY.length)];
+                    const starterWord = CONFIG.STARTER_WORDS[i];
                     const starterWordObj = new VocabularyModule.Word(starterWord, meaning, lang.id);
                     lang.lexicon.set(meaning, starterWordObj);
                 }

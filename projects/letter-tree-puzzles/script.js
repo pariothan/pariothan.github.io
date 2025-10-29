@@ -1,529 +1,725 @@
-// script.js
-let lastwords = [];
-fetch("words_dictionary.json")
-  .then((response) => response.json())
-  .then((data) => {
-    window.dictionary = Object.keys(data).map((word) => word.toUpperCase());
-    // Now dictionary is loaded, initialize event listeners
-    toggleHoveredAndParentNodes();
-  });
+const canvas = document.getElementById("treeCanvas");
+const ctx = canvas.getContext("2d");
 
-const wordsList = document.getElementById("wordsListContent");
-const wordDisplay = document.getElementById("wordDisplay");
-let words = new Set();
+const LEVEL_LABELS = {
+  PHI: "φ",
+  OMEGA: "ω",
+  FOOT: "Ft",
+  SIGMA: "σ",
+  MU: "μ",
+  TONE_H: "H",
+  TONE_L: "L",
+};
 
-// Function to play sound
-function playSound(path) {
-  const audio = new Audio(path); // Specify the path to your sound effect file
-  audio.play();
-}
+const BRANCH_INTERVAL = 240; // ms
+const BRANCH_PROBABILITY = 0.7;
+const POSITION_LERP = 0.15;
+const LEAF_WIDTH = 50;
+const SIBLING_SPACING = 50;
+const BRANCH_OFFSET_MIN = 70;
+const BRANCH_OFFSET_MAX = 110;
+const FADE_IN_FRAMES = 30;
 
-function collectAllWordsFromTree() {
-  const nodes = document.querySelectorAll(".node");
-  const words = [];
+const CROSS_OUT_DURATION = 60;
+const DELETE_DURATION = 30;
+const TONE_MOVE_DURATION = 60;
+const ASSOCIATION_DURATION = 60;
+const CENTERING_DURATION = 60;
 
-  nodes.forEach((node) => {
-    const input = node.querySelector("input");
-    if (input && input.value !== "") {
-      let currentNode = node;
-      let word = "";
-      while (currentNode) {
-        const input = currentNode.querySelector("input");
-        if (input && input.value !== "")
-          word = input.value.toUpperCase() + word;
-        currentNode = currentNode.parentElement.closest(".node");
-      }
-      words.push(word);
-    }
-  });
+let root = null;
+let allNodes = [];
+let includeSigma = false;
+let activeLevels = [];
+let levelYPositions = {};
+let lastBranchAttempt = 0;
 
-  return words;
-}
+let transformStarted = false;
+let transformPhase = "none";
+let nodesToCrossOut = [];
+let associationLines = [];
+let toneCenteringData = [];
+let toneToMove = null;
+let targetMu = null;
+let originalTonePos = null;
 
-function updateLines() {
-  const svg = document.querySelector("svg");
-  svg.innerHTML = ""; // Clear existing lines for redrawing
-  document.querySelectorAll(".child").forEach((child) => {
-    const parent = child.closest(".children-container").parentNode;
-    drawLine(parent, child);
-  });
-  checkCollisions(); // Check for collisions after updating lines
-}
+let crossOutProgress = 0;
+let deleteProgress = 0;
+let toneMovementProgress = 0;
+let associationProgress = 0;
+let centeringProgress = 0;
 
-function drawLine(fromNode, toNode) {
-  const svg = document.querySelector("svg");
-  const fromRect = fromNode.getBoundingClientRect();
-  const toRect = toNode.getBoundingClientRect();
+let cameraX = 0;
+let cameraY = 0;
+let cameraZoomX = 1;
+let cameraZoomY = 1;
 
-  const offsetX = window.scrollX + svg.getBoundingClientRect().left;
-  const offsetY = window.scrollY + svg.getBoundingClientRect().top;
+class TreeNode {
+  constructor(level, x, y) {
+    this.level = level;
+    this.x = x;
+    this.y = y;
+    this.targetX = x;
+    this.targetY = y;
+    this.children = [];
+    this.parent = null;
+    this.isTerminal = false;
+    this.age = 0;
+    this.subtreeWidth = LEAF_WIDTH;
+  }
 
-  const fromX = fromRect.left + fromRect.width / 2 + window.scrollX - offsetX;
-  const fromY = fromRect.top + fromRect.height / 2 + window.scrollY - offsetY;
-  const toX = toRect.left + toRect.width / 2 + window.scrollX - offsetX;
-  const toY = toRect.top + toRect.height / 2 + window.scrollY - offsetY;
+  get label() {
+    return LEVEL_LABELS[this.level] ?? this.level;
+  }
 
-  const angle = Math.atan2(toY - fromY, toX - fromX);
-  const r = 18; // radius of the circle (half of the diameter)
+  get opacity() {
+    return Math.min(1, this.age / FADE_IN_FRAMES);
+  }
 
-  const fromEdgeX = fromX + r * Math.cos(angle);
-  const fromEdgeY = fromY + r * Math.sin(angle);
-  const toEdgeX = toX - r * Math.cos(angle);
-  const toEdgeY = toY - r * Math.sin(angle);
-
-  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-  line.setAttribute("x1", fromEdgeX);
-  line.setAttribute("y1", fromEdgeY);
-  line.setAttribute("x2", toEdgeX);
-  line.setAttribute("y2", toEdgeY);
-  line.setAttribute("stroke", "black");
-
-  svg.appendChild(line);
-}
-
-function updateContainerSize() {
-  const svg = document.querySelector("svg");
-  const maxHeight = Math.max(
-    ...Array.from(document.querySelectorAll(".node")).map(
-      (el) => el.getBoundingClientRect().bottom,
-    ),
-  );
-  const currentHeight = window.innerHeight;
-
-  if (maxHeight > currentHeight) {
-    svg.style.height = `${maxHeight + 100}px`;
+  updatePosition() {
+    this.x += (this.targetX - this.x) * POSITION_LERP;
+    this.y += (this.targetY - this.y) * POSITION_LERP;
   }
 }
 
-function addChildNode(element) {
-  const parent = element.closest(".node");
-  let childrenContainer = parent.querySelector(".children-container");
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
 
-  // Check if the parent can have more children
-  if (!childrenContainer) {
-    childrenContainer = document.createElement("div");
-    childrenContainer.className = "children-container";
-    parent.appendChild(childrenContainer);
-  } else if (childrenContainer.children.length >= 2) {
-    // Prevent adding more than two children
-    alert("A node can only have two children.");
+function initTree() {
+  allNodes = [];
+  transformStarted = false;
+  transformPhase = "none";
+  nodesToCrossOut = [];
+  associationLines = [];
+  toneCenteringData = [];
+  toneToMove = null;
+  targetMu = null;
+  originalTonePos = null;
+  crossOutProgress = 0;
+  deleteProgress = 0;
+  toneMovementProgress = 0;
+  associationProgress = 0;
+  centeringProgress = 0;
+
+  includeSigma = Math.random() < 0.6;
+  activeLevels = ["PHI", "OMEGA", "FOOT"];
+  if (includeSigma) activeLevels.push("SIGMA");
+  activeLevels.push("MU", "TONE_H");
+
+  levelYPositions = {};
+  const spacing =
+    activeLevels.length > 1 ? 1000 / (activeLevels.length - 1) : 0;
+  activeLevels.forEach((level, index) => {
+    levelYPositions[level] = index * spacing;
+  });
+  levelYPositions.TONE_L = levelYPositions.TONE_H;
+
+  root = new TreeNode("PHI", 0, levelYPositions.PHI ?? 0);
+  allNodes.push(root);
+  lastBranchAttempt = performance.now();
+  updateLayout();
+}
+
+function getNextLevel(level) {
+  const index = activeLevels.indexOf(level);
+  if (index === -1 || index === activeLevels.length - 1) {
+    return null;
+  }
+  return activeLevels[index + 1];
+}
+
+function countActiveMu() {
+  return allNodes.filter(
+    (node) =>
+      node.level === "MU" &&
+      !node.isTerminal &&
+      node.children.length === 0,
+  ).length;
+}
+
+function attemptBranching() {
+  const now = performance.now();
+  if (now - lastBranchAttempt < BRANCH_INTERVAL) return;
+  lastBranchAttempt = now;
+
+  const leaves = allNodes.filter(
+    (node) => !node.isTerminal && node.children.length === 0,
+  );
+  if (leaves.length === 0) return;
+
+  let layoutNeedsUpdate = false;
+
+  leaves.forEach((node) => {
+    if (Math.random() > BRANCH_PROBABILITY) return;
+
+    if (node.level === "MU") {
+      layoutNeedsUpdate = handleMuBranching(node) || layoutNeedsUpdate;
+      return;
+    }
+
+    const nextLevel = getNextLevel(node.level);
+    if (!nextLevel) {
+      node.isTerminal = true;
+      return;
+    }
+
+    layoutNeedsUpdate =
+      handleGeneralBranching(node, nextLevel) || layoutNeedsUpdate;
+  });
+
+  if (layoutNeedsUpdate) {
+    updateLayout();
+  }
+}
+
+function handleGeneralBranching(node, nextLevel) {
+  const branchRoll = Math.random();
+  const offset = randomBetween(BRANCH_OFFSET_MIN, BRANCH_OFFSET_MAX);
+
+  if (branchRoll < 0.7) {
+    const left = new TreeNode(nextLevel, node.x - offset, node.y);
+    const right = new TreeNode(nextLevel, node.x + offset, node.y);
+    left.targetY = levelYPositions[nextLevel];
+    right.targetY = levelYPositions[nextLevel];
+    left.parent = node;
+    right.parent = node;
+    node.children.push(left, right);
+    allNodes.push(left, right);
+    return true;
+  }
+
+  const child = new TreeNode(
+    nextLevel,
+    branchRoll < 0.85 ? node.x - offset : node.x + offset,
+    node.y,
+  );
+  child.targetY = levelYPositions[nextLevel];
+  child.parent = node;
+  node.children.push(child);
+  allNodes.push(child);
+  return true;
+}
+
+function isToneNode(node) {
+  return node.level === "TONE_H" || node.level === "TONE_L";
+}
+
+function handleMuBranching(node) {
+  const activeMuCount = countActiveMu();
+  const isFinalMu = activeMuCount === 1;
+  const targetY = levelYPositions.TONE_H;
+
+  if (isFinalMu && Math.random() < 0.4) {
+    const leftToneLevel = Math.random() < 0.5 ? "TONE_H" : "TONE_L";
+    const rightToneLevel = Math.random() < 0.5 ? "TONE_H" : "TONE_L";
+    const offset = randomBetween(BRANCH_OFFSET_MIN, BRANCH_OFFSET_MAX);
+
+    const left = new TreeNode(leftToneLevel, node.x - offset, node.y);
+    const right = new TreeNode(rightToneLevel, node.x + offset, node.y);
+    left.targetY = levelYPositions[leftToneLevel];
+    right.targetY = levelYPositions[rightToneLevel];
+    left.parent = node;
+    right.parent = node;
+    left.isTerminal = true;
+    right.isTerminal = true;
+    node.children.push(left, right);
+    allNodes.push(left, right);
+    node.isTerminal = true;
+    return true;
+  }
+
+  const choice = Math.random();
+  if (choice < 0.333) {
+    const tone = new TreeNode("TONE_H", node.x, node.y);
+    tone.targetY = targetY;
+    tone.parent = node;
+    tone.isTerminal = true;
+    node.children.push(tone);
+    allNodes.push(tone);
+  } else if (choice < 0.666) {
+    const tone = new TreeNode("TONE_L", node.x, node.y);
+    tone.targetY = targetY;
+    tone.parent = node;
+    tone.isTerminal = true;
+    node.children.push(tone);
+    allNodes.push(tone);
+  }
+
+  node.isTerminal = true;
+  return true;
+}
+
+function calculateSubtreeWidth(node) {
+  if (node.children.length === 0) {
+    node.subtreeWidth = LEAF_WIDTH;
+    return node.subtreeWidth;
+  }
+
+  const childWidths = node.children.map((child) => calculateSubtreeWidth(child));
+  node.subtreeWidth =
+    childWidths.reduce((sum, w) => sum + w, 0) +
+    (node.children.length - 1) * SIBLING_SPACING;
+  return node.subtreeWidth;
+}
+
+function positionNodes(node, centerX) {
+  node.targetX = centerX;
+  if (node.children.length === 0) return;
+
+  if (node.children.length === 1) {
+    positionNodes(node.children[0], centerX);
     return;
   }
 
-  const buttonClickSound = new Audio("buttonclick.wav");
-  buttonClickSound.play();
+  const totalWidth =
+    node.children.reduce((sum, child) => sum + child.subtreeWidth, 0) +
+    (node.children.length - 1) * SIBLING_SPACING;
 
-  const containerDiv = document.createElement("div");
-  containerDiv.className = "node child";
-
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = "_";
-  input.maxLength = 1;
-  input.oninput = function () {
-    updateDisplayWord(this);
-  };
-
-  const addButton = document.createElement("button");
-  addButton.className = "add-btn";
-  addButton.textContent = "+";
-  addButton.onclick = function () {
-    addChildNode(this);
-  };
-
-  const deleteButton = document.createElement("button");
-  deleteButton.className = "delete-btn"; // Reference to delete-btn CSS
-  
-  deleteButton.textContent = "-";
-  deleteButton.onclick = function () {
-    deleteNode(this);
-  };
-  deleteButton.style.right = "28px";
-  deleteButton.style.top = "-2px";
-  deleteButton.style.width = "15px";
-  deleteButton.style.height = "15px";
-  deleteButton.style.background = "red";
-  deleteButton.style.fontSize = "10px";
-  console.log(containerDiv);
-  containerDiv.appendChild(input);
-  containerDiv.appendChild(addButton);
-  containerDiv.appendChild(deleteButton);
-
-  childrenContainer.appendChild(containerDiv);
-
-  updateLines();
-
-  // If children limit is reached, hide the addButton
-  if (childrenContainer.children.length >= 2) {
-    element.style.display = "none";
-
-    updateContainerSize();
-  } else if (childrenContainer.children.length === 1) {
-    //insanity edge case for if the node somehow has zero children and is hidden, probably will never apply
-    element.style.display = "";
-    element.textContent = "⅄"; // Change to upside down Y
-  }
-}
-
-function deleteNode(element) {
-  const nodeToDelete = element.closest(".node");
-  const parent = nodeToDelete.parentElement.closest(".node");
-
-  // Remove the node
-  nodeToDelete.parentNode.removeChild(nodeToDelete);
-
-  // Find the add button in the parent node
-  const addButton = parent.querySelector(".add-btn");
-
-  // Make the add button visible
-  addButton.style.display = "";
-
-  // Log the updated parent for debugging
-  console.log(parent.innerHTML);
-  console.log(parent.getElementsByTagName("*"));
-
-  // Update the lines to reflect the new structure
-  updateLines();
-}
-
-function getLastCommonAncestor(node1, node2) {
-  const path1 = getPathToRoot(node1);
-  const path2 = getPathToRoot(node2);
-
-  let lca = null;
-
-  for (let i = 0; i < Math.min(path1.length, path2.length); i++) {
-    if (path1[i] === path2[i]) {
-      lca = path1[i];
-    } else {
-      break;
-    }
-  }
-
-  return lca;
-}
-
-function getPathToRoot(node) {
-  const path = [];
-  while (node) {
-    path.push(node);
-    node = node.parentElement.closest(".node");
-  }
-  return path.reverse();
-}
-
-// Function to get the closest node to a given point
-function getClosestNode(x, y) {
-  const nodes = document.querySelectorAll(".node");
-  let closestNode = null;
-  let closestDistance = Infinity;
-
-  nodes.forEach((node) => {
-    const rect = node.getBoundingClientRect();
-    const nodeX = rect.left + rect.width / 2;
-    const nodeY = rect.top + rect.height / 2;
-    const distance = Math.sqrt((x - nodeX) ** 2 + (y - nodeY) ** 2);
-
-    if (distance < closestDistance) {
-      closestNode = node;
-      closestDistance = distance;
-    }
-  });
-
-  return closestNode;
-}
-
-let lastHoveredNode = null;
-
-function toggleHoveredAndParentNodes() {
-  document.addEventListener("mousemove", function (event) {
-    const hoveredNode = getClosestNode(event.clientX, event.clientY);
-    const bubbleSound = new Audio("bubble.wav");
-    if (hoveredNode !== lastHoveredNode) {
-      bubbleSound.play();
-      lastHoveredNode = hoveredNode;
-    }
-
-    document.querySelectorAll(".node").forEach((node) => {
-      node.classList.add("shrunk");
-      node.classList.remove("grown", "gradient-grow", "gradient-shrink");
-    });
-
-    if (hoveredNode) {
-      const pathToRoot = getPathToRoot(hoveredNode);
-      pathToRoot.forEach((node) => {
-        node.classList.remove("shrunk");
-        node.classList.add("grown");
-      });
-
-      document.querySelectorAll(".node").forEach((node) => {
-        const lca = getLastCommonAncestor(node, hoveredNode);
-        if (lca) {
-          node.classList.add("gradient-grow");
-          node.style.transform = `scale(1)`;
-        }
-      });
-
-      updateLines();
-      updateDisplayWord(hoveredNode);
-    } else {
-      document.querySelectorAll(".node").forEach((node) => {
-        node.classList.add("shrunk");
-        node.classList.remove("grown", "gradient-grow", "gradient-shrink");
-      });
-    }
-  });
-
-  document.addEventListener("mouseout", function () {
-    document.querySelectorAll(".node").forEach((node) => {
-      node.classList.add("shrunk");
-      node.classList.remove("grown", "gradient-grow", "gradient-shrink");
-    });
-
-    setTimeout(() => {
-      updateLines();
-    }, 300);
-  });
-
-  document.addEventListener("mouseover", function (event) {
-    if (
-      event.target.classList.contains("node") ||
-      event.target.closest(".node")
-    ) {
-      updateLines(); // Update lines when mouse over textbox
-    }
-  });
-
-  document.addEventListener("mouseleave", function () {
-    updateLines(); // Update lines when mouse off textbox
-  });
-
-  document.querySelectorAll(".node").forEach((node) => {
-    node.addEventListener("transitionstart", () => {
-      startFrequentUpdates();
-    });
-
-    node.addEventListener("transitionend", () => {
-      updateLines();
-      stopFrequentUpdates();
-    });
+  let currentX = centerX - totalWidth / 2;
+  node.children.forEach((child) => {
+    const childCenter = currentX + child.subtreeWidth / 2;
+    positionNodes(child, childCenter);
+    currentX += child.subtreeWidth + SIBLING_SPACING;
   });
 }
 
-function startFrequentUpdates() {
-  if (!updateLines.intervalId) {
-    updateLines.intervalId = setInterval(updateLines, 30); // More frequent updates approx. 30 times/sec
-  }
+function updateLayout() {
+  if (!root) return;
+  calculateSubtreeWidth(root);
+  positionNodes(root, 0);
 }
 
-function stopFrequentUpdates() {
-  if (updateLines.intervalId) {
-    clearInterval(updateLines.intervalId);
-    updateLines.intervalId = null;
-  }
-}
-
-function updateWordsList(words) {
-  const wordsListContent = document.getElementById("wordsListContent");
-
-  const containsAllWords = lastwords.every((word) => words.includes(word));
-
-  if (containsAllWords && words.length > lastwords.length) {
-    playSound("score.wav");
-  }
-  if (words != lastwords) {
-    lastwords = words;
-  }
-
-  wordsListContent.innerHTML = ""; // Clear the list
-
-  words.forEach((word) => {
-    const li = document.createElement("li");
-    li.textContent = word;
-    li.style.fontFamily = "Arial, sans-serif";
-    li.style.fontSize = "1.2em";
-    li.style.padding = "5px";
-    li.style.borderBottom = "1px solid #ccc";
-    wordsListContent.appendChild(li);
-  });
-}
-
-function updateDisplayWord(node) {
-  const wordDisplay = document.getElementById("wordDisplay");
-  let currentNode = node;
-  let word = "";
-  while (currentNode) {
-    const input = currentNode.querySelector("input");
-    if (input && input.value !== "") word = input.value.toUpperCase() + word;
-    currentNode = currentNode.parentElement.closest(".node");
-  }
-  wordDisplay.textContent = word;
-  var wordsFormed = collectAllWordsFromTree();
-  var wordsFormed = new Set(wordsFormed);
-  var wordsFormed = Array.from(wordsFormed);
-
-  wordsFormed = wordsFormed.filter((word) => isWordInDictionary(word));
-
-  const wordsFormedCountDisplay = document.getElementById("wordsFormedCount");
-
-  if (!wordsFormedCountDisplay) {
-    const newDisplay = document.createElement("div");
-    newDisplay.id = "wordsFormedCount";
-    newDisplay.style.position = "fixed";
-    newDisplay.style.top = "60px";
-    newDisplay.style.left = "50%";
-    newDisplay.style.transform = "translateX(-50%)";
-    newDisplay.style.fontSize = "18px";
-    newDisplay.style.fontWeight = "bold";
-    document.body.appendChild(newDisplay);
-  }
-  document.getElementById("wordsFormedCount").textContent =
-    `Words Formed: ${wordsFormed.length}`;
-  updateWordsList(wordsFormed);
-}
-
-function isWordInDictionary(word) {
-  if (!window.dictionary) {
-    console.error("Dictionary not loaded yet");
-    return false;
-  }
-
-  return word.length >= 3 && window.dictionary.includes(word.toUpperCase());
-}
-
-function checkCollisions() {
-  const nodes = document.querySelectorAll(".node");
-  nodes.forEach((node1, index1) => {
-    nodes.forEach((node2, index2) => {
-      if (index1 !== index2 && isColliding(node1, node2)) {
-        const { bucket1, bucket2 } = collectBuckets(node1, node2);
-        moveBucketsApart(bucket1, bucket2);
-      }
-    });
-  });
-}
-
-function isColliding(node1, node2) {
-  const rect1 = node1.getBoundingClientRect();
-  const rect2 = node2.getBoundingClientRect();
-  return !(
-    rect1.right < rect2.left ||
-    rect1.left > rect2.right ||
-    rect1.bottom < rect2.top ||
-    rect1.top > rect2.bottom
+function isAnimationComplete() {
+  return allNodes.every(
+    (node) => node.isTerminal || node.children.length > 0,
   );
 }
 
-function getLastCommonAncestorNode(node1, node2) {
-  const path1 = getPathToRoot(node1);
-  const path2 = getPathToRoot(node2);
+function startTransformation() {
+  transformStarted = true;
+  nodesToCrossOut = findNodesToRemove();
 
-  let lca = null;
+  if (nodesToCrossOut.length > 0) {
+    transformPhase = "crossing-out";
+    crossOutProgress = 0;
+    return;
+  }
 
-  for (let i = 0; i < Math.min(path1.length, path2.length); i++) {
-    if (path1[i] === path2[i]) {
-      lca = path1[i];
+  if (checkToneMovement()) {
+    transformPhase = "moving-tone";
+    return;
+  }
+
+  calculateAssociationLines();
+  associationProgress = 0;
+  transformPhase = associationLines.length > 0 ? "drawing-associations" : "complete";
+}
+
+function handleTransformations() {
+  switch (transformPhase) {
+    case "crossing-out": {
+      crossOutProgress += 1;
+      if (crossOutProgress >= CROSS_OUT_DURATION) {
+        transformPhase = "deleting";
+        deleteProgress = 0;
+      }
+      break;
+    }
+    case "deleting": {
+      deleteProgress += 1;
+      if (deleteProgress >= DELETE_DURATION) {
+        removeCrossedOutNodes();
+        nodesToCrossOut = [];
+
+        if (checkToneMovement()) {
+          transformPhase = "moving-tone";
+          break;
+        }
+
+        calculateAssociationLines();
+        associationProgress = 0;
+        transformPhase =
+          associationLines.length > 0 ? "drawing-associations" : "complete";
+        updateLayout();
+      }
+      break;
+    }
+    case "moving-tone": {
+      if (!toneToMove || !targetMu || !originalTonePos) {
+        calculateAssociationLines();
+        associationProgress = 0;
+        transformPhase =
+          associationLines.length > 0 ? "drawing-associations" : "complete";
+        updateLayout();
+        break;
+      }
+
+      toneMovementProgress += 1;
+      const t = Math.min(1, toneMovementProgress / TONE_MOVE_DURATION);
+      const eased = ease(t);
+
+      toneToMove.targetX =
+        originalTonePos.x + (targetMu.x - originalTonePos.x) * eased;
+      toneToMove.targetY =
+        originalTonePos.y +
+        (levelYPositions[toneToMove.level] - originalTonePos.y) * eased;
+
+      if (toneMovementProgress >= TONE_MOVE_DURATION) {
+        completeToneReassignment();
+        calculateAssociationLines();
+        associationProgress = 0;
+        transformPhase =
+          associationLines.length > 0 ? "drawing-associations" : "complete";
+        updateLayout();
+      }
+      break;
+    }
+    case "drawing-associations": {
+      associationProgress += 1;
+      if (associationProgress >= ASSOCIATION_DURATION) {
+        calculateToneCentering();
+        centeringProgress = 0;
+        transformPhase =
+          toneCenteringData.length > 0 ? "centering-tones" : "complete";
+      }
+      break;
+    }
+    case "centering-tones": {
+      centeringProgress += 1;
+      const t = Math.min(1, centeringProgress / CENTERING_DURATION);
+      const eased = ease(t);
+
+      toneCenteringData.forEach(({ tone, originalX, targetX }) => {
+        tone.targetX = originalX + (targetX - originalX) * eased;
+      });
+
+      if (centeringProgress >= CENTERING_DURATION) {
+        toneCenteringData.forEach(({ tone, targetX }) => {
+          tone.x = targetX;
+          tone.targetX = targetX;
+        });
+        transformPhase = "complete";
+      }
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+function removeCrossedOutNodes() {
+  nodesToCrossOut.forEach((node) => {
+    if (node.parent) {
+      node.parent.children = node.parent.children.filter(
+        (child) => child !== node,
+      );
+    }
+    const idx = allNodes.indexOf(node);
+    if (idx !== -1) {
+      allNodes.splice(idx, 1);
+    }
+  });
+}
+
+function findNodesToRemove() {
+  const tones = getToneNodesInOrder();
+  const marked = [];
+
+  for (let i = 1; i < tones.length; i += 1) {
+    const previous = tones[i - 1];
+    const current = tones[i];
+    if (current.level === previous.level) {
+      marked.push(current);
+    }
+  }
+
+  return marked;
+}
+
+function getToneNodesInOrder() {
+  return allNodes
+    .filter((node) => isToneNode(node))
+    .sort((a, b) => a.x - b.x);
+}
+
+function checkToneMovement() {
+  const muNodes = allNodes
+    .filter((node) => node.level === "MU")
+    .sort((a, b) => a.x - b.x);
+
+  if (muNodes.length === 0) return false;
+
+  const rightmostMu = muNodes[muNodes.length - 1];
+  const hasTone = rightmostMu.children.some(isToneNode);
+  if (hasTone) return false;
+
+  const toneNodes = getToneNodesInOrder();
+  if (toneNodes.length === 0) return false;
+
+  toneToMove = toneNodes[toneNodes.length - 1];
+  targetMu = rightmostMu;
+  originalTonePos = { x: toneToMove.x, y: toneToMove.y };
+  toneMovementProgress = 0;
+  return true;
+}
+
+function completeToneReassignment() {
+  if (!toneToMove || !targetMu) return;
+
+  if (toneToMove.parent) {
+    toneToMove.parent.children = toneToMove.parent.children.filter(
+      (child) => child !== toneToMove,
+    );
+  }
+
+  toneToMove.parent = targetMu;
+  targetMu.children.push(toneToMove);
+  toneToMove.targetX = targetMu.targetX;
+  toneToMove.x = toneToMove.targetX;
+  toneToMove.targetY = levelYPositions[toneToMove.level];
+  toneToMove.y = toneToMove.targetY;
+
+  toneToMove = null;
+  targetMu = null;
+  originalTonePos = null;
+}
+
+function calculateAssociationLines() {
+  associationLines = [];
+  const muNodes = allNodes
+    .filter((node) => node.level === "MU")
+    .sort((a, b) => a.x - b.x);
+
+  muNodes.forEach((currentMu, index) => {
+    const tone = currentMu.children.find(isToneNode);
+    if (!tone) return;
+
+    let lastNonTone = null;
+    for (let i = index + 1; i < muNodes.length; i += 1) {
+      const nextMu = muNodes[i];
+      const nextHasTone = nextMu.children.some(isToneNode);
+      if (nextHasTone) break;
+      lastNonTone = nextMu;
+    }
+
+    if (lastNonTone) {
+      associationLines.push({ fromTone: tone, toMu: lastNonTone });
+    }
+  });
+}
+
+function calculateToneCentering() {
+  toneCenteringData = associationLines.map(({ fromTone, toMu }) => {
+    const parentMu = fromTone.parent;
+    if (!parentMu) {
+      return null;
+    }
+    return {
+      tone: fromTone,
+      originalX: fromTone.x,
+      targetX: (parentMu.x + toMu.x) / 2,
+    };
+  }).filter(Boolean);
+}
+
+function ease(t) {
+  return t * t * (3 - 2 * t);
+}
+
+function updateCamera() {
+  if (allNodes.length === 0 || canvas.width === 0 || canvas.height === 0) {
+    return;
+  }
+
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+
+  allNodes.forEach((node) => {
+    minX = Math.min(minX, node.x);
+    maxX = Math.max(maxX, node.x);
+    minY = Math.min(minY, node.y);
+    maxY = Math.max(maxY, node.y);
+  });
+
+  if (!Number.isFinite(minX) || !Number.isFinite(maxX)) return;
+
+  const padding = 80;
+  minX -= padding;
+  maxX += padding;
+  minY -= padding;
+  maxY += padding;
+
+  const treeWidth = Math.max(1, maxX - minX);
+  const treeHeight = Math.max(1, maxY - minY);
+
+  cameraZoomX = canvas.width / treeWidth;
+  cameraZoomY = canvas.height / treeHeight;
+  cameraX = (minX + maxX) / 2;
+  cameraY = (minY + maxY) / 2;
+}
+
+function worldToScreen(x, y) {
+  return {
+    x: (x - cameraX) * cameraZoomX + canvas.width / 2,
+    y: (y - cameraY) * cameraZoomY + canvas.height / 2,
+  };
+}
+
+function drawAssociationLines(progress) {
+  ctx.save();
+  ctx.strokeStyle = "#7cb342";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.globalAlpha = 0.8;
+
+  associationLines.forEach(({ fromTone, toMu }) => {
+    const tonePos = worldToScreen(fromTone.x, fromTone.y);
+    const muPos = worldToScreen(toMu.x, toMu.y);
+
+    const gap = 20;
+    const dx = muPos.x - tonePos.x;
+    const dy = muPos.y - tonePos.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist <= gap * 2) return;
+
+    const startX = tonePos.x + (dx / dist) * gap;
+    const startY = tonePos.y + (dy / dist) * gap;
+    const endX = muPos.x - (dx / dist) * gap;
+    const endY = muPos.y - (dy / dist) * gap;
+
+    const currentX = startX + (endX - startX) * progress;
+    const currentY = startY + (endY - startY) * progress;
+
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(currentX, currentY);
+    ctx.stroke();
+  });
+
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.font = 'bold 16px "JetBrains Mono", "Fira Code", monospace';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#7cb342";
+  ctx.fillStyle = "#7cb342";
+
+  allNodes.forEach((node) => {
+    node.children.forEach((child) => {
+      if (transformPhase === "deleting" && nodesToCrossOut.includes(child)) {
+        return;
+      }
+
+      const parentPos = worldToScreen(node.x, node.y);
+      const childPos = worldToScreen(child.x, child.y);
+      const gap = 20;
+
+      const dx = childPos.x - parentPos.x;
+      const dy = childPos.y - parentPos.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist <= gap * 2) return;
+
+      const startX = parentPos.x + (dx / dist) * gap;
+      const startY = parentPos.y + (dy / dist) * gap;
+      const endX = childPos.x - (dx / dist) * gap;
+      const endY = childPos.y - (dy / dist) * gap;
+
+      ctx.globalAlpha = Math.min(node.opacity, child.opacity);
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    });
+  });
+
+  allNodes.forEach((node) => {
+    let alpha = node.opacity;
+    if (transformPhase === "deleting" && nodesToCrossOut.includes(node)) {
+      const fade = deleteProgress / DELETE_DURATION;
+      alpha *= Math.max(0, 1 - fade);
+    }
+
+    ctx.globalAlpha = alpha;
+    const pos = worldToScreen(node.x, node.y);
+    ctx.fillText(node.label, pos.x, pos.y);
+
+    if (transformPhase === "crossing-out" && nodesToCrossOut.includes(node)) {
+      const progress = Math.min(1, crossOutProgress / CROSS_OUT_DURATION);
+      const textWidth = ctx.measureText(node.label).width;
+      const lineLength = textWidth * 1.2;
+
+      ctx.beginPath();
+      ctx.moveTo(pos.x - lineLength / 2, pos.y);
+      ctx.lineTo(pos.x - lineLength / 2 + lineLength * progress, pos.y);
+      ctx.stroke();
+    }
+  });
+
+  ctx.globalAlpha = 1;
+
+  if (
+    transformPhase === "drawing-associations" ||
+    transformPhase === "centering-tones" ||
+    transformPhase === "complete"
+  ) {
+    const progress =
+      transformPhase === "drawing-associations"
+        ? Math.min(1, associationProgress / ASSOCIATION_DURATION)
+        : 1;
+    drawAssociationLines(progress);
+  }
+
+  ctx.restore();
+}
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  const width = Math.max(1, Math.floor(rect.width));
+  const height = Math.max(1, Math.floor(rect.height));
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+}
+
+function animate() {
+  allNodes.forEach((node) => {
+    node.age += 1;
+    node.updatePosition();
+  });
+
+  if (!transformStarted) {
+    if (!isAnimationComplete()) {
+      attemptBranching();
     } else {
-      break;
+      startTransformation();
     }
+  } else {
+    handleTransformations();
   }
 
-  return lca;
+  updateCamera();
+  draw();
+  requestAnimationFrame(animate);
 }
 
-function getSequenceToLCA(startNode, lcaNode) {
-  const path = [];
-  let currentNode = startNode;
-
-  while (currentNode && currentNode !== lcaNode) {
-    path.push(currentNode);
-    currentNode = currentNode.parentElement.closest(".node");
-  }
-
-  if (currentNode === lcaNode) {
-    path.push(lcaNode);
-  }
-  return path;
+function main() {
+  resizeCanvas();
+  initTree();
+  updateCamera();
+  animate();
 }
 
-function isDescendant(ancestor, possibleDescendant) {
-  let currentNode = possibleDescendant;
+window.addEventListener("resize", () => {
+  resizeCanvas();
+  updateCamera();
+});
 
-  while (currentNode) {
-    if (currentNode === ancestor) {
-      return true;
-    }
-    currentNode = currentNode.parentElement.closest(".node");
-  }
-
-  return false;
-}
-
-function collectAllDescendants(node) {
-  const descendants = [];
-
-  function recurse(currentNode) {
-    descendants.push(currentNode);
-    const children = currentNode.querySelectorAll(".node.child");
-    children.forEach((child) => recurse(child));
-  }
-
-  recurse(node);
-  return descendants;
-}
-
-function collectBuckets(node1, node2) {
-  const lca = getLastCommonAncestorNode(node1, node2);
-  if (!lca) return null;
-
-  // Find the sequence of nodes from node 1 to LCA
-  const sequence1_to_lca = getSequenceToLCA(node1, lca);
-
-  // Find the first child of LCA in the sequence that node 2 is not descended from
-  let bucket_parent1 = null;
-  for (let node of sequence1_to_lca) {
-    if (!isDescendant(node2, node)) {
-      bucket_parent1 = node;
-      break;
-    }
-  }
-
-  // Gather all children of the bucket parent downwards and store them in bucket 1
-  const bucket1 = [bucket_parent1, ...collectAllDescendants(bucket_parent1)];
-  // Repeat the process for bucket 2
-  // Find the sequence of nodes from node 2 to LCA
-  const sequence2_to_lca = getSequenceToLCA(node2, lca);
-
-  // Find the first child of LCA in the sequence that node 1 is not descended from
-  let bucket_parent2 = null;
-  for (let node of sequence2_to_lca) {
-    if (!isDescendant(node1, node)) {
-      bucket_parent2 = node;
-      break;
-    }
-  }
-
-  // Gather all children of the bucket parent downwards and store them in bucket 2
-  const bucket2 = [bucket_parent2, ...collectAllDescendants(bucket_parent2)];
-
-  // The resulting buckets are bucket1 and bucket2
-  return { bucket1, bucket2 };
-}
-
-function moveBucketsApart(bucket1, bucket2) {
-  const distance = 10; // Distance to move the buckets apart
-  bucket1.forEach((node) => {
-    const left = parseInt(window.getComputedStyle(node).left, 10);
-    node.style.left = `${left - distance}px`;
-  });
-
-  bucket2.forEach((node) => {
-    const left = parseInt(window.getComputedStyle(node).left, 10);
-    node.style.left = `${left + distance}px`;
-  });
-
-  updateLines(); // Redraw lines since nodes have moved
-}
-
-// Initial call to update lines continuously 8 times a second
-setInterval(updateLines, 125);
+main();
