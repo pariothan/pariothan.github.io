@@ -48,7 +48,7 @@ class CONFIG {
     // Prestige drift parameters
     static PRESTIGE_DRIFT_MAGNITUDE = 0.08;    // Maximum change per drift event
     static PRESTIGE_DRIFT_BIAS = 0.5;          // Bias toward middle value (0.5)
-    static PRESTIGE_MIDDLE_BIAS_STRENGTH = 0.05; // Stronger pull toward middle value
+    static PRESTIGE_MIDDLE_BIAS_STRENGTH = 0.15; // Stronger pull toward middle value (increased from 0.05)
     static PRESTIGE_COMMUNITY_FEEDBACK = 3.0;   // Scales bias strength based on average prestige deviation
     static PRESTIGE_COMMUNITY_SHIFT = 0.04;     // Direct nudging based on community-wide average prestige
 
