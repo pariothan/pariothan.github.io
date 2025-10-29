@@ -243,6 +243,42 @@
             </div>
         </div>
 
+        <!-- World Generation Modal -->
+        <div id="world-gen-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Generate New World</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>World Parameters</h3>
+                        <div class="setting-item">
+                            <label for="gen-grid-width">Grid Width:</label>
+                            <input type="number" id="gen-grid-width" value="60" min="30" max="100">
+                        </div>
+                        <div class="setting-item">
+                            <label for="gen-grid-height">Grid Height:</label>
+                            <input type="number" id="gen-grid-height" value="60" min="30" max="100">
+                        </div>
+                        <div class="setting-item">
+                            <label for="gen-land-prob">Land Density:</label>
+                            <input type="range" id="gen-land-prob" min="0.04" max="0.12" step="0.01" value="0.08">
+                            <span id="gen-land-prob-value">0.08</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="gen-seed-languages">Initial Languages:</label>
+                            <input type="number" id="gen-seed-languages" value="5" min="1" max="20">
+                            <span class="hint">Number of seed languages to start with</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="generate-world-btn" class="btn btn-primary">Generate World</button>
+                    <button id="cancel-gen-btn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Keyboard Shortcuts Help -->
         <div id="help-overlay" class="help-overlay hidden">
             <div class="help-content">

@@ -1,0 +1,30 @@
+{
+  "name": "language-evolution-simulator",
+  "version": "1.0.0",
+  "description": "A comprehensive web-based language evolution simulator featuring real-time visualization of how languages evolve, spread, and interact across procedurally generated worlds",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "test": "echo \"Open test.html in your browser to run tests\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pariothan/language-evolution-simulator.git"
+  },
+  "keywords": [
+    "linguistics",
+    "language-evolution",
+    "simulation",
+    "computational-linguistics",
+    "phonology",
+    "historical-linguistics",
+    "language-change",
+    "visualization"
+  ],
+  "author": "Sam Pariothan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pariothan/language-evolution-simulator/issues"
+  },
+  "homepage": "https://github.com/pariothan/language-evolution-simulator#readme"
+}

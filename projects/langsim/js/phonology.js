@@ -35,18 +35,15 @@ function fv(features) {
 }
 
 // Phoneme inventory with distinctive features
+// Trimmed to common phonemes found in major world languages
 const PHONEMES = {
-    // Basic vowels
+    // Basic vowels (reduced from 14 to 9)
     "i": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: +1, low: -1, back: -1, round: -1, tense: +1}),
-    "ɪ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, high: +1, low: -1, back: -1, round: -1, tense: -1}),
     "e": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: 0, low: 0, back: -1, round: -1, tense: +1}),
     "ɛ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: -1, low: 0, back: -1, round: -1, tense: -1}),
-    "æ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, high: -1, low: +1, back: -1, round: -1, tense: -1}),
     "a": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: -1, low: +1, back: 0, round: -1, tense: +1}),
     "ɑ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
@@ -55,20 +52,10 @@ const PHONEMES = {
              labial: +1, coronal: -1, dorsal: +1, high: -1, low: 0, back: +1, round: +1, tense: -1}),
     "o": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: +1, coronal: -1, dorsal: +1, high: 0, low: 0, back: +1, round: +1, tense: +1}),
-    "ʊ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
-             labial: +1, coronal: -1, dorsal: +1, high: +1, low: -1, back: +1, round: +1, tense: -1}),
     "u": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: +1, coronal: -1, dorsal: +1, high: +1, low: -1, back: +1, round: +1, tense: +1}),
     "ə": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: 0, low: 0, back: 0, round: -1, tense: -1}),
-
-    // Central vowels
-    "ɨ": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, high: +1, low: -1, back: 0, round: -1, tense: +1}),
-
-    // Front rounded vowels
-    "y": fv({syllabic: +1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
-             labial: +1, coronal: -1, dorsal: +1, high: +1, low: -1, back: -1, round: +1, tense: +1}),
 
     // Bilabial stops
     "p": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
@@ -82,29 +69,13 @@ const PHONEMES = {
     "d": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
              labial: -1, coronal: +1, dorsal: -1, distributed: +1, anterior: +1}),
 
-    // Retroflex stops
-    "ʈ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: -1, anterior: -1}),
-    "ɖ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: -1, anterior: -1}),
-
-    // Palatal stops
-    "c": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
-             labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
-
     // Velar stops
     "k": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
              labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
     "g": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
 
-    // Uvular stops
-    "q": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
-             labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
-    "ɢ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
-
-    // Glottal stop
+    // Glottal stop (common in many languages)
     "ʔ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
              labial: 0, coronal: 0, dorsal: 0, anterior: 0}),
 
@@ -114,13 +85,7 @@ const PHONEMES = {
     "v": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
              labial: +1, coronal: -1, dorsal: -1, strident: +1, anterior: +1}),
 
-    // Dental fricatives
-    "θ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
-             labial: -1, coronal: +1, dorsal: -1, strident: -1, distributed: +1, anterior: +1}),
-    "ð": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, strident: -1, distributed: +1, anterior: +1}),
-
-    // Alveolar fricatives
+    // Alveolar fricatives (very common)
     "s": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
              labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: +1, anterior: +1}),
     "z": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
@@ -132,63 +97,37 @@ const PHONEMES = {
     "ʒ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
              labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: -1, anterior: -1}),
 
-    // Retroflex fricatives
-    "ʂ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
-             labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: -1, anterior: -1}),
-    "ʐ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: -1, anterior: -1}),
-
-    // Palatal fricatives
-    "ç": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
-             labial: -1, coronal: -1, dorsal: +1, strident: -1, anterior: -1}),
-    "ʝ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, strident: -1, anterior: -1}),
-
-    // Velar fricatives
+    // Velar fricatives (found in many languages)
     "x": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
              labial: -1, coronal: -1, dorsal: +1, strident: -1, anterior: -1}),
-    "ɣ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, strident: -1, anterior: -1}),
 
-    // Glottal fricative
+    // Glottal fricative (extremely common)
     "h": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: +1, voice: -1,
              labial: 0, coronal: 0, dorsal: 0, strident: -1, anterior: 0}),
 
-    // Affricates
+    // Affricates (common in many languages)
     "ts": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
-              labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: +1, anterior: +1}),
-    "dz": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
               labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: +1, anterior: +1}),
     "tʃ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: -1,
               labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: -1, anterior: -1}),
     "dʒ": fv({syllabic: -1, consonantal: +1, sonorant: -1, continuant: -1, voice: +1,
               labial: -1, coronal: +1, dorsal: -1, strident: +1, distributed: -1, anterior: -1}),
 
-    // Nasals
+    // Nasals (universal)
     "m": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: -1, nasal: +1, voice: +1,
              labial: +1, coronal: -1, dorsal: -1, anterior: +1}),
     "n": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: -1, nasal: +1, voice: +1,
              labial: -1, coronal: +1, dorsal: -1, distributed: +1, anterior: +1}),
-    "ɳ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: -1, nasal: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: -1, anterior: -1}),
     "ŋ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: -1, nasal: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
 
-    // Liquids
+    // Liquids (very common)
     "l": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, lateral: +1, voice: +1,
              labial: -1, coronal: +1, dorsal: -1, distributed: +1, anterior: +1}),
-    "ɭ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, lateral: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: -1, anterior: -1}),
     "r": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: +1, dorsal: -1, distributed: +1, anterior: +1}),
-    "ɾ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: +1, anterior: +1}),
-    "ɽ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: +1, dorsal: -1, distributed: -1, anterior: -1}),
-    "ʀ": fv({syllabic: -1, consonantal: +1, sonorant: +1, continuant: +1, voice: +1,
-             labial: -1, coronal: -1, dorsal: +1, anterior: -1}),
 
-    // Glides
+    // Glides (universal)
     "j": fv({syllabic: -1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
              labial: -1, coronal: -1, dorsal: +1, high: +1, back: -1, round: -1, anterior: -1}),
     "w": fv({syllabic: -1, consonantal: -1, sonorant: +1, continuant: +1, voice: +1,
