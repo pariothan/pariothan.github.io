@@ -7,7 +7,6 @@
 const MapMode = {
     LANGUAGE_NAME: "language_name",
     VOCABULARY_ITEM: "vocabulary_item",
-    PHONOLOGICAL_RULES: "phonological_rules",
     PHONEME_COUNT: "phoneme_count",
     SPEAKER_COUNT: "speaker_count",
     PRESTIGE: "prestige"
@@ -246,7 +245,6 @@ class LanguageRenderer {
         const modeDescriptions = {
             [MapMode.LANGUAGE_NAME]: "Language Names",
             [MapMode.VOCABULARY_ITEM]: `Vocabulary: ${this.currentVocabularyWord}`,
-            [MapMode.PHONOLOGICAL_RULES]: "Phonological Rules",
             [MapMode.PHONEME_COUNT]: "Phoneme Counts",
             [MapMode.SPEAKER_COUNT]: "Speaker Counts",
             [MapMode.PRESTIGE]: "Language Prestige"
@@ -342,8 +340,6 @@ class LanguageRenderer {
                 return this._getLanguageNameInfo(language);
             case MapMode.VOCABULARY_ITEM:
                 return this._getVocabularyItemInfo(language);
-            case MapMode.PHONOLOGICAL_RULES:
-                return this._getPhonologicalRulesInfo(language);
             case MapMode.PHONEME_COUNT:
                 return this._getPhonemeCountInfo(language);
             case MapMode.SPEAKER_COUNT:
@@ -371,32 +367,6 @@ class LanguageRenderer {
             return [wordForm, displayText];
         }
         return ["", "---"];
-    }
-
-    _getPhonologicalRulesInfo(language) {
-        // Summarize phonotactic constraints
-        const constraints = language.phonotacticConstraints;
-        if (constraints && constraints.syllableTypes) {
-            // Get dominant syllable type
-            const syllableEntries = Object.entries(constraints.syllableTypes);
-            if (syllableEntries.length > 0) {
-                const dominantType = syllableEntries.reduce((a, b) => a[1] > b[1] ? a : b);
-                const ruleSummary = dominantType[0].substring(0, 4);
-                return [ruleSummary, ruleSummary];
-            }
-        }
-
-        // Fallback: use phoneme count as proxy for rule complexity
-        const phonemeCount = language.getPhonemeCount();
-        let ruleSummary;
-        if (phonemeCount < 20) {
-            ruleSummary = "SIMP";
-        } else if (phonemeCount < 40) {
-            ruleSummary = "MED";
-        } else {
-            ruleSummary = "COMP";
-        }
-        return [ruleSummary, ruleSummary];
     }
 
     _getPhonemeCountInfo(language) {
