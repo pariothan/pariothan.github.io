@@ -1478,15 +1478,15 @@ class Language {
 
     // Prestige drift method
     _driftPrestige(speakerCount, avgCommunityPrestige = 0.5) {
-        // Prestige drift with bias toward middle values and speaker count influence
+        // Prestige drift with zeroing force (decay toward 0) and speaker count influence
         const drift = (Math.random() - 0.5) * CONFIG.PRESTIGE_DRIFT_MAGNITUDE;
 
         const clampedAvg = Math.max(0, Math.min(1, avgCommunityPrestige));
         const avgDelta = clampedAvg - 0.5;
         const adaptiveFactor = 1 + Math.abs(avgDelta) * CONFIG.PRESTIGE_COMMUNITY_FEEDBACK;
 
-        // Bias toward middle value (0.5) adaptively scaled by community average
-        const middleBias = (0.5 - this.prestige) * CONFIG.PRESTIGE_MIDDLE_BIAS_STRENGTH * adaptiveFactor;
+        // Zeroing force: pull toward zero prestige (decay/erosion of prestige over time)
+        const zeroingBias = -this.prestige * CONFIG.PRESTIGE_ZEROING_STRENGTH * adaptiveFactor;
 
         // Community-wide shift nudges prestige opposite the average deviation
         const communityBias = -avgDelta * CONFIG.PRESTIGE_COMMUNITY_SHIFT;
@@ -1494,7 +1494,7 @@ class Language {
         // Speaker count influence (more speakers = slight prestige boost)
         const speakerInfluence = Math.log(speakerCount + 1) * 0.01;
 
-        this.prestige += drift + middleBias + communityBias + speakerInfluence;
+        this.prestige += drift + zeroingBias + communityBias + speakerInfluence;
         this.prestige = Math.max(0.01, Math.min(0.99, this.prestige));
 
         // Update prestige history
