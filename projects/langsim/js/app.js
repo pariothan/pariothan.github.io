@@ -510,7 +510,10 @@ class LanguageEvolutionApp {
 
             let originText = '';
             if (item.borrowed) {
-                originText = ` (borrowed from lang ${item.borrowed})`;
+                // Get the donor language name from simulation
+                const donorLang = this.simulation?.languages?.get(item.borrowed);
+                const donorName = donorLang ? donorLang.name : `lang ${item.borrowed}`;
+                originText = ` (borrowed from ${donorName})`;
             } else if (item.generation > 0) {
                 originText = ` (gen ${item.generation})`;
             }
