@@ -8,7 +8,6 @@ const MapMode = {
     LANGUAGE_NAME: "language_name",
     VOCABULARY_ITEM: "vocabulary_item",
     PHONOLOGICAL_RULES: "phonological_rules",
-    LANGUAGE_FAMILY: "language_family",
     PHONEME_COUNT: "phoneme_count",
     SPEAKER_COUNT: "speaker_count",
     PRESTIGE: "prestige"
@@ -248,7 +247,6 @@ class LanguageRenderer {
             [MapMode.LANGUAGE_NAME]: "Language Names",
             [MapMode.VOCABULARY_ITEM]: `Vocabulary: ${this.currentVocabularyWord}`,
             [MapMode.PHONOLOGICAL_RULES]: "Phonological Rules",
-            [MapMode.LANGUAGE_FAMILY]: "Language Families",
             [MapMode.PHONEME_COUNT]: "Phoneme Counts",
             [MapMode.SPEAKER_COUNT]: "Speaker Counts",
             [MapMode.PRESTIGE]: "Language Prestige"
@@ -346,8 +344,6 @@ class LanguageRenderer {
                 return this._getVocabularyItemInfo(language);
             case MapMode.PHONOLOGICAL_RULES:
                 return this._getPhonologicalRulesInfo(language);
-            case MapMode.LANGUAGE_FAMILY:
-                return this._getLanguageFamilyInfo(language);
             case MapMode.PHONEME_COUNT:
                 return this._getPhonemeCountInfo(language);
             case MapMode.SPEAKER_COUNT:
@@ -401,25 +397,6 @@ class LanguageRenderer {
             ruleSummary = "COMP";
         }
         return [ruleSummary, ruleSummary];
-    }
-
-    _getLanguageFamilyInfo(language) {
-        // Find root ancestor by walking parent chain
-        let rootAncestor = language;
-        const visited = new Set([language.id]);
-
-        while (rootAncestor.parentId !== null && !visited.has(rootAncestor.parentId)) {
-            const parent = this.simulation.getLanguageById(rootAncestor.parentId);
-            if (parent) {
-                visited.add(rootAncestor.parentId);
-                rootAncestor = parent;
-            } else {
-                break;
-            }
-        }
-
-        const familyId = `family_${rootAncestor.id}`;
-        return [familyId, `F${rootAncestor.id}`];
     }
 
     _getPhonemeCountInfo(language) {
