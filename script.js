@@ -72,7 +72,7 @@ const VIEWS = {
         <span class="tech-badge">Data Analysis</span>
       </div>
       <h3>Sentiment analysis by etymological origin</h3>
-      <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More soon, but here's a sneak peak:</p>
+      <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More soon, but here's a sneak peek:</p>
       <img src="./assets/images/sigbreakdown.png" alt="Bar chart showing sentiment analysis by etymological origin" class="screenshot" loading="lazy" />
     </section>
 
