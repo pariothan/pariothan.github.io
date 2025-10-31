@@ -42,6 +42,17 @@ const VIEWS = {
       </div>
       <h3><a href="./projects/ai-aac" target="_blank" rel="noopener noreferrer">AI-AAC</a></h3>
       <p>This one wasn't for fun as much as for jumping on a brilliant idea thought up by my friend Liz when we were at the <a href="https://www.seattledataai.org/event/hackathon24/" target="_blank" rel="noopener noreferrer">Humans and AI Hackathon 2025 in Bellevue</a>. Built with <a href="https://www.linkedin.com/in/liz-m-weber/" target="_blank" rel="noopener noreferrer">Elizabeth Weber</a> (bioengineer & accessibility specialist) and <a href="https://www.linkedin.com/in/meetapandit/" target="_blank" rel="noopener noreferrer">Meeta Pandit</a> (data engineer). A Flask web app that helps generate contextual vocabulary and sentences for AAC (Augmentative and Alternative Communication) users. Uses LLMs for intelligent vocabulary generation, with optional image based context analysis, and a drag-and-drop sentence builder, with AI giving options so you can pick the nuanced meaning you meant to say. Combines my linguistics background with Liz's bioengineering and accessibility expertise and Meeta's data engineering skills for a truly interdisciplinary project!</p>
+      <p>
+        Update: I competed in 
+        <a href="https://www.linkedin.com/feed/update/urn:li:activity:7388058184185237504/">
+          another hackathon
+        </a>
+        (this time hosted by 
+        <a href="https://www.linkedin.com/company/belle-community/">B.E.L.L.E.</a> 
+        and 
+        <a href="https://www.linkedin.com/company/testsprite/">TestSprite</a>), 
+        updating this project further to add proper tablet support and better sentence generation, among other things — and won 2nd place!
+      </p> 
     </section>
 
     <section class="story-card span-2 project-card" data-tags="javascript,physics,simulation">
