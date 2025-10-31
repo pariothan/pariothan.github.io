@@ -51,7 +51,7 @@ const VIEWS = {
         <a href="https://www.linkedin.com/company/belle-community/">B.E.L.L.E.</a> 
         and 
         <a href="https://www.linkedin.com/company/testsprite/">TestSprite</a>), 
-        updating this project further to add proper tablet support and better sentence generation, among other things — and won 2nd place!
+        updating this project further to add proper tablet support and better sentence generation, among other things, and won 2nd place!
       </p> 
     </section>
 
@@ -72,7 +72,7 @@ const VIEWS = {
         <span class="tech-badge">Data Analysis</span>
       </div>
       <h3>Sentiment analysis by etymological origin</h3>
-      <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More soon, but here's a sneak peek:</p>
+      <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More soon, but here's a sneak peak:</p>
       <img src="./assets/images/sigbreakdown.png" alt="Bar chart showing sentiment analysis by etymological origin" class="screenshot" loading="lazy" />
     </section>
 
