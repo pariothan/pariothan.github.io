@@ -76,15 +76,7 @@ const VIEWS = {
       <img src="./assets/images/sigbreakdown.png" alt="Bar chart showing sentiment analysis by etymological origin" class="screenshot" loading="lazy" />
     </section>
 
-    <section class="story-card project-tile project-card" data-tags="javascript,linguistics,puzzle,game">
-      <div class="tech-stack">
-        <span class="tech-badge">JavaScript</span>
-        <span class="tech-badge">Linguistics</span>
-        <span class="tech-badge">Game Design</span>
-      </div>
-      <h3>Experimental <a href="./projects/letter-tree-puzzles" target="_blank" rel="noopener noreferrer">binary-tree word puzzles</a>.</h3>
-      <p>Doing syntax in generative linguistics, making the trees was always the most fun part. It's kind of like a puzzle, seeing whether your theory can fit what you know has to come out of the bottom of the tree. (Why are syntax trees upside down?) Coming into the CS world, I realized that people here don't have as much fun treeing out things. So I made a puzzle, to simulate the experience for you guys! But I haven't really figured out how to make it a "game" yet. Stay tuned.</p>
-    </section>
+    <!-- TODO: Re-add letter tree puzzle project here -->
 
     <section class="story-card project-tile">
       <div class="deprecated">
