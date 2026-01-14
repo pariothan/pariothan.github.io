@@ -92,12 +92,7 @@ const VIEWS = {
 
     <!-- TODO: Re-add letter tree puzzle project here -->
 
-    <section class="story-card project-tile">
-      <div class="deprecated">
-        <h3><em>Deprecated:</em> <a href="./projects/gravity-sim-legacy/" target="_blank" rel="noopener noreferrer">Early gravity experiment</a></h3>
-        <p>My first attempt at n-body universal gravitation - an experiment with how far GPT-4 could go in writing physics simulations. Kept here for historical interest, but the new version above is much better.</p>
-      </div>
-    </section>
+
 
   
     <section class="story-card project-tile project-card" data-tags="game,creative">
