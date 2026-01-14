@@ -31,6 +31,20 @@ const VIEWS = {
     <section class="title-card span-2">
       <h1>I do these for fun, but you can look</h1>
     </section>
+      <section class="story-card span-2 project-tile project-card" data-tags="linguistics,simulation,python" style="display: flex; flex-direction: column;">
+      <div style="display: flex; gap: 1.5rem; align-items: stretch; flex: 1;">
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+          <div class="tech-stack">
+            <span class="tech-badge">Python</span>
+            <span class="tech-badge">Simulation</span>
+            <span class="tech-badge">Linguistics</span>
+          </div>
+          <h3><a href="./projects/langsim" target="_blank" rel="noopener noreferrer">Language Evolution Simulator</a></h3>
+          <p>A very early prototype of a simulator intended to use community dynamics to model language usage and evolution. Language historians / historical linguists have lots of theories about how language particularly changes over time, but without a time machine our "observational" data is limited to what happened to be written down. That's limiting for like, a number of reasons that you probably don't need me to list. But I was thinking, if we could simulate language communities, maybe we could see whether parameters these theories propose produce the results they intend to? It's the next best thing! Currently has support for simple toy languages with ~200 words, some basic phonotactic constraints, and word borrowing. Watch a new world of languages unfold before your eyes...</p>
+        </div>
+        <img src="./assets/images/guess.png" alt="Map with colored squares showing language evolution simulation" class="screenshot" loading="lazy" style="flex-shrink: 0; width: 350px; align-self: stretch; object-fit: cover; object-position: center;" />
+      </div>
+    </section>
 
     <section class="story-card span-2 project-card" data-tags="ai,accessibility,hackathon,flask,python,linguistics">
       <div class="tech-stack">
@@ -55,7 +69,7 @@ const VIEWS = {
       </p> 
     </section>
 
-    <section class="story-card span-2 project-card" data-tags="javascript,physics,simulation">
+    <section class="story-card  project-card" data-tags="javascript,physics,simulation">
       <div class="tech-stack">
         <span class="tech-badge">JavaScript</span>
         <span class="tech-badge">Physics</span>
@@ -85,17 +99,7 @@ const VIEWS = {
       </div>
     </section>
 
-    <section class="story-card project-tile project-card" data-tags="linguistics,simulation,python">
-      <div class="tech-stack">
-        <span class="tech-badge">Python</span>
-        <span class="tech-badge">Simulation</span>
-        <span class="tech-badge">Linguistics</span>
-      </div>
-      <h3><a href="./projects/langsim" target="_blank" rel="noopener noreferrer">Language Evolution Simulator</a></h3>
-      <p>A very early prototype of a simulator intended to use community dynamics to model language usage and evolution. Language historians / historical linguists have lots of theories about how language particularly changes over time, but without a time machine our "observational" data is limited to what happened to be written down. That's limiting for like, a number of reasons that you probably don't need me to list. But I was thinking, if we could simulate language communities, maybe we could see whether parameters these theories propose produce the results they intend to? It's the next best thing! Currently has support for simple toy languages with ~200 words, some basic phonotactic constraints, and word borrowing. Watch a new world of languages unfold before your eyes...</p>
-      <img src="./assets/images/guess.png" alt="Map with colored squares showing language evolution simulation" class="screenshot" loading="lazy" />
-    </section>
-
+  
     <section class="story-card project-tile project-card" data-tags="game,creative">
       <div class="tech-stack">
         <span class="tech-badge">Game Design</span>
