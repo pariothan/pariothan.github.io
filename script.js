@@ -92,9 +92,6 @@ const VIEWS = {
 
     <!-- TODO: Re-add letter tree puzzle project here -->
 
-
-
-  
     <section class="story-card project-tile project-card" data-tags="game,creative">
       <div class="tech-stack">
         <span class="tech-badge">Game Design</span>
@@ -115,77 +112,177 @@ const VIEWS = {
   </article>
 `,
   resume: `
-  <article class="story-grid grid-two masonry">
+  <article class="story-grid grid-two">
     <section class="title-card">
       <h1>Samuel Lederer</h1>
-      <p><strong>Linguist</strong></p>
-      <p><a href="mailto:slederer@pm.me">slederer@pm.me</a> | 781-742-3477 | Seattle, WA</p>
+      <p><a href="mailto:slederer@pm.me">slederer@pm.me</a> | Seattle, WA 98105</p>
+      <p><a href="https://prosodic.net">prosodic.net</a> · <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
     </section>
+
     <section class="story-card">
-      <h2>Languages</h2>
-      <p>English (native), Mandarin Chinese (full professional proficiency)</p>
+      <h2>Research Interests</h2>
+      <ul>
+        <li>Computational, community-based models of language evolution and diffusion</li>
+        <li>Interactions between social structure and grammatical, lexical, and phonological emergence</li>
+        <li>Modeling of psycholinguistic principles of language production</li>
+      </ul>
     </section>
+
     <section class="story-card">
-      <h2>Core Skills</h2>
-      <p>SQL, Python (expert; numpy, pandas, SciPy), R, Microsoft Suite, deductive and analytical reasoning, communication and emotional intelligence, American-Chinese cultural exchange, Mandarin proficiency</p>
+      <h2>Skills</h2>
+      <p><strong>Languages:</strong> English (native), Mandarin Chinese (professional proficiency)</p>
+      <p><strong>Languages (Fieldwork):</strong> Najdi Arabic</p>
+      <p><strong>Programming:</strong> Python (advanced), R (intermediate), JavaScript (intermediate), SQL (intermediate)</p>
+      <p><strong>Other tools:</strong> Praat, LaTeX, Audacity</p>
     </section>
-    <section class="story-card">
+
+    <section class="story-card span-2 project-card">
       <h2>Education</h2>
-      <h3><strong>University of Massachusetts, Amherst</strong> | May 2023</h3>
-      <p>B.A. Linguistics; Minors in Chinese and Biology</p>
+    </section>
+
+    <section class="story-card">
+      <h3>B.A. in Linguistics | 2018-2023</h3>
+      <p><em>University of Massachusetts Amherst</em> | GPA: 3.62</p>
+    </section>
+
+    <section class="story-card">
+      <h3>Linguistic Society of America Institute | 2023</h3>
+      <p><em>Amherst, MA</em></p>
+      <ul>
+        <li>Historical/Contact Creole Linguistics (Enoch Aboh)</li>
+        <li>PCIbex Training</li>
+        <li>Linguistic foundations of Computer Science</li>
+      </ul>
+    </section>
+
+    <section class="story-card">
+      <h3>Post-baccalaureate | July 2025-Aug 2026</h3>
+      <p><em>University of Northern Iowa</em></p>
+      <p>Coursework detailed at end of document</p>
+    </section>
+
+    <section class="story-card span-2 project-card">
+      <h2>Research Experience</h2>
     </section>
 
     <section class="story-card span-2">
-      <h3><strong>Freelance Linguistic Analyst (Various)</strong> | Jul 2023 - Present</h3>
-      <p><em>Various</em></p>
+      <h3><a href="./projects/langsim" target="_blank" rel="noopener noreferrer">Cellular automata-based simulation of contact-induced language change</a> | Late 2024-Present</h3>
+      <p><em>Independent Research Project</em></p>
       <ul>
-        <li>Utilize linguistic expertise in syntax, semantics, phonology, and sociolinguistics in conjunction with NLP to assess training pipelines for quality</li>
-        <li>Check work of non-linguist annotators, ensuring accurate and descriptive linguistic principles are used</li>
+        <li>Developed a cellular automata model of language diffusion and change modeled at the community level with interactive grammar, vocabulary and contact visualizations, which serves to test whether the predictions of theoretical parameters</li>
+        <li>Modeled both internally driven mechanisms (phonological and grammatical innovation) and externally driven mechanisms (borrowing, L1 influence during language shift), revising on results for linguistic plausibility and to match different theories about language change, particularly those of Dr. Enoch Aboh</li>
+        <li>Simulated repair strategies whereby borrowed or retained lexical items are reanalyzed to conform to evolving phonological constraints</li>
       </ul>
     </section>
 
     <section class="story-card">
-      <h3><strong>Linguistics Department Library Supervisor</strong> | Aug 2021 - May 2023</h3>
-      <p><em>University of Massachusetts</em></p>
+      <h3>Research Assistant | 2020-2023</h3>
+      <p><em>Grammar and Processing Lab, UMass Amherst</em></p>
       <ul>
-        <li>Independently cataloged and organized collection of over 5,000 books, transforming a decades-unused collection into a searchable, and loanable library using spreadsheets, and personally written Python based library programs</li>
-        <li>Following departmental strategic vision, executed a self directed plan with little supervision over the course of two years due to strong problem solving and project management skills</li>
-        <li>Organized large sets of academic data to aid in research of several professors, tagging with metadata to ensure it would still be searchable once I left</li>
+        <li>Supported experimental and computational research on psycholinguistic theories of language production and the internal processes posited to be involved</li>
+        <li>Prepared data frameworks for collection of participant data</li>
+        <li>Annotated and computationally analyzed participant data to pass up to primary researchers</li>
+        <li>Engaged with formal analyses of syntax and phonology in lab research contexts</li>
       </ul>
     </section>
 
     <section class="story-card">
-      <h3><strong>Research Assistant</strong> | Oct 2020 - May 2023</h3>
-      <p><em>University of Massachusetts | GAP (Grammar and Processing) Lab, various</em></p>
+      <h3>Research Assistant | Summer 2021</h3>
+      <p><em>Center for the Study of African American Language, UMass Amherst</em></p>
       <ul>
-        <li>Aided in survey-based experiment design, collection of research data, data annotation and analysis, and theoretical work in psycholinguistics</li>
-        <li>Designed and conducted psycholinguistic experiments, gathering participants and handling requirements to organize research efforts and obtain proper research authorization</li>
-        <li>Analyzed data using R</li>
-        <li>Annotated data for addition into databases and aided in syntax, semantic, and phonemic analysis as well as POS tagging, taking care to maintain best practices that the data was maximally beneficial to later researchers</li>
+        <li>Assisted with speech data organization and entry for African American English varieties</li>
       </ul>
     </section>
 
     <section class="story-card">
-      <h3><strong>ESL Instructor (Freelance / YMCA Boston)</strong> | Nov 2023 - May 2025</h3>
-      <p><em>Various (Freelance)</em></p>
+      <h3>Etymology and Sentiment | 2025</h3>
+      <p><em>Project for Blog</em></p>
       <ul>
-        <li>Maintain engaging and interactive classes to ensure students effectively grasp course materials</li>
-        <li>Tailor teaching to students from diverse cultural backgrounds and different language levels</li>
-        <li>Assess student progress and provide individualized support to foster development and remedy persistent language struggles</li>
+        <li>Tracked word occurrences in positive and negative reviews of movies, TV shows, and Amazon products</li>
+        <li>Mapped positive and negative occurrences over words' etymological origins, showing enduring effects of sociolinguistic conditions in the ancient, medieval, and modern world</li>
+      </ul>
+    </section>
+
+    <section class="story-card span-2 project-card">
+      <h2>Service</h2>
+    </section>
+
+    <section class="story-card">
+      <h3>Teaching Assistant (UMass Amherst) | 2022, 2023</h3>
+      <p><em>LING 101: Introduction to Linguistics</em></p>
+    </section>
+
+    <section class="story-card">
+      <h3>Guest Lecture (UMass Amherst) | 2022</h3>
+      <p><em>LING 101: Introduction to Linguistics</em></p>
+      <ul>
+        <li>Invited by instructor (Dr. Rajesh Bhatt) to deliver multiple lectures on Chinese dialectology and sociolinguistics to introductory undergrad audience</li>
       </ul>
     </section>
 
     <section class="story-card">
-      <h3><strong>Chinese Immersion (Shanghai)</strong> | June - December 2019</h3>
-      <p><em>Shanghai University of Finance and Economics</em></p>
+      <h3>Linguistics Department Librarian and Administrative Assistant | Aug 2021 – May 2023</h3>
+      <p><em>UMass Amherst Linguistics Department</em></p>
       <ul>
-        <li>Spent six months entirely immersed in Mandarin Chinese in Shanghai</li>
-        <li>Lived in a Chinese family, tutoring the seven-year old son as my host-brother</li>
-        <li>Raised Chinese to HSK6 level and beyond, gaining full professional proficiency</li>
-        <li>Built an intercultural skill cross-applicable to nearly all fields</li>
+        <li>Cataloged and reorganized collection of over 5,000 books into a searchable library</li>
+        <li>Compiled large-scale corpus of bibliography files for academic research</li>
       </ul>
     </section>
 
+    <section class="story-card span-2 project-card">
+      <h2>Professional Experience</h2>
+    </section>
+
+    <section class="story-card">
+      <h3>Linguistic Data Annotation and Consultation | 2023-Present</h3>
+      <p><em>Contract Work</em></p>
+      <ul>
+        <li>Data annotation and data annotation pipeline design</li>
+        <li>Consulting methods for theoretical adherence</li>
+      </ul>
+    </section>
+
+    <section class="story-card">
+      <h3>Instructor (Brightmont Academy, Seattle) | 2025-Present</h3>
+      <ul>
+        <li>Teaching and tutoring Pre-calculus, AP Physics 1 and 2, and AP Computer Science</li>
+      </ul>
+    </section>
+
+    <section class="story-card">
+      <h3>Chess Instructor (Orangutan Chess Academy, Seattle) | 2025-Present</h3>
+    </section>
+
+    <section class="story-card span-2 project-card">
+      <h2>Relevant Coursework</h2>
+    </section>
+
+    <section class="story-card">
+      <h3>UMass Amherst (Undergraduate level)</h3>
+      <ul>
+        <li>CS121: Introduction to Problem Solving with Computers; LING 409: Introduction to Computational Linguistics (formerly LING 509); LING 492B: Computational Linguistics: Use and Meaning</li>
+        <li>LING 401: Introduction to Syntax; LING 510: Introduction to Semantics; LING 402: Speech Sounds and Structure (Phonology); LING 414: Introduction to Phonetics for Linguists</li>
+        <li>LING 413: Language Variation and Social Context</li>
+        <li>LING 412: Language and the Brain</li>
+      </ul>
+    </section>
+
+    <section class="story-card">
+      <h3>UMass Amherst (Graduate level)</h3>
+      <ul>
+        <li>CHIN 575: Syntactic Structure of Chinese; CHIN 577: Chinese Dialectology</li>
+        <li>LING 601: Introduction to Transformational Grammar; LING 604: Syntactic Theory</li>
+        <li>LING 592T: Tone and Intonation; LING 603: Generative Phonology; LING 606: Phonological Theory</li>
+      </ul>
+    </section>
+
+    <section class="story-card">
+      <h3>University of Northern Iowa (Post-baccalaureate)</h3>
+      <ul>
+        <li>CS1520: Data Structures and Algorithms</li>
+        <li>MATH 1420: Calculus I; MATH 1421: Calculus II; MATH 2500: Linear Algebra for Applications; STAT 3752: Introduction to Probability</li>
+      </ul>
+    </section>
 
   </article>
 `,
