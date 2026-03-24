@@ -30,6 +30,9 @@ body {
   font-family: "Roboto", "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--ink);
   background: var(--bg);
+  background-image: radial-gradient(circle, rgba(160, 180, 100, 0.05) 1px, transparent 1px);
+  background-size: 6px 6px;
+  background-attachment: fixed;
   line-height: 1.3;
   font-weight: 400;
   text-rendering: optimizeLegibility;
@@ -38,6 +41,11 @@ body {
   font-style: normal;
   font-variation-settings:
     "wdth" 100;
+}
+
+::selection {
+  background: rgba(255, 152, 0, 0.45);
+  color: #000;
 }
 
 /* --- Layout --- */
@@ -116,6 +124,7 @@ body {
   border: 1px solid #333;
   padding: 16px 20px;
   clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.04), inset -1px -1px 0 rgba(0, 0, 0, 0.25);
   opacity: 0.95;
   width: 100%;
   align-self: start;
@@ -495,6 +504,7 @@ h1 {
   font-weight: 800;
   letter-spacing: 0.01em;
   color: var(--accent-green);
+  text-shadow: 2px 2px 0 rgba(66, 133, 244, 0.12);
 }
 
 h2 {
@@ -505,6 +515,7 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--accent-blue);
+  text-shadow: 1px 1px 0 rgba(156, 39, 176, 0.1);
 }
 
 h3 {
@@ -515,6 +526,7 @@ h3 {
   font-weight: 600;
   letter-spacing: 0.005em;
   color: var(--accent-purple);
+  text-shadow: 1px 1px 0 rgba(66, 133, 244, 0.1);
 }
 
 p {

@@ -116,8 +116,7 @@ const VIEWS = {
     <section class="title-card">
       <h1>Samuel Lederer</h1>
       <p><a href="mailto:slederer@pm.me">slederer@pm.me</a> | Seattle, WA 98105</p>
-      <p><a href="https://prosodic.net">prosodic.net</a> · <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>
-    </section>
+       </section>
 
     <section class="story-card">
       <h2>Research Interests</h2>
@@ -254,7 +253,7 @@ const VIEWS = {
     </section>
 
     <section class="story-card span-2 project-card">
-      <h2>Relevant Coursework</h2>
+      <h2>Coursework</h2>
     </section>
 
     <section class="story-card">
@@ -280,7 +279,6 @@ const VIEWS = {
       <h3>University of Northern Iowa (Post-baccalaureate)</h3>
       <ul>
         <li>CS1520: Data Structures and Algorithms</li>
-        <li>MATH 1420: Calculus I; MATH 1421: Calculus II; MATH 2500: Linear Algebra for Applications; STAT 3752: Introduction to Probability</li>
       </ul>
     </section>
 
