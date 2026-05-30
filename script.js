@@ -10,20 +10,6 @@ const VIEWS = {
       </div>
     </section>
 
-    <section class="story-card">
-      <h3>What I Do</h3>
-      <p>Freelance linguist working at the intersection of language, data, and technology. Currently doing linguistic data annotation for NLP systems, but I use language science to solve complex problems across a pretty wide range of domains. Driven by curiosity. I never want to take the easy answer when I can look further.</p>
-    </section>
-
-    <section class="story-card">
-      <h3>Background</h3>
-      <p>B.A. Linguistics from UMass Amherst with minors in Chinese and Biology. Full professional proficiency in Mandarin Chinese gained through immersive study in Shanghai.</p>
-    </section>
-
-    <section class="story-card">
-      <h3>Technical Skills</h3>
-      <p>Python (numpy, pandas, SciPy), R, SQL, data analysis, experimental design. Comfortable with syntax trees, phonological analysis, and corpus linguistics. Always building for fun.</p>
-    </section>
   </article>
 `,
   projects: `
