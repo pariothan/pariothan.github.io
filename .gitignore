@@ -1,3 +1,10 @@
 # Documentation
 TREE_ANIMATION_SPEC.md
 TREE_ANIMATION_IMPLEMENTATION.md
+IMPROVEMENTS.md
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
