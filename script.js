@@ -1,323 +1,41 @@
-// --- Content templates ---
-const VIEWS = {
-  me: `
-  <article class="story-grid auto-fit">
-    <section class="title-card title-card--intro">
-      <img src="./assets/images/headshot.png" alt="Samuel Lederer headshot" class="headshot" loading="lazy" />
-      <div>
-        <h1>Samuel Lederer <em>(he/him)</em></h1>
-        <h2>If you seek info on me this is a place</h2>
-      </div>
-    </section>
-
-  </article>
-`,
-  projects: `
-  <article class="story-grid grid-two masonry">
-    <section class="title-card span-2">
-      <h1>I do these for fun, but you can look</h1>
-    </section>
-      <section class="story-card span-2 project-tile project-card" data-tags="linguistics,simulation,python" style="display: flex; flex-direction: column;">
-      <div style="display: flex; gap: 1.5rem; align-items: stretch; flex: 1;">
-        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-          <div class="tech-stack">
-            <span class="tech-badge">Python</span>
-            <span class="tech-badge">Simulation</span>
-            <span class="tech-badge">Linguistics</span>
-          </div>
-          <h3><a href="./projects/langsim" target="_blank" rel="noopener noreferrer">Language Evolution Simulator</a></h3>
-          <p>A very early prototype of a simulator intended to use community dynamics to model language usage and evolution. Language historians / historical linguists have lots of theories about how language particularly changes over time, but without a time machine our "observational" data is limited to what happened to be written down. That's limiting for like, a number of reasons that you probably don't need me to list. But I was thinking, if we could simulate language communities, maybe we could see whether parameters these theories propose produce the results they intend to? It's the next best thing! Currently has support for simple toy languages with ~200 words, some basic phonotactic constraints, and word borrowing. Watch a new world of languages unfold before your eyes...</p>
-        </div>
-        <img src="./assets/images/guess.png" alt="Map with colored squares showing language evolution simulation" class="screenshot" loading="lazy" style="flex-shrink: 0; width: 350px; align-self: stretch; object-fit: cover; object-position: center;" />
-      </div>
-    </section>
-
-    <section class="story-card span-2 project-card" data-tags="ai,accessibility,hackathon,flask,python,linguistics">
-      <div class="tech-stack">
-        <span class="tech-badge">Python</span>
-        <span class="tech-badge">Flask</span>
-        <span class="tech-badge">AI/LLM</span>
-        <span class="tech-badge">Accessibility</span>
-        <span class="tech-badge">Computational Linguistics</span>
-      </div>
-      <h3><a href="./projects/ai-aac" target="_blank" rel="noopener noreferrer">AI-AAC</a></h3>
-      <p>This one wasn't for fun as much as for jumping on a brilliant idea thought up by my friend Liz when we were at the <a href="https://www.seattledataai.org/event/hackathon24/" target="_blank" rel="noopener noreferrer">Humans and AI Hackathon 2025 in Bellevue</a>. Built with <a href="https://www.linkedin.com/in/liz-m-weber/" target="_blank" rel="noopener noreferrer">Elizabeth Weber</a> (bioengineer & accessibility specialist) and <a href="https://www.linkedin.com/in/meetapandit/" target="_blank" rel="noopener noreferrer">Meeta Pandit</a> (data engineer). A Flask web app that helps generate contextual vocabulary and sentences for AAC (Augmentative and Alternative Communication) users. Uses LLMs for intelligent vocabulary generation, with optional image based context analysis, and a drag-and-drop sentence builder, with AI giving options so you can pick the nuanced meaning you meant to say. Combines my linguistics background with Liz's bioengineering and accessibility expertise and Meeta's data engineering skills for a truly interdisciplinary project!</p>
-      <p>
-        Update: I competed in 
-        <a href="https://www.linkedin.com/feed/update/urn:li:activity:7388058184185237504/">
-          another hackathon
-        </a>
-        (this time hosted by 
-        <a href="https://www.linkedin.com/company/belle-community/">B.E.L.L.E.</a> 
-        and 
-        <a href="https://www.linkedin.com/company/testsprite/">TestSprite</a>), 
-        updating this project further to add proper tablet support and better sentence generation, among other things, and won 2nd place!
-      </p> 
-    </section>
-
-    <section class="story-card  project-card" data-tags="javascript,physics,simulation">
-      <div class="tech-stack">
-        <span class="tech-badge">JavaScript</span>
-        <span class="tech-badge">Physics</span>
-        <span class="tech-badge">WebGL</span>
-      </div>
-      <h3><a href="./projects/gravity-sim/dist" target="_blank" rel="noopener noreferrer">Interactive n-body gravity simulation</a></h3>
-      <p>Built this Newtonian physics simulator as a short hackathon project! Features real-time physics, better controls, and some visual effects. A complete rewrite that's much more polished than my earlier attempt. No relativity or quantum mechanics yet, sorry!</p>
-    </section>
-
-    <section class="story-card project-tile project-card" data-tags="nlp,linguistics,data-analysis,python">
-      <div class="tech-stack">
-        <span class="tech-badge">Python</span>
-        <span class="tech-badge">NLP</span>
-        <span class="tech-badge">Data Analysis</span>
-      </div>
-      <h3>Sentiment analysis by etymological origin</h3>
-      <p>Ever wondered about the lasting impacts of 11th century English socioeconomic conditions on how people complain about superhero movies? I have! More soon, but here's a sneak peak:</p>
-      <img src="./assets/images/sigbreakdown.png" alt="Bar chart showing sentiment analysis by etymological origin" class="screenshot" loading="lazy" />
-    </section>
-
-    <!-- TODO: Re-add letter tree puzzle project here -->
-
-    <section class="story-card project-tile project-card" data-tags="game,creative">
-      <div class="tech-stack">
-        <span class="tech-badge">Game Design</span>
-        <span class="tech-badge">TTRPG</span>
-      </div>
-      <h3>Ever wished you could sit down with your friends and write a new episode of Seinfeld?</h3>
-      <p>If you're Larry David that might be easy, but I tried to make it into a game, TTRPG style.</p>
-    </section>
-
-    <section class="story-card project-tile project-card" data-tags="javascript,game,chess">
-      <div class="tech-stack">
-        <span class="tech-badge">JavaScript</span>
-        <span class="tech-badge">Game Logic</span>
-      </div>
-      <h3><a href="./projects/chesstest" target="_blank" rel="noopener noreferrer">Funky Chess</a></h3>
-      <p>Chess is all great and all, but the rules haven't changed much in hundreds of years. Boring. In Funky Chess, the rules change every game! In truth this app exists because I was tired of losing at Chess to memorized tactics. Make your opponent think up some new ones for a change!</p>
-    </section>
-  </article>
-`,
-  resume: `
-  <article class="story-grid grid-two">
-    <section class="title-card">
-      <h1>Samuel Lederer</h1>
-      <p><a href="mailto:slederer@pm.me">slederer@pm.me</a> | Seattle, WA 98105</p>
-       </section>
-
-    <section class="story-card">
-      <h2>Research Interests</h2>
-      <ul>
-        <li>Computational, community-based models of language evolution and diffusion</li>
-        <li>Interactions between social structure and grammatical, lexical, and phonological emergence</li>
-        <li>Modeling of psycholinguistic principles of language production</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h2>Skills</h2>
-      <p><strong>Languages:</strong> English (native), Mandarin Chinese (professional proficiency)</p>
-      <p><strong>Languages (Fieldwork):</strong> Najdi Arabic</p>
-      <p><strong>Programming:</strong> Python (advanced), R (intermediate), JavaScript (intermediate), SQL (intermediate)</p>
-      <p><strong>Other tools:</strong> Praat, LaTeX, Audacity</p>
-    </section>
-
-    <section class="story-card span-2 project-card">
-      <h2>Education</h2>
-    </section>
-
-    <section class="story-card">
-      <h3>B.A. in Linguistics | 2018-2023</h3>
-      <p><em>University of Massachusetts Amherst</em> | GPA: 3.62</p>
-    </section>
-
-    <section class="story-card">
-      <h3>Linguistic Society of America Institute | 2023</h3>
-      <p><em>Amherst, MA</em></p>
-      <ul>
-        <li>Historical/Contact Creole Linguistics (Enoch Aboh)</li>
-        <li>PCIbex Training</li>
-        <li>Linguistic foundations of Computer Science</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Post-baccalaureate | July 2025-Aug 2026</h3>
-      <p><em>University of Northern Iowa</em></p>
-      <p>Coursework detailed at end of document</p>
-    </section>
-
-    <section class="story-card span-2 project-card">
-      <h2>Research Experience</h2>
-    </section>
-
-    <section class="story-card span-2">
-      <h3><a href="./projects/langsim" target="_blank" rel="noopener noreferrer">Cellular automata-based simulation of contact-induced language change</a> | Late 2024-Present</h3>
-      <p><em>Independent Research Project</em></p>
-      <ul>
-        <li>Developed a cellular automata model of language diffusion and change modeled at the community level with interactive grammar, vocabulary and contact visualizations, which serves to test whether the predictions of theoretical parameters</li>
-        <li>Modeled both internally driven mechanisms (phonological and grammatical innovation) and externally driven mechanisms (borrowing, L1 influence during language shift), revising on results for linguistic plausibility and to match different theories about language change, particularly those of Dr. Enoch Aboh</li>
-        <li>Simulated repair strategies whereby borrowed or retained lexical items are reanalyzed to conform to evolving phonological constraints</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Research Assistant | 2020-2023</h3>
-      <p><em>Grammar and Processing Lab, UMass Amherst</em></p>
-      <ul>
-        <li>Supported experimental and computational research on psycholinguistic theories of language production and the internal processes posited to be involved</li>
-        <li>Prepared data frameworks for collection of participant data</li>
-        <li>Annotated and computationally analyzed participant data to pass up to primary researchers</li>
-        <li>Engaged with formal analyses of syntax and phonology in lab research contexts</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Research Assistant | Summer 2021</h3>
-      <p><em>Center for the Study of African American Language, UMass Amherst</em></p>
-      <ul>
-        <li>Assisted with speech data organization and entry for African American English varieties</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Etymology and Sentiment | 2025</h3>
-      <p><em>Project for Blog</em></p>
-      <ul>
-        <li>Tracked word occurrences in positive and negative reviews of movies, TV shows, and Amazon products</li>
-        <li>Mapped positive and negative occurrences over words' etymological origins, showing enduring effects of sociolinguistic conditions in the ancient, medieval, and modern world</li>
-      </ul>
-    </section>
-
-    <section class="story-card span-2 project-card">
-      <h2>Service</h2>
-    </section>
-
-    <section class="story-card">
-      <h3>Teaching Assistant (UMass Amherst) | 2022, 2023</h3>
-      <p><em>LING 101: Introduction to Linguistics</em></p>
-    </section>
-
-    <section class="story-card">
-      <h3>Guest Lecture (UMass Amherst) | 2022</h3>
-      <p><em>LING 101: Introduction to Linguistics</em></p>
-      <ul>
-        <li>Invited by instructor (Dr. Rajesh Bhatt) to deliver multiple lectures on Chinese dialectology and sociolinguistics to introductory undergrad audience</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Linguistics Department Librarian and Administrative Assistant | Aug 2021 – May 2023</h3>
-      <p><em>UMass Amherst Linguistics Department</em></p>
-      <ul>
-        <li>Cataloged and reorganized collection of over 5,000 books into a searchable library</li>
-        <li>Compiled large-scale corpus of bibliography files for academic research</li>
-      </ul>
-    </section>
-
-    <section class="story-card span-2 project-card">
-      <h2>Professional Experience</h2>
-    </section>
-
-    <section class="story-card">
-      <h3>Linguistic Data Annotation and Consultation | 2023-Present</h3>
-      <p><em>Contract Work</em></p>
-      <ul>
-        <li>Data annotation and data annotation pipeline design</li>
-        <li>Consulting methods for theoretical adherence</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Instructor (Brightmont Academy, Seattle) | 2025-Present</h3>
-      <ul>
-        <li>Teaching and tutoring Pre-calculus, AP Physics 1 and 2, and AP Computer Science</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>Chess Instructor (Orangutan Chess Academy, Seattle) | 2025-Present</h3>
-    </section>
-
-    <section class="story-card span-2 project-card">
-      <h2>Coursework</h2>
-    </section>
-
-    <section class="story-card">
-      <h3>UMass Amherst (Undergraduate level)</h3>
-      <ul>
-        <li>CS121: Introduction to Problem Solving with Computers; LING 409: Introduction to Computational Linguistics (formerly LING 509); LING 492B: Computational Linguistics: Use and Meaning</li>
-        <li>LING 401: Introduction to Syntax; LING 510: Introduction to Semantics; LING 402: Speech Sounds and Structure (Phonology); LING 414: Introduction to Phonetics for Linguists</li>
-        <li>LING 413: Language Variation and Social Context</li>
-        <li>LING 412: Language and the Brain</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>UMass Amherst (Graduate level)</h3>
-      <ul>
-        <li>CHIN 575: Syntactic Structure of Chinese; CHIN 577: Chinese Dialectology</li>
-        <li>LING 601: Introduction to Transformational Grammar; LING 604: Syntactic Theory</li>
-        <li>LING 592T: Tone and Intonation; LING 603: Generative Phonology; LING 606: Phonological Theory</li>
-      </ul>
-    </section>
-
-    <section class="story-card">
-      <h3>University of Northern Iowa (Post-baccalaureate)</h3>
-      <ul>
-        <li>CS1520: Data Structures and Algorithms</li>
-      </ul>
-    </section>
-
-  </article>
-`,
-};
-
-const content = document.getElementById("content");
-const year = new Date().getFullYear();
+const VALID_VIEWS = new Set(['me', 'projects', 'resume']);
+const content = document.getElementById('content');
 
 function render(view) {
-  content.innerHTML = VIEWS[view] || VIEWS.me;
-  const y = content.querySelector("#year");
-  if (y) y.textContent = year;
+  if (!VALID_VIEWS.has(view)) view = 'me';
+  document.querySelectorAll('.view').forEach(s => { s.hidden = true; });
+  document.getElementById(view).hidden = false;
+  document.querySelectorAll('.navbtn').forEach(link => {
+    const linkView = link.getAttribute('href')?.replace('#', '');
+    if (linkView === view) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
   content.focus();
 }
 
-// Initial render
-render("me");
-
-// Wire sidebar buttons
-document.querySelectorAll(".navbtn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".navbtn")
-      .forEach((b) => b.removeAttribute("aria-current"));
-    btn.setAttribute("aria-current", "page");
-    render(btn.dataset.view);
-
-    // Update URL hash
-    window.location.hash = btn.dataset.view;
-
-    // Rebuild tree when switching tabs
-    if (window.rebuildTree) {
-      window.rebuildTree();
-    }
+document.querySelectorAll('.navbtn').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const view = link.getAttribute('href').replace('#', '');
+    history.pushState(null, '', link.href);
+    render(view);
+    if (window.rebuildTree) window.rebuildTree();
   });
 });
 
-// Optional: deep-link via hash (#me, #resume, #projects)
-const hash = location.hash.replace("#", "");
-if (hash && VIEWS[hash]) {
-  const targetBtn = document.querySelector(`.navbtn[data-view="${hash}"]`);
-  if (targetBtn) {
-    targetBtn.click();
-  }
-}
+window.addEventListener('popstate', () => {
+  render(location.hash.replace('#', '') || 'me');
+});
 
-// Personal website link popup
-document.getElementById("personal-website-link")?.addEventListener("click", (e) => {
-  e.preventDefault();
+document.getElementById('personal-website-link')?.addEventListener('click', () => {
   alert("You're already there!");
 });
+
+const _initial = location.hash.replace('#', '');
+render(VALID_VIEWS.has(_initial) ? _initial : 'me');
 
 // --- Prosodic Tree Animation ---
 (function() {
