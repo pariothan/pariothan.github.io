@@ -1,4 +1,4 @@
-const VALID_VIEWS = new Set(['me', 'projects', 'resume']);
+const VALID_VIEWS = new Set(['me', 'projects', 'cv']);
 const content = document.getElementById('content');
 
 function render(view) {
