@@ -3,6 +3,9 @@ TREE_ANIMATION_SPEC.md
 TREE_ANIMATION_IMPLEMENTATION.md
 IMPROVEMENTS.md
 
+# Scripts
+deploy.sh
+
 # Dependencies
 node_modules/
 
