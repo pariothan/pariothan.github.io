@@ -5,6 +5,7 @@ IMPROVEMENTS.md
 
 # Scripts
 deploy.sh
+fix-git-history.sh
 
 # Dependencies
 node_modules/
