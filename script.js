@@ -1,10 +1,12 @@
-const VALID_VIEWS = new Set(['me', 'projects', 'cv']);
+const VALID_VIEWS = new Set(['me', 'projects', 'cv', 'blog']);
 const content = document.getElementById('content');
 
 function render(view) {
   if (!VALID_VIEWS.has(view)) view = 'me';
+  const target = document.getElementById(view);
+  if (!target) return;
   document.querySelectorAll('.view').forEach(s => { s.hidden = true; });
-  document.getElementById(view).hidden = false;
+  target.hidden = false;
   document.querySelectorAll('.navbtn').forEach(link => {
     const linkView = link.getAttribute('href')?.replace('#', '');
     if (linkView === view) {
@@ -13,13 +15,16 @@ function render(view) {
       link.removeAttribute('aria-current');
     }
   });
+  if (view === 'blog') loadBlog();
   content.focus();
 }
 
 document.querySelectorAll('.navbtn').forEach(link => {
+  const href = link.getAttribute('href');
+  if (!href || !href.startsWith('#')) return;
   link.addEventListener('click', e => {
     e.preventDefault();
-    const view = link.getAttribute('href').replace('#', '');
+    const view = href.replace('#', '');
     history.pushState(null, '', link.href);
     render(view);
     if (window.rebuildTree) window.rebuildTree();
@@ -36,6 +41,75 @@ document.getElementById('personal-website-link')?.addEventListener('click', () =
 
 const _initial = location.hash.replace('#', '');
 render(VALID_VIEWS.has(_initial) ? _initial : 'me');
+
+// --- Blog ---
+let _blogManifest = null;
+let _activeBlogTag = null;
+
+function loadBlog() {
+  if (_blogManifest !== null) { renderBlogPosts(_blogManifest); return; }
+  _blogManifest = window.__blogPosts__ || [];
+  renderBlogPosts(_blogManifest);
+}
+
+function renderBlogPosts(posts) {
+  const grid = document.getElementById('blog-grid');
+  const filtersEl = document.getElementById('blog-tag-filters');
+  if (!grid) return;
+
+  grid.querySelectorAll('[data-blog-content]').forEach(el => el.remove());
+
+  const allTags = [...new Set(posts.flatMap(p => p.tags))].sort();
+
+  if (filtersEl) {
+    filtersEl.innerHTML = '';
+    if (allTags.length > 1) {
+      const makeBtn = (label, tag) => {
+        const btn = document.createElement('button');
+        btn.className = 'blog-tag-btn' + (tag === _activeBlogTag ? ' active' : '');
+        btn.textContent = label;
+        btn.addEventListener('click', () => { _activeBlogTag = tag; renderBlogPosts(_blogManifest); });
+        return btn;
+      };
+      filtersEl.appendChild(makeBtn('ALL', null));
+      allTags.forEach(tag => filtersEl.appendChild(makeBtn(tag, tag)));
+    }
+  }
+
+  const filtered = _activeBlogTag ? posts.filter(p => p.tags.includes(_activeBlogTag)) : posts;
+
+  if (filtered.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'blog-status';
+    empty.dataset.blogContent = '1';
+    empty.textContent = posts.length === 0 ? 'No posts yet — check back soon.' : 'No posts with that tag.';
+    grid.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(post => {
+    const a = document.createElement('a');
+    a.className = 'story-card blog-post-card';
+    a.href = `./posts/${post.slug}/`;
+    a.dataset.blogContent = '1';
+
+    const date = new Date(post.date + 'T12:00:00').toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+    const tagsHtml = post.tags.map(t => `<span class="tech-badge">${t}</span>`).join('');
+
+    a.innerHTML = `
+      <div class="post-card-meta">
+        <time class="post-date" datetime="${post.date}">${date}</time>
+        <span class="post-reading-time">${post.readingTime}&nbsp;min&nbsp;read</span>
+      </div>
+      <h3>${post.title}</h3>
+      ${tagsHtml ? `<div class="tech-stack">${tagsHtml}</div>` : ''}
+      ${post.excerpt ? `<p class="post-excerpt">${post.excerpt}</p>` : ''}
+    `;
+    grid.appendChild(a);
+  });
+}
 
 // --- Prosodic Tree Animation ---
 (function() {
