@@ -1,0 +1,1 @@
+window.__blogPosts__ = [{"slug":"etymology-and-sentiment","title":"PLACEHOLDER POST - Replace Me","date":"2025-07-05","tags":["placeholder"],"excerpt":"This is a dummy post. Delete this file and write a real one.","readingTime":1}];
