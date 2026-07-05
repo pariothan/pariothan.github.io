@@ -1,0 +1,158 @@
+@page {
+  margin: 2cm 2.5cm;
+  size: A4 portrait;
+}
+
+/* --- Global reset for print --- */
+* {
+  background: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  clip-path: none !important;
+  filter: none !important;
+  animation: none !important;
+  transition: none !important;
+  color: #000 !important;
+}
+
+html,
+body {
+  background: #fff !important;
+  font-size: 11pt;
+  line-height: 1.4;
+  height: auto !important;
+}
+
+/* --- Hide everything that isn't the CV --- */
+.left-column,
+.name-column,
+.sidebar,
+#me,
+#projects {
+  display: none !important;
+}
+
+/* --- Flatten layout --- */
+.wrap {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.content-frame {
+  display: block !important;
+  border: none !important;
+  padding: 0 !important;
+  min-height: unset !important;
+  overflow: visible !important;
+  background-image: none !important;
+}
+
+/* Force CV visible regardless of active tab */
+#cv {
+  display: block !important;
+}
+
+/* --- CV grid: single column blocks --- */
+.story-grid.grid-two {
+  display: block !important;
+}
+
+/* --- Section header cards (span-2 project-card) --- */
+.story-card.span-2.project-card {
+  border: none !important;
+  border-bottom: 2px solid #000 !important;
+  padding: 0 0 4pt !important;
+  margin: 16pt 0 8pt !important;
+  break-after: avoid;
+}
+
+.story-card.span-2.project-card h2 {
+  font-size: 13pt !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 !important;
+}
+
+/* --- Content cards --- */
+.story-card {
+  border: none !important;
+  border-bottom: 1px solid #ddd !important;
+  padding: 6pt 0 !important;
+  margin-bottom: 4pt !important;
+  break-inside: avoid;
+}
+
+.title-card {
+  border: none !important;
+  border-bottom: 2px solid #000 !important;
+  padding: 0 0 8pt !important;
+  margin-bottom: 12pt !important;
+  text-align: center;
+}
+
+/* --- Typography --- */
+h1,
+h2,
+h3 {
+  font-family: Georgia, "Times New Roman", serif !important;
+}
+
+h1 {
+  font-size: 20pt !important;
+  margin: 0 0 4pt !important;
+}
+
+h2 {
+  font-size: 14pt !important;
+  margin: 0 !important;
+}
+
+h3 {
+  font-size: 11pt !important;
+  font-weight: bold;
+  margin: 4pt 0 2pt !important;
+}
+
+p,
+li {
+  font-size: 10pt !important;
+  line-height: 1.45 !important;
+  margin-bottom: 4pt !important;
+}
+
+ul {
+  margin: 2pt 0 4pt 1.4em !important;
+}
+
+/* --- Links --- */
+a {
+  text-decoration: underline !important;
+}
+
+a[href^="http"]::after,
+a[href^="https"]::after {
+  content: " (" attr(href) ")";
+  font-size: 8pt;
+  color: #555 !important;
+}
+
+a[href^="#"]::after,
+a[href^="./"]::after,
+a[href^="mailto:"]::after {
+  content: "" !important;
+}
+
+/* --- Tech badges --- */
+.tech-badge {
+  border: 1px solid #888 !important;
+  border-radius: 4px;
+  padding: 1pt 5pt !important;
+  font-size: 8pt !important;
+}
+
+/* --- Page breaks --- */
+.story-card.span-2.project-card {
+  break-before: auto;
+  break-after: avoid;
+}
