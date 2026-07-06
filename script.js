@@ -53,11 +53,9 @@ function loadBlog() {
 }
 
 function renderBlogPosts(posts) {
-  const grid = document.getElementById('blog-grid');
+  const postsEl = document.getElementById('blog-posts');
   const filtersEl = document.getElementById('blog-tag-filters');
-  if (!grid) return;
-
-  grid.querySelectorAll('[data-blog-content]').forEach(el => el.remove());
+  if (!postsEl) return;
 
   const allTags = [...new Set(posts.flatMap(p => p.tags))].sort();
 
@@ -78,12 +76,10 @@ function renderBlogPosts(posts) {
 
   const filtered = _activeBlogTag ? posts.filter(p => p.tags.includes(_activeBlogTag)) : posts;
 
+  postsEl.innerHTML = '';
+
   if (filtered.length === 0) {
-    const empty = document.createElement('p');
-    empty.className = 'blog-status';
-    empty.dataset.blogContent = '1';
-    empty.textContent = posts.length === 0 ? 'No posts yet — check back soon.' : 'No posts with that tag.';
-    grid.appendChild(empty);
+    postsEl.innerHTML = `<p class="blog-status">${posts.length === 0 ? 'No posts yet — check back soon.' : 'No posts with that tag.'}</p>`;
     return;
   }
 
@@ -91,7 +87,6 @@ function renderBlogPosts(posts) {
     const a = document.createElement('a');
     a.className = 'story-card blog-post-card';
     a.href = `./posts/${post.slug}/`;
-    a.dataset.blogContent = '1';
 
     const date = new Date(post.date + 'T12:00:00').toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric',
@@ -107,7 +102,7 @@ function renderBlogPosts(posts) {
       ${tagsHtml ? `<div class="tech-stack">${tagsHtml}</div>` : ''}
       ${post.excerpt ? `<p class="post-excerpt">${post.excerpt}</p>` : ''}
     `;
-    grid.appendChild(a);
+    postsEl.appendChild(a);
   });
 }
 
