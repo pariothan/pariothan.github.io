@@ -1,8 +1,8 @@
 ---
-title: "Indirect Trilingual Contact in Derivational Morphology: The True Etymological Origin of \"Cosplay\""
+title: "Trilingual Contact in Derivational Morphology: The Etymology of \"Cosplay\""
 date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
-excerpt: "Most English speakers know the word \"cosplay,\" and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of \"costume\" and \"play.\" But a question this brings up is: \"Why?\" No, 'cosplay' is not trivial or incidental. "
+excerpt: "No, 'cosplay' is not trivial or incidental."
 ---
 
 Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
