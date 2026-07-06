@@ -801,6 +801,7 @@ footer {
     grid-column: 2;
     position: static;
     width: 100%;
+    height: auto;
     right: auto;
     top: auto;
     bottom: auto;
@@ -855,6 +856,7 @@ footer {
     grid-row: 1;
     position: static;
     width: 100%;
+    height: auto;
     flex-direction: column;
     right: auto;
     top: auto;
