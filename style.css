@@ -898,6 +898,14 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  /* Prevent span-2 items from forcing implicit columns in a 1-col grid */
+  .story-grid.grid-two .span-2,
+  .story-grid.grid-three .span-2,
+  .story-grid.grid-two .title-card,
+  .story-grid.grid-three .title-card {
+    grid-column: 1;
+  }
+
   .story-grid.auto-fit {
     grid-template-columns: 1fr;
   }
