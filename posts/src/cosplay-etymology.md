@@ -2,7 +2,7 @@
 title: "Indirect Trilingual Contact in Derivational Morphology: The True Etymological Origin of \"Cosplay\""
 date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
-excerpt: "Most people know \"cosplay\" came from a Japanese portmanteau. Far fewer ask why Japanese forms words that way — and the answer runs through a trilingual chain of borrowed derivational rules."
+excerpt: "Most English speakers know the word \"cosplay,\" and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of \"costume\" and \"play.\" But a question this brings up is: \"Why?\" No, 'cosplay' is not trivial or incidental. "
 ---
 
 Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
@@ -11,7 +11,7 @@ Only contact linguistics, the study of how languages directly and indirectly inf
 
 While the act of cosplaying can be summarized as costume play, English words are not typically formed in this way. Portmanteaus are typically reserved for wordplay (where even there they work quite differently). And regular compounds like "medical scholar" don't form words like "medschol." 
 
-No, 'cosplay' is not trivial or coincidental.
+No, 'cosplay' is not trivial or incidental.
 
 ## Some background on Chinese compounding
 
@@ -41,7 +41,7 @@ This lays the foundation of our journey to understanding 'cosplay.' But we don't
 
 Ever since Japan entered the written Sinosphere in the 7th century, new Japanese words have been formed according to Chinese derivational compounding rules. So, do we take one syllable from each root word? Well, not quite. Japanese syllables, unlike Chinese syllables, are nearly always one mora. Chinese words loaned into Japanese typically get restructured, with each long syllable becoming two short syllables. 
 
-Here's an example: a Chinese two-syllable word, 'ji.rou' (4 mora, 2 syllables), meaning chicken meat, is modeled in Japanese as 'to.ri.ni.ku' (4 mora, 4 syllables).
+A Chinese two-syllable word, 'ji.rou' (4 mora, 2 syllables), meaning chicken meat, gets remodeled in Japanese as 'to.ri.ni.ku' (4 mora, 4 syllables).
 
 But why does any of this matter for 'cosplay'? Well, cosplay is a *Japanese* word. And it was formed according to how Japanese typically forms words — the Chinese compounding derivational process. Words are typically formed by taking two mora, rather than one syllable, from each root.
 
