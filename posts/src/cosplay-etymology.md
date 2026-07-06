@@ -2,14 +2,14 @@
 title: "Trilingual Contact in Derivational Morphology: The Etymology of \"Cosplay\""
 date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
-excerpt: "No, 'cosplay' is not trivial or incidental."
+excerpt: "\"No, 'cosplay' is not trivial or incidental. Only contact linguistics can explain it.\""
 ---
 
 Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
 
 Only contact linguistics, the study of how languages directly and indirectly influence each other, can answer this!
 
-While the act of cosplaying can be summarized as costume play, English words are not typically formed in this way. Portmanteaus are typically reserved for wordplay (where even there they work quite differently). And regular compounds like "medical scholar" don't form words like "medschol." 
+While the act of cosplaying could be summarized as costume play, English words are not  formed in this way! Portmanteaus are typically reserved for wordplay (where even there they work quite differently). And regular compounds like "science degree" don't form words like "scideg." 
 
 No, 'cosplay' is not trivial or incidental.
 
