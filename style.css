@@ -863,6 +863,10 @@ footer {
     bottom: auto;
   }
 
+  .links-section {
+    margin-top: 0;
+  }
+
   /* Hide tree animation on small screens */
   .tree-section {
     display: none;
