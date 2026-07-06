@@ -1,12 +1,19 @@
 [
   {
-    "slug": "etymology-and-sentiment",
-    "title": "PLACEHOLDER POST - Replace Me",
-    "date": "2025-07-05",
+    "slug": "cosplay-etymology",
+    "title": "Indirect Trilingual Contact in Derivational Morphology: The True Etymological Origin of \"Cosplay\"",
+    "date": "2024-01-26",
     "tags": [
-      "placeholder"
+      "linguistics",
+      "morphology",
+      "etymology",
+      "contact-linguistics",
+      "japanese",
+      "pop-culture",
+      "english",
+      "chinese"
     ],
-    "excerpt": "This is a dummy post. Delete this file and write a real one.",
-    "readingTime": 1
+    "excerpt": "Most people know \"cosplay\" came from a Japanese portmanteau. Far fewer ask why Japanese forms words that way — and the answer runs through a trilingual chain of borrowed derivational rules.",
+    "readingTime": 6
   }
 ]
