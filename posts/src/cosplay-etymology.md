@@ -20,7 +20,7 @@ To answer this question, we need to look at Chinese compounding derivational mor
 1. Chinese words are one or two syllables, and not more.
  - In Old Chinese, they were always one. In modern Chinese, they can be two. Some loaned nouns get to three or more, but it's very uncommon.
 2. Chinese words are frequently loaned into other East Asian languages. They can be written with the same characters but often very different pronunciations.
-- This can come from either the native word being assigned to the Chinese character, or the Chinese phonological form being loaned. (But it will still hcange over time to be different from how it was in the Chinese variety of origin!)
+- This can come from either the native word being assigned to the Chinese character, or the Chinese phonological form being loaned. (But it will still change over time to be different from how it was in the Chinese variety of origin!)
 3. Chinese syllables are typically two mora.
  - A mora is a theoretical timing unit of speech. Syllables are nearly always said to be either short (at one mora), or long (at least two mora). 
  - Typically, when people observe that some languages seem to be "faster" than others, this is because those languages are made up of mostly short syllables, like Spanish or Japanese. 
