@@ -1252,6 +1252,57 @@ footer {
   border-color: #2a2a2a;
 }
 
+/* --- Glossary term tooltips --- */
+.term {
+  color: var(--accent-yellow);
+  border-bottom: 1px dotted var(--accent-yellow);
+  cursor: help;
+}
+
+.term:hover,
+.term:focus,
+.term.is-active {
+  color: var(--accent-purple);
+  border-bottom-color: var(--accent-purple);
+  outline: none;
+}
+
+/* Single shared popover, positioned in JS and appended to <body> so it
+   always renders above page content and is never clipped by the
+   overflow:hidden panels the layout uses elsewhere. */
+.term-popover {
+  position: fixed;
+  max-width: min(320px, 86vw);
+  background: var(--card);
+  border: 1px solid rgba(66, 133, 244, 0.4);
+  border-top: 2px solid var(--accent-blue);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(66, 133, 244, 0.2);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  padding: 10px 14px;
+  color: var(--ink);
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.term-popover.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 767px) {
+  .term-popover {
+    max-width: min(260px, 78vw);
+    font-size: 0.8rem;
+  }
+}
+
 /* Mobile blog adjustments */
 @media (max-width: 767px) {
   .post-nav {

@@ -29,6 +29,26 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+// Replaces explicit {{term}} / {{display|term}} markup with hoverable glossary spans,
+// looking definitions up in the post's frontmatter `terms` map.
+function applyTerms(content, terms, slug) {
+  if (!terms) return content;
+  const defs = {};
+  for (const [key, def] of Object.entries(terms)) {
+    defs[key.trim().toLowerCase()] = def;
+  }
+  return content.replace(/\{\{([^{}|]+?)(?:\|([^{}]+?))?\}\}/g, (match, display, key) => {
+    const lookupKey = (key || display).trim().toLowerCase();
+    const def = defs[lookupKey];
+    if (!def) {
+      console.warn(`  [warn] ${slug}: no glossary entry for term "${lookupKey}" (from "${match}")`);
+      return display.trim();
+    }
+    const label = escapeHtml(`${display.trim()} — ${def}`);
+    return `<span class="term" tabindex="0" data-def="${escapeHtml(def)}" aria-label="${label}">${display.trim()}</span>`;
+  });
+}
+
 function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) {
   const tagsHtml = tags.map(t => `<span class="tech-badge">${escapeHtml(t)}</span>`).join('');
 
@@ -126,6 +146,7 @@ const posts = files.map(file => {
     tags,
     excerpt: data.excerpt || '',
     readingTime: readingTime(content),
+    terms: data.terms || null,
     _content: content,
   };
 }).sort((a, b) => b.date.localeCompare(a.date));
@@ -139,7 +160,7 @@ posts.forEach((post, i) => {
 
   const html = buildPostHtml({
     ...post,
-    content: marked(post._content),
+    content: marked(applyTerms(post._content, post.terms, post.slug)),
     prev,
     next,
   });
@@ -148,7 +169,7 @@ posts.forEach((post, i) => {
   console.log(`  built posts/${post.slug}/index.html`);
 });
 
-const manifest = posts.map(({ _content, ...p }) => p);
+const manifest = posts.map(({ _content, terms, ...p }) => p);
 fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
 fs.writeFileSync(path.join(OUT, 'manifest.js'), `window.__blogPosts__ = ${JSON.stringify(manifest)};`, 'utf-8');
 console.log(`  wrote posts/manifest.json + manifest.js (${manifest.length} post${manifest.length !== 1 ? 's' : ''})`);

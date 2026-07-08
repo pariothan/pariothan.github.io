@@ -3,11 +3,19 @@ title: "Trilingual Contact in Derivational Morphology: The Etymology of \"Cospla
 date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
 excerpt: "\"No, 'cosplay' is not trivial or incidental. Only contact linguistics can explain it.\""
+terms:
+  portmanteau: "A word formed by blending the sounds and meanings of two other words, like 'smog' from smoke + fog."
+  mora: "A theoretical timing unit of speech. Syllables are either short (one mora) or long (two or more mora)."
+  derivational morphology: "The set of processes by which languages form new words, typically by combining roots and affixes."
+  contact linguistics: "The study of how languages influence each other through prolonged contact between their speakers."
+  compounding: "Forming a new word by combining two or more existing words or roots."
+  sinosphere: "The historical cultural sphere of countries whose writing systems and vocabulary were heavily shaped by Classical Chinese: China, Japan, Korea, and Vietnam."
+  katakana: "One of the two Japanese syllabaries, conventionally used for foreign loanwords and onomatopoeia."
 ---
 
-Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin portmanteau of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
+Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin {{portmanteau}} of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
 
-Only contact linguistics, the study of how languages directly and indirectly influence each other, can answer this!
+Only {{contact linguistics}}, the study of how languages directly and indirectly influence each other, can answer this!
 
 While the act of cosplaying could be summarized as costume play, English words are not  formed in this way! Portmanteaus are typically reserved for wordplay (where even there they work quite differently). And regular compounds like "science degree" don't form words like "scideg." 
 
@@ -15,14 +23,14 @@ No, 'cosplay' is not trivial or incidental.
 
 ## Some background on Chinese compounding
 
-To answer this question, we need to look at Chinese compounding derivational morphology. Derivational Morphology is the process by which languages form new words. Here's some basic facts about Chinese words we'll need:
+To answer this question, we need to look at Chinese {{compounding}} {{derivational morphology}}. Derivational Morphology is the process by which languages form new words. Here's some basic facts about Chinese words we'll need:
 
 1. Chinese words are one or two syllables, and not more.
  - In Old Chinese, they were always one. In modern Chinese, they can be two. Some loaned nouns get to three or more, but it's very uncommon.
 2. Chinese words are frequently loaned into other East Asian languages. They can be written with the same characters but often very different pronunciations.
 - This can come from either the native word being assigned to the Chinese character, or the Chinese phonological form being loaned. (But it will still change over time to be different from how it was in the Chinese variety of origin!)
-3. Chinese syllables are typically two mora.
- - A mora is a theoretical timing unit of speech. Syllables are nearly always said to be either short (at one mora), or long (at least two mora). 
+3. Chinese syllables are typically two {{mora}}.
+ - A {{mora}} is a theoretical timing unit of speech. Syllables are nearly always said to be either short (at one mora), or long (at least two mora). 
  - Typically, when people observe that some languages seem to be "faster" than others, this is because those languages are made up of mostly short syllables, like Spanish or Japanese. 
   - English has a heavily mixed syllable set of short and long syllables.
  - An easy way to understand mora would be checking how long it takes to say "dad" and "daddy." While most people assume that "daddy" would take longer to say, as it has two syllables, "dad" takes longer to say, because it has one additional mora. Things with more mora take more time to say!
@@ -39,7 +47,7 @@ Here's a fun example of how "Chinese style" as a single word can be derived desp
 
 This lays the foundation of our journey to understanding 'cosplay.' But we don't just need to know Chinese derivational compounding. We also need to know how the process has been used in other languages: In this case, Japanese.
 
-Ever since Japan entered the written Sinosphere in the 7th century, new Japanese words have been formed according to Chinese derivational compounding rules. So, do we take one syllable from each root word? Well, not quite. Japanese syllables, unlike Chinese syllables, are nearly always one mora. Chinese words loaned into Japanese typically get restructured, with each long syllable becoming two short syllables. 
+Ever since Japan entered the written {{Sinosphere}} in the 7th century, new Japanese words have been formed according to Chinese derivational compounding rules. So, do we take one syllable from each root word? Well, not quite. Japanese syllables, unlike Chinese syllables, are nearly always one mora. Chinese words loaned into Japanese typically get restructured, with each long syllable becoming two short syllables. 
 
 A Chinese two-syllable word, 'ji.rou' (4 mora, 2 syllables), meaning chicken meat, gets remodeled in Japanese as 'to.ri.ni.ku' (4 mora, 4 syllables).
 
@@ -59,7 +67,7 @@ Taking the first two mora of /ko.su.tuu.mu/ (costume) — /ko.su/ — and the fi
 
 ![Derivation of cosplay from cos and play, 4 mora, 4 syllables](../../assets/images/posts/cosplay-etymology/derivation-cosplay.png)
 
-By usual Japanese practice, the new word is written with either katakana, a special set of glyphs showing that it is of foreign (and non-Chinese) origin, or with the orthography of the root language. As /ko.su/ represents \<cos\>, and /pu.re/ represents \<play\>, we can write /ko.su.pu.re/ as \<cosplay\>.
+By usual Japanese practice, the new word is written with either {{katakana}}, a special set of glyphs showing that it is of foreign (and non-Chinese) origin, or with the orthography of the root language. As /ko.su/ represents \<cos\>, and /pu.re/ represents \<play\>, we can write /ko.su.pu.re/ as \<cosplay\>.
 
 ## The English back-loan
 
