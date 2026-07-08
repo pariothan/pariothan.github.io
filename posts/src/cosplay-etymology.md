@@ -15,7 +15,7 @@ No, 'cosplay' is not trivial or incidental.
 
 ## Some background on Chinese compounding
 
-To answer this question, we need to look at Chinese compounding derivational morphology. Here's some basic facts about Chinese words we'll need:
+To answer this question, we need to look at Chinese compounding derivational morphology. Derivational Morphology is the process by which languages form new words. Here's some basic facts about Chinese words we'll need:
 
 1. Chinese words are one or two syllables, and not more.
  - In Old Chinese, they were always one. In modern Chinese, they can be two. Some loaned nouns get to three or more, but it's very uncommon.
@@ -37,7 +37,7 @@ Here's a fun example of how "Chinese style" as a single word can be derived desp
 
 ## How Japanese borrows the pattern
 
-This lays the foundation of our journey to understanding 'cosplay.' But we don't just need to know Chinese derivational compounding. We also need to know how the process has been used in other languages — in this case, Japanese.
+This lays the foundation of our journey to understanding 'cosplay.' But we don't just need to know Chinese derivational compounding. We also need to know how the process has been used in other languages: In this case, Japanese.
 
 Ever since Japan entered the written Sinosphere in the 7th century, new Japanese words have been formed according to Chinese derivational compounding rules. So, do we take one syllable from each root word? Well, not quite. Japanese syllables, unlike Chinese syllables, are nearly always one mora. Chinese words loaned into Japanese typically get restructured, with each long syllable becoming two short syllables. 
 
