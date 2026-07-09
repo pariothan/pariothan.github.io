@@ -4,13 +4,12 @@ date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
 excerpt: "\"No, 'cosplay' is not trivial or incidental. Only contact linguistics can explain it.\""
 terms:
-  portmanteau: "A word formed by blending the sounds and meanings of two other words, like 'smog' from smoke + fog."
   mora: "A theoretical timing unit of speech. Syllables are either short (one mora) or long (two or more mora)."
   derivational morphology: "The set of processes by which languages form new words, typically by combining roots and affixes."
-  contact linguistics: "The study of how languages influence each other through prolonged contact between their speakers."
+  contact linguistics: "The study of how languages influence each other through prolonged contact, either between speakers of both or within multilingual speakers and communities."
   compounding: "Forming a new word by combining two or more existing words or roots."
-  sinosphere: "The historical cultural sphere of countries whose writing systems and vocabulary were heavily shaped by Classical Chinese: China, Japan, Korea, and Vietnam."
-  katakana: "One of the two Japanese syllabaries, conventionally used for foreign loanwords and onomatopoeia."
+  sinosphere: "The historical cultural sphere of countries whose writing systems and vocabulary were heavily shaped by Classical Chinese."
+  katakana: "One of the two Japanese syllabaries, conventionally used for non-Chinese foreign loanwords and onomatopoeia."
 ---
 
 Most English speakers know the word "cosplay," and some use it every day. Many of them also know that the word has its origins in a Japanese-origin {{portmanteau}} of "costume" and "play." But a question this brings up and that may not be asked enough is: "Why?"
