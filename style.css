@@ -339,6 +339,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   --tree-color: var(--accent-green);
   --tree-opacity: .5;
 }
@@ -404,7 +405,10 @@ body {
 }
 
 /* --- Tree canvas --- */
+/* Absolutely positioned so the canvas's (DPR-scaled) pixel size never feeds back into the layout */
 #tree-canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;

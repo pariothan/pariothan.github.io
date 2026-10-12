@@ -5,7 +5,8 @@
 (function () {
   const popover = document.createElement('div');
   popover.className = 'term-popover';
-  popover.setAttribute('role', 'tooltip');
+  // Visual only: each .term already carries its definition in aria-label.
+  popover.setAttribute('aria-hidden', 'true');
   document.body.appendChild(popover);
 
   let activeTerm = null;
