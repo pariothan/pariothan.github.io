@@ -1,9 +1,10 @@
-# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
+# Development harnesses and build inputs, not pages
+Disallow: /docs/
+Disallow: /posts/src/
+Disallow: /projects/chesstest/debug.html
+Disallow: /projects/chesstest/test.html
+Disallow: /projects/langsim/test.html
 
-# Sitemap location
 Sitemap: https://prosodic.net/sitemap.xml
-
-# Crawl delay (optional, helps prevent overloading the server)
-Crawl-delay: 1

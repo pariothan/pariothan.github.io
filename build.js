@@ -5,6 +5,8 @@ const { marked } = require('marked');
 
 const SRC = path.join(__dirname, 'posts', 'src');
 const OUT = path.join(__dirname, 'posts');
+const SITE_URL = 'https://' + fs.readFileSync(path.join(__dirname, 'CNAME'), 'utf-8').trim();
+const AUTHOR = 'Samuel Lederer';
 
 function readingTime(text) {
   return Math.max(1, Math.ceil(text.trim().split(/\s+/).length / 200));
@@ -49,7 +51,44 @@ function applyTerms(content, terms, slug) {
   });
 }
 
-function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) {
+// First image in the rendered post, as an absolute URL (for social cards).
+function firstImageUrl(html, pageUrl) {
+  const m = html.match(/<img[^>]+src="([^"]+)"/);
+  return m ? new URL(m[1], pageUrl).href : `${SITE_URL}/assets/images/headshot.png`;
+}
+
+function postMeta({ slug, title, date, excerpt, content }) {
+  const url = `${SITE_URL}/posts/${slug}/`;
+  const image = firstImageUrl(content, url);
+  const desc = escapeHtml(excerpt);
+  const jsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: excerpt,
+    datePublished: date,
+    image,
+    url,
+    mainEntityOfPage: url,
+    author: { '@type': 'Person', name: AUTHOR, url: SITE_URL + '/' },
+  }).replace(/</g, '\\u003c');
+  return `<meta name="description" content="${desc}" />
+    <meta name="author" content="${AUTHOR}" />
+    <link rel="canonical" href="${url}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${escapeHtml(title)}" />
+    <meta property="og:description" content="${desc}" />
+    <meta property="og:image" content="${image}" />
+    <meta property="article:published_time" content="${date}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(title)}" />
+    <meta name="twitter:description" content="${desc}" />
+    <meta name="twitter:image" content="${image}" />
+    <script type="application/ld+json">${jsonLd}</script>`;
+}
+
+function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content, prev, next }) {
   const tagsHtml = tags.map(t => `<span class="tech-badge">${escapeHtml(t)}</span>`).join('');
 
   const prevHtml = prev
@@ -65,6 +104,7 @@ function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(title)} — Samuel Lederer</title>
+    ${postMeta({ slug, title, date, excerpt, content })}
     <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -173,3 +213,21 @@ const manifest = posts.map(({ _content, terms, ...p }) => p);
 fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
 fs.writeFileSync(path.join(OUT, 'manifest.js'), `window.__blogPosts__ = ${JSON.stringify(manifest)};`, 'utf-8');
 console.log(`  wrote posts/manifest.json + manifest.js (${manifest.length} post${manifest.length !== 1 ? 's' : ''})`);
+
+// Sitemap: the home page, every project linked from it, and every post.
+// Fragment URLs (#cv etc.) are omitted; search engines ignore them.
+const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
+const projectPaths = [...indexHtml.matchAll(/href="\.\/(projects\/[^"#?]+?)\/?"/g)].map(m => m[1] + '/');
+const EXTRA_PATHS = ['projects/letter-tree-puzzles/']; // live but not linked from the home page
+const sitemapEntries = [
+  { loc: `${SITE_URL}/` },
+  ...[...new Set([...projectPaths, ...EXTRA_PATHS])].sort().map(p => ({ loc: `${SITE_URL}/${p}` })),
+  ...posts.map(p => ({ loc: `${SITE_URL}/posts/${p.slug}/`, lastmod: p.date })),
+];
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapEntries.map(e => `  <url><loc>${e.loc}</loc>${e.lastmod ? `<lastmod>${e.lastmod}</lastmod>` : ''}</url>`).join('\n')}
+</urlset>
+`;
+fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap, 'utf-8');
+console.log(`  wrote sitemap.xml (${sitemapEntries.length} URLs)`);

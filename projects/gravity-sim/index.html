@@ -5,6 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Philosophiæ Naturalis Principia Mathematica</title>
+    <script>
+      // This file is the Vite dev entry; on the deployed site send visitors to the built app.
+      if (/^\/projects\/gravity-sim\/?$/.test(location.pathname)) location.replace('/projects/gravity-sim/dist/');
+    </script>
   </head>
   <body>
     <div id="root"></div>
