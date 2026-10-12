@@ -204,6 +204,27 @@ function buildPostHtml(post, shell) {
 `;
 }
 
+// Intrinsic size of a PNG, read from its IHDR chunk.
+function pngSize(file) {
+  try {
+    const buf = fs.readFileSync(file);
+    if (buf.toString('ascii', 1, 4) !== 'PNG') return null;
+    return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+  } catch {
+    return null;
+  }
+}
+
+// Give post images their intrinsic size (so the layout doesn't jump as they
+// load) and let the browser defer the off-screen ones.
+function sizeImages(html, pageDir) {
+  return html.replace(/<img src="([^"]+)"/g, (tag, src) => {
+    const size = /^https?:/.test(src) ? null : pngSize(path.resolve(pageDir, src));
+    if (!size) return tag;
+    return `<img src="${src}" width="${size.width}" height="${size.height}" loading="lazy" decoding="async"`;
+  });
+}
+
 function loadPosts() {
   if (!fs.existsSync(SRC)) return [];
   return fs.readdirSync(SRC).filter(f => f.endsWith('.md')).map(file => {
@@ -219,7 +240,7 @@ function loadPosts() {
       tags,
       excerpt: data.excerpt || '',
       readingTime: readingTime(content),
-      content: marked(applyTerms(content, data.terms, slug)),
+      content: sizeImages(marked(applyTerms(content, data.terms, slug)), path.join(OUT, slug)),
     };
   }).sort((a, b) => b.date.localeCompare(a.date));
 }
