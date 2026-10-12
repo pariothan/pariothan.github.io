@@ -21,10 +21,12 @@
     <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../style.css" />
-    <link rel="stylesheet" href="../../print.css" media="print" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Fira+Code&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../style.css?v=1ed7266a" />
+    <link rel="stylesheet" href="../../print.css?v=a32be509" media="print" />
   </head>
   <body>
     <div class="wrap">
@@ -104,6 +106,7 @@
       <aside class="sidebar" aria-label="Sidebar">
         <div class="nav-section">
           <div class="nav-separator">NAVIGATION</div>
+
           <nav class="button-frame" aria-label="Section navigation">
             <a class="navbtn" href="../../">ME</a>
             <a class="navbtn" href="../../#projects">PROJECTS</a>
@@ -111,22 +114,35 @@
             <a class="navbtn" href="../../#blog">BLOG</a>
           </nav>
         </div>
+
         <div class="tree-section">
           <canvas id="tree-canvas"></canvas>
         </div>
+
         <div class="links-section">
-          <div class="links-separator">LINKS</div>
+          <div class="links-separator">LINKS/CONTACT</div>
+
           <nav class="links-frame" aria-label="External links">
-            <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer" class="linkbtn">GITHUB</a>
-            <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer" class="linkbtn">LINKEDIN</a>
-            <a href="mailto:slederer@pm.me" class="linkbtn">EMAIL</a>
+            <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer" class="linkbtn">
+              GITHUB
+            </a>
+            <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer" class="linkbtn">
+              LINKEDIN
+            </a>
+            <a href="mailto:slederer+website@pm.me" class="linkbtn">
+              EMAIL
+            </a>
+            <button class="linkbtn" id="personal-website-link">
+              WEBSITE
+            </button>
           </nav>
         </div>
       </aside>
+
       <div class="name-column"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
     </div>
-    <script src="../../script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+    <script src="../../js/site.js?v=ae3165c7"></script>
+    <script src="../../js/tree.js?v=8cd6edf7"></script>
+    <script src="../../js/glossary.js?v=bc314f7e"></script>
   </body>
 </html>

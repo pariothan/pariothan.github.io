@@ -1,12 +1,25 @@
+// Static site build. index.html is hand-edited and is the source of truth for
+// the page shell: the <head> assets and the sidebar between its `shell:*`
+// markers are copied into every post. The build then
+//   - renders posts/src/*.md to posts/<slug>/index.html,
+//   - writes the blog cards into index.html between its `build:*` markers,
+//   - stamps ?v=<content hash> on local CSS/JS references (cache busting),
+//   - writes sitemap.xml.
+// All outputs are committed; GitHub Pages serves the repo as-is.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const matter = require('gray-matter');
 const { marked } = require('marked');
 
-const SRC = path.join(__dirname, 'posts', 'src');
-const OUT = path.join(__dirname, 'posts');
-const SITE_URL = 'https://' + fs.readFileSync(path.join(__dirname, 'CNAME'), 'utf-8').trim();
+const ROOT = __dirname;
+const SRC = path.join(ROOT, 'posts', 'src');
+const OUT = path.join(ROOT, 'posts');
+const SITE_URL = 'https://' + fs.readFileSync(path.join(ROOT, 'CNAME'), 'utf-8').trim();
 const AUTHOR = 'Samuel Lederer';
+const HLJS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0';
+
+// ---------- helpers ----------
 
 function readingTime(text) {
   return Math.max(1, Math.ceil(text.trim().split(/\s+/).length / 200));
@@ -31,6 +44,49 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+// Replace the content between <!-- {name} --> and <!-- /{name} --> markers.
+function between(html, name) {
+  const m = html.match(new RegExp(`<!-- ${name} -->([\\s\\S]*?)<!-- /${name} -->`));
+  if (!m) throw new Error(`index.html is missing the <!-- ${name} --> markers`);
+  return m[1];
+}
+
+function replaceBetween(html, name, content) {
+  between(html, name); // throws if the markers are missing
+  return html.replace(
+    new RegExp(`(<!-- ${name} -->)[\\s\\S]*?(<!-- /${name} -->)`),
+    (_, open, close) => `${open}${content}${close}`,
+  );
+}
+
+// ---------- cache busting ----------
+
+const VERSIONED = ['style.css', 'print.css', ...fs.readdirSync(path.join(ROOT, 'js')).map(f => `js/${f}`)];
+const versions = Object.fromEntries(VERSIONED.map(f => [
+  f, crypto.createHash('sha1').update(fs.readFileSync(path.join(ROOT, f))).digest('hex').slice(0, 8),
+]));
+
+function stampVersions(html) {
+  return html.replace(
+    /((?:href|src)="(?:\.\/|(?:\.\.\/)+)?)(style\.css|print\.css|js\/[\w-]+\.js)(?:\?v=\w+)?"/g,
+    (_, prefix, file) => `${prefix}${file}${versions[file] ? `?v=${versions[file]}` : ''}"`,
+  );
+}
+
+// ---------- shared shell ----------
+
+// Rewrite the home page's relative URLs so the fragment works from `prefix`
+// (e.g. "../../" for posts/<slug>/).
+function rebase(html, prefix) {
+  return html
+    .replace(/ aria-current="page"/g, '')
+    .replace(/href="#me"/g, `href="${prefix}"`)
+    .replace(/(href|src)="#/g, `$1="${prefix}#`)
+    .replace(/(href|src)="(?!https?:|mailto:|data:|\/|#|\.\.\/)(?:\.\/)?/g, `$1="${prefix}`);
+}
+
+// ---------- glossary terms ----------
+
 // Replaces explicit {{term}} / {{display|term}} markup with hoverable glossary spans,
 // looking definitions up in the post's frontmatter `terms` map.
 function applyTerms(content, terms, slug) {
@@ -50,6 +106,8 @@ function applyTerms(content, terms, slug) {
     return `<span class="term" tabindex="0" data-def="${escapeHtml(def)}" aria-label="${label}">${display.trim()}</span>`;
   });
 }
+
+// ---------- posts ----------
 
 // First image in the rendered post, as an absolute URL (for social cards).
 function firstImageUrl(html, pageUrl) {
@@ -88,8 +146,11 @@ function postMeta({ slug, title, date, excerpt, content }) {
     <script type="application/ld+json">${jsonLd}</script>`;
 }
 
-function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content, prev, next }) {
+function buildPostHtml(post, shell) {
+  const { title, date, tags, readingTime, content, prev, next } = post;
   const tagsHtml = tags.map(t => `<span class="tech-badge">${escapeHtml(t)}</span>`).join('');
+  const hasCode = content.includes('<pre><code');
+  const hasTerms = content.includes('class="term"');
 
   const prevHtml = prev
     ? `<a class="navbtn post-nav-btn" href="../${prev.slug}/">&#8592; ${escapeHtml(prev.title)}</a>`
@@ -103,15 +164,10 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${escapeHtml(title)} — Samuel Lederer</title>
-    ${postMeta({ slug, title, date, excerpt, content })}
-    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../style.css" />
-    <link rel="stylesheet" href="../../print.css" media="print" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <title>${escapeHtml(title)} — ${AUTHOR}</title>
+    ${postMeta(post)}
+    ${shell.head.trim()}${hasCode ? `
+    <link rel="stylesheet" href="${HLJS}/styles/atom-one-dark.min.css" />` : ''}
   </head>
   <body>
     <div class="wrap">
@@ -136,87 +192,91 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
           </nav>
         </article>
       </main>
-      <aside class="sidebar" aria-label="Sidebar">
-        <div class="nav-section">
-          <div class="nav-separator">NAVIGATION</div>
-          <nav class="button-frame" aria-label="Section navigation">
-            <a class="navbtn" href="../../">ME</a>
-            <a class="navbtn" href="../../#projects">PROJECTS</a>
-            <a class="navbtn" href="../../#cv">CV</a>
-            <a class="navbtn" href="../../#blog">BLOG</a>
-          </nav>
-        </div>
-        <div class="tree-section">
-          <canvas id="tree-canvas"></canvas>
-        </div>
-        <div class="links-section">
-          <div class="links-separator">LINKS</div>
-          <nav class="links-frame" aria-label="External links">
-            <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer" class="linkbtn">GITHUB</a>
-            <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer" class="linkbtn">LINKEDIN</a>
-            <a href="mailto:slederer@pm.me" class="linkbtn">EMAIL</a>
-          </nav>
-        </div>
-      </aside>
-      <div class="name-column"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
+      ${shell.sidebar.trim()}
     </div>
-    <script src="../../script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+    <script src="../../js/site.js"></script>
+    <script src="../../js/tree.js"></script>${hasTerms ? `
+    <script src="../../js/glossary.js"></script>` : ''}${hasCode ? `
+    <script src="${HLJS}/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>` : ''}
   </body>
-</html>`;
+</html>
+`;
 }
 
-if (!fs.existsSync(SRC)) fs.mkdirSync(SRC, { recursive: true });
+function loadPosts() {
+  if (!fs.existsSync(SRC)) return [];
+  return fs.readdirSync(SRC).filter(f => f.endsWith('.md')).map(file => {
+    const { data, content } = matter(fs.readFileSync(path.join(SRC, file), 'utf-8'));
+    const slug = data.slug || path.basename(file, '.md');
+    const tags = Array.isArray(data.tags)
+      ? data.tags
+      : data.tags ? String(data.tags).split(',').map(t => t.trim()) : [];
+    return {
+      slug,
+      title: data.title || slug,
+      date: data.date ? toISODate(data.date) : new Date().toISOString().slice(0, 10),
+      tags,
+      excerpt: data.excerpt || '',
+      readingTime: readingTime(content),
+      content: marked(applyTerms(content, data.terms, slug)),
+    };
+  }).sort((a, b) => b.date.localeCompare(a.date));
+}
 
-const files = fs.readdirSync(SRC).filter(f => f.endsWith('.md'));
+// ---------- blog index (inside index.html) ----------
 
-const posts = files.map(file => {
-  const raw = fs.readFileSync(path.join(SRC, file), 'utf-8');
-  const { data, content } = matter(raw);
-  const slug = data.slug || path.basename(file, '.md');
-  const rawTags = data.tags;
-  const tags = Array.isArray(rawTags)
-    ? rawTags
-    : rawTags ? String(rawTags).split(',').map(t => t.trim()) : [];
-  return {
-    slug,
-    title: data.title || slug,
-    date: data.date ? toISODate(data.date) : new Date().toISOString().slice(0, 10),
-    tags,
-    excerpt: data.excerpt || '',
-    readingTime: readingTime(content),
-    terms: data.terms || null,
-    _content: content,
-  };
-}).sort((a, b) => b.date.localeCompare(a.date));
+function blogCardHtml(post) {
+  const tagsHtml = post.tags.map(t => `<span class="tech-badge">${escapeHtml(t)}</span>`).join('');
+  return `
+            <a class="story-card blog-post-card" href="./posts/${post.slug}/" data-tags="${escapeHtml(JSON.stringify(post.tags))}">
+              <div class="post-card-meta">
+                <time class="post-date" datetime="${post.date}">${formatDate(post.date)}</time>
+                <span class="post-reading-time">${post.readingTime}&nbsp;min&nbsp;read</span>
+              </div>
+              <h3>${escapeHtml(post.title)}</h3>
+              ${tagsHtml ? `<div class="tech-stack">${tagsHtml}</div>` : ''}
+              ${post.excerpt ? `<p class="post-excerpt">${escapeHtml(post.excerpt)}</p>` : ''}
+            </a>`;
+}
+
+function blogFiltersHtml(posts) {
+  const allTags = [...new Set(posts.flatMap(p => p.tags))].sort();
+  if (allTags.length <= 1) return '';
+  const btn = (label, tag, active) =>
+    `<button type="button" class="blog-tag-btn${active ? ' active' : ''}" data-tag="${escapeHtml(tag)}">${escapeHtml(label)}</button>`;
+  return [btn('ALL', '', true), ...allTags.map(t => btn(t, t, false))].join('');
+}
+
+// ---------- run ----------
+
+const posts = loadPosts();
+
+let indexHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf-8');
+indexHtml = replaceBetween(indexHtml, 'build:blog-filters', blogFiltersHtml(posts));
+indexHtml = replaceBetween(indexHtml, 'build:blog-posts', posts.length
+  ? posts.map(blogCardHtml).join('') + '\n            '
+  : '<p class="blog-status">No posts yet — check back soon.</p>');
+indexHtml = stampVersions(indexHtml);
+fs.writeFileSync(path.join(ROOT, 'index.html'), indexHtml, 'utf-8');
+console.log(`  updated index.html (${posts.length} blog card${posts.length !== 1 ? 's' : ''})`);
+
+const shell = {
+  head: between(indexHtml, 'shell:head'),
+  sidebar: between(indexHtml, 'shell:sidebar'),
+};
 
 posts.forEach((post, i) => {
   const dir = path.join(OUT, post.slug);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-  const prev = posts[i + 1] || null;
-  const next = posts[i - 1] || null;
-
-  const html = buildPostHtml({
-    ...post,
-    content: marked(applyTerms(post._content, post.terms, post.slug)),
-    prev,
-    next,
-  });
-
-  fs.writeFileSync(path.join(dir, 'index.html'), html, 'utf-8');
+  fs.mkdirSync(dir, { recursive: true });
+  const postShell = { head: rebase(shell.head, '../../'), sidebar: rebase(shell.sidebar, '../../') };
+  const html = buildPostHtml({ ...post, prev: posts[i + 1] || null, next: posts[i - 1] || null }, postShell);
+  fs.writeFileSync(path.join(dir, 'index.html'), stampVersions(html), 'utf-8');
   console.log(`  built posts/${post.slug}/index.html`);
 });
 
-const manifest = posts.map(({ _content, terms, ...p }) => p);
-fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
-fs.writeFileSync(path.join(OUT, 'manifest.js'), `window.__blogPosts__ = ${JSON.stringify(manifest)};`, 'utf-8');
-console.log(`  wrote posts/manifest.json + manifest.js (${manifest.length} post${manifest.length !== 1 ? 's' : ''})`);
-
 // Sitemap: the home page, every project linked from it, and every post.
 // Fragment URLs (#cv etc.) are omitted; search engines ignore them.
-const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
 const projectPaths = [...indexHtml.matchAll(/href="\.\/(projects\/[^"#?]+?)\/?"/g)].map(m => m[1] + '/');
 const EXTRA_PATHS = ['projects/letter-tree-puzzles/']; // live but not linked from the home page
 const sitemapEntries = [
@@ -229,5 +289,5 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 ${sitemapEntries.map(e => `  <url><loc>${e.loc}</loc>${e.lastmod ? `<lastmod>${e.lastmod}</lastmod>` : ''}</url>`).join('\n')}
 </urlset>
 `;
-fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemap, 'utf-8');
+fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap, 'utf-8');
 console.log(`  wrote sitemap.xml (${sitemapEntries.length} URLs)`);

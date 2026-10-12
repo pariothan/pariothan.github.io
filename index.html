@@ -24,22 +24,21 @@
     <meta name="twitter:description" content="(Currently) Freelance linguist working at the intersection of language, data, and technology. Explore my interactive projects and linguistic experiments." />
     <meta name="twitter:image" content="https://prosodic.net/assets/images/headshot.png" />
 
-    <!-- Favicon -->
+    <!-- Shared with post pages: build.js copies everything between the shell:head markers -->
+    <!-- shell:head -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-
-    <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Fira+Code&family=JetBrains+Mono&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="style.css?v=1ed7266a" />
+    <link rel="stylesheet" href="print.css?v=a32be509" media="print" />
+    <!-- /shell:head -->
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=2" />
-    <link rel="stylesheet" href="print.css?v=2" media="print" />
+    <!-- Pick the visible section before first paint. Without JS, every section shows. -->
+    <script>document.documentElement.dataset.view = location.hash.slice(1) || 'me';</script>
   </head>
   <body>
     <div class="wrap">
@@ -58,7 +57,7 @@
           </article>
         </section>
 
-        <section id="projects" class="view" hidden>
+        <section id="projects" class="view">
           <article class="story-grid grid-two masonry">
             <section class="title-card span-2">
               <h1>I do these for fun, but you can look</h1>
@@ -141,17 +140,31 @@
           </article>
         </section>
 
-        <section id="blog" class="view" hidden>
+        <section id="blog" class="view">
           <article class="story-grid auto-fit">
             <section class="title-card">
               <h1>I wrote some things</h1>
-              <div id="blog-tag-filters" class="blog-tag-filters" role="group" aria-label="Filter posts"></div>
+              <div id="blog-tag-filters" class="blog-tag-filters" role="group" aria-label="Filter posts" hidden>
+                <!-- build:blog-filters --><button type="button" class="blog-tag-btn active" data-tag="">ALL</button><button type="button" class="blog-tag-btn" data-tag="chinese">chinese</button><button type="button" class="blog-tag-btn" data-tag="contact-linguistics">contact-linguistics</button><button type="button" class="blog-tag-btn" data-tag="english">english</button><button type="button" class="blog-tag-btn" data-tag="etymology">etymology</button><button type="button" class="blog-tag-btn" data-tag="japanese">japanese</button><button type="button" class="blog-tag-btn" data-tag="linguistics">linguistics</button><button type="button" class="blog-tag-btn" data-tag="morphology">morphology</button><button type="button" class="blog-tag-btn" data-tag="pop-culture">pop-culture</button><!-- /build:blog-filters -->
+              </div>
             </section>
           </article>
-          <div id="blog-posts" class="blog-posts-grid"></div>
+          <div id="blog-posts" class="blog-posts-grid">
+            <!-- build:blog-posts -->
+            <a class="story-card blog-post-card" href="./posts/cosplay-etymology/" data-tags="[&quot;linguistics&quot;,&quot;morphology&quot;,&quot;etymology&quot;,&quot;contact-linguistics&quot;,&quot;japanese&quot;,&quot;pop-culture&quot;,&quot;english&quot;,&quot;chinese&quot;]">
+              <div class="post-card-meta">
+                <time class="post-date" datetime="2024-01-26">January 26, 2024</time>
+                <span class="post-reading-time">6&nbsp;min&nbsp;read</span>
+              </div>
+              <h3>Trilingual Contact in Derivational Morphology: The Etymology of &quot;Cosplay&quot;</h3>
+              <div class="tech-stack"><span class="tech-badge">linguistics</span><span class="tech-badge">morphology</span><span class="tech-badge">etymology</span><span class="tech-badge">contact-linguistics</span><span class="tech-badge">japanese</span><span class="tech-badge">pop-culture</span><span class="tech-badge">english</span><span class="tech-badge">chinese</span></div>
+              <p class="post-excerpt">&quot;No, 'cosplay' is not trivial or incidental. Only contact linguistics can explain it.&quot;</p>
+            </a>
+            <!-- /build:blog-posts -->
+          </div>
         </section>
 
-        <section id="cv" class="view" hidden>
+        <section id="cv" class="view">
           <article class="story-grid grid-two">
             <section class="title-card">
               <h1>Samuel Lederer</h1>
@@ -326,6 +339,8 @@
 
       </main>
 
+      <!-- Shared with post pages: build.js copies everything between the shell:sidebar markers -->
+      <!-- shell:sidebar -->
       <aside class="sidebar" aria-label="Sidebar">
         <div class="nav-section">
           <div class="nav-separator">NAVIGATION</div>
@@ -363,11 +378,11 @@
       </aside>
 
       <div class="name-column"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
+      <!-- /shell:sidebar -->
     </div>
 
-    <!-- Blog post manifest (generated by build.js) -->
-    <script src="./posts/manifest.js?v=2"></script>
-    <!-- Main JavaScript -->
-    <script src="script.js?v=2"></script>
+    <script src="js/site.js?v=ae3165c7"></script>
+    <script src="js/router.js?v=8b506ba2"></script>
+    <script src="js/tree.js?v=8cd6edf7"></script>
   </body>
 </html>

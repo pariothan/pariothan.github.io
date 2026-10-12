@@ -17,6 +17,22 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+/* Home page sections: an inline script sets html[data-view]; without JS every section shows. */
+html[data-view] .view {
+  display: none;
+}
+
+html[data-view="me"] #me,
+html[data-view="projects"] #projects,
+html[data-view="cv"] #cv,
+html[data-view="blog"] #blog {
+  display: block;
+}
+
 html {
   scroll-behavior: smooth;
 }
