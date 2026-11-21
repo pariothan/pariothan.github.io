@@ -1200,3 +1200,16 @@ function renderBlogPosts(posts) {
     if (activeTerm) positionPopover(activeTerm);
   });
 })();
+
+// Private demo: the button first asks for a password, then hands it to the demo page (which is what checks it).
+(function () {
+  const form = document.getElementById('private-demo');
+  if (!form) return;
+  const key = document.getElementById('private-demo-key');
+  form.addEventListener('submit', (e) => {
+    if (key.hidden) { e.preventDefault(); key.hidden = false; key.focus(); return; }
+    if (!key.value) { e.preventDefault(); key.focus(); return; }
+    try { sessionStorage.setItem('private-demo-key', key.value); } catch {}
+    key.value = '';
+  });
+})();

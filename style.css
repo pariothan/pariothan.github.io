@@ -1313,3 +1313,36 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- Private demo (password-gated) --- */
+.private-demo-form {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.private-demo-key {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid #333;
+  font-size: 14px;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.private-demo-key:focus {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+.private-demo-key:not([hidden]) + .private-demo-btn {
+  width: auto;
+  flex: none;
+  padding: 10px 14px;
+}
+
+.private-demo-btn {
+  text-align: center;
+}
