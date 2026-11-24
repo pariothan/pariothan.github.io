@@ -1,16 +1,18 @@
+/* The idea: as little as possible. No boxes, no frames, no decoration.
+   Text on a dark screen, a thin line where one is needed, and the tree. */
+
 :root {
   --bg: #0a0a0a;
   --ink: #e8eaed;
-  /* LCARS-inspired accents - refined */
+  --dim: rgba(232, 234, 237, 0.55);  /* dates, labels, small print */
+  --rule: #262626;                   /* thin dividing lines */
   --accent-green: #7cb342;
   --accent-blue: #4285f4;
-  --accent-purple: #9c27b0;
+  --accent-purple: #ab47bc;
   --accent-yellow: #ff9800;
-  --accent-red: #f44336;
-  /* Panels */
-  --card: #1a1a1a;
-  --card-dark: #252525;
   --edge-column-width: 56px;
+  --font-display: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
 * {
@@ -19,28 +21,21 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark; /* dark scrollbars and form controls to match */
 }
 
-html,
-body {
-  height: 100%;
-}
 body {
   margin: 0;
-  font-family: "Roboto", "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--ink);
   background: var(--bg);
+  /* CRT dots */
   background-image: radial-gradient(circle, rgba(160, 180, 100, 0.05) 1px, transparent 1px);
   background-size: 6px 6px;
   background-attachment: fixed;
   line-height: 1.3;
-  font-weight: 400;
   text-rendering: optimizeLegibility;
   font-feature-settings: "liga" 0;
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
 }
 
 ::selection {
@@ -48,429 +43,391 @@ body {
   color: #000;
 }
 
-/* --- Layout --- */
+/* --- Typography --- */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--accent-green);
+}
+
+h2 {
+  margin: 2em 0 0.5em;
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  line-height: 1.3;
+  color: var(--accent-blue);
+}
+
+h3 {
+  margin: 1.4em 0 0.4em;
+  font-size: clamp(1.15rem, 1.9vw, 1.4rem);
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+p,
+li {
+  font-size: clamp(1rem, 1.4vw, 1.08rem);
+  line-height: 1.6;
+}
+
+p {
+  margin: 0 0 1.1em;
+}
+
+ul,
+ol {
+  margin: 0 0 1.1em 1.4em;
+  padding: 0;
+}
+
+li {
+  margin: 0.3em 0;
+}
+
+li::marker {
+  color: var(--dim);
+}
+
+a {
+  color: var(--accent-yellow);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--ink);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* --- Layout: the page | navigation | name --- */
 .wrap {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: var(--edge-column-width) minmax(0, 1fr) 150px var(--edge-column-width); /* left bar | content | sidebar | name */
-  gap: 8px;
-  padding: 12px;
-  max-width: 1600px;
+  grid-template-columns: minmax(0, 1fr) 150px var(--edge-column-width);
+  gap: 32px;
+  padding: 0 12px 0 clamp(24px, 7vw, 110px);
+  max-width: 1500px;
   margin: 0 auto;
 }
 
-.content-frame {
-  grid-column: 2;
-  background: transparent;
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(124, 179, 66, 0.08),
-      rgba(124, 179, 66, 0.08) 6px,
-      transparent 1px,
-      transparent 48px
-    ),
-    repeating-linear-gradient(
-      to right,
-      rgba(124, 179, 66, 0.06),
-      rgba(124, 179, 66, 0.06) 6px,
-      transparent 1px,
-      transparent 48px
-    );
-  padding: 24px;
-  min-height: 65svh;
-  border: 1px solid #333;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-  position: relative;
-  overflow: hidden;
-  transition: opacity 0.2s ease-in-out;
+.page {
+  grid-column: 1;
+  padding: 64px 0 120px;
 }
 
-.content-frame::before {
-  content: "";
+.page:focus {
+  outline: none;
+}
+
+/* Text gets a readable width. The ME page is let off, for the tree. */
+.view,
+.post {
+  max-width: 800px;
+}
+
+#me {
+  max-width: none;
+}
+
+/* --- Page titles --- */
+.page-title {
+  margin-bottom: 56px;
+}
+
+.page-title h2 {
+  margin: 0.5em 0 0;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  color: var(--dim);
+}
+
+.page-title p {
+  margin: 0.8em 0 0;
+  color: var(--dim);
+}
+
+/* The one on the ME page, with the headshot */
+.page-title--intro {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+/* the one thing that keeps its cut corners */
+.headshot {
+  flex-shrink: 0;
+  max-width: 140px;
+  height: auto;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+/* --- ME page: the big prosodic tree --- */
+.tree-hero {
+  position: relative;
+  height: clamp(340px, calc(100svh - 360px), 760px);
+  max-width: 1100px;
+  margin-top: 40px;
+  --tree-opacity: 0.95;
+  --tree-font-size: 24;
+}
+
+.tree-canvas {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(124, 179, 66, 0.18),
-      rgba(124, 179, 66, 0.18) 1px,
-      transparent 1px,
-      transparent 48px
-    ),
-    repeating-linear-gradient(
-      to right,
-      rgba(124, 179, 66, 0.14),
-      rgba(124, 179, 66, 0.14) 1px,
-      transparent 1px,
-      transparent 48px
-    );
-  filter: blur(6px);
-  mix-blend-mode: screen;
-  opacity: 0.5;
-  z-index: 0;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-}
-
-.story-grid {
-  display: grid;
-  gap: 16px;
-  position: relative;
-  z-index: 1;
-  width: 100%;
-}
-
-.story-card {
-  background: var(--card);
-  border: 1px solid #333;
-  padding: 16px 20px;
-  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.04), inset -1px -1px 0 rgba(0, 0, 0, 0.25);
-  opacity: 0.95;
-  width: 100%;
-  align-self: start;
-}
-
-.story-card h2:first-child,
-.story-card h3:first-child {
-  margin-top: 0;
-}
-
-/* Technology stack badges */
-.tech-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.tech-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  background: rgba(124, 179, 66, 0.15);
-  border: 1px solid rgba(124, 179, 66, 0.4);
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  color: var(--accent-green);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.title-card {
-  background: rgba(12, 18, 29, 0.92);
-  border: 1px solid rgba(66, 133, 244, 0.4);
-  padding: 28px;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 12px, 100% 100%, 10px 100%, 0 calc(100% - 12px));
-  box-shadow:
-    0 6px 26px rgba(66, 133, 244, 0.28),
-    inset 0 0 0 1px rgba(66, 133, 244, 0.32);
-  position: relative;
-  width: 100%;
-  color: var(--ink);
-  align-self: start;
-  overflow: hidden;
-}
-
-.title-card h1,
-.title-card h2 {
-  margin: 0;
-}
-
-.title-card h1 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  letter-spacing: 0.015em;
-}
-
-.title-card h2 {
-  margin-top: 0.6em;
-  font-weight: 500;
-  color: rgba(232, 234, 237, 0.8);
-}
-
-.title-card .note {
-  display: inline-block;
-  margin-top: 1em;
-  font-size: 0.85rem;
-  color: rgba(232, 234, 237, 0.65);
-  letter-spacing: 0.18em;
-}
-
-.story-card.span-2 {
-  grid-column: span 2;
-}
-
-.title-card {
-  grid-column: 1 / -1;
-}
-
-.story-grid.masonry {
-  display: block;
-  column-count: 2;
-  column-gap: 16px;
-}
-
-.story-grid.masonry .story-card {
-  display: inline-block;
-  width: 100%;
-  margin-bottom: 16px;
-  break-inside: avoid;
-}
-
-.story-grid.masonry .story-card.span-2 {
-  column-span: all;
-  width: 100%;
-  display: block;
-}
-
-.story-grid.masonry .title-card {
-  column-span: all;
-  display: block;
-  margin-bottom: 20px;
-}
-
-.story-grid.masonry .story-card--ghost {
-  display: none;
-}
-
-.story-card--ghost {
-  background: transparent;
-  border: none;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.story-grid.grid-two,
-.story-grid.grid-three {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-}
-
-.story-grid.grid-three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.story-grid.auto-fit {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  align-items: stretch;
-  justify-items: stretch;
-  justify-content: stretch;
-  width: 100%;
-  grid-auto-columns: 1fr;
-}
-
-.story-grid.auto-fit .story-card--intro {
-  grid-column: 1 / -1;
-}
-
-.story-card--intro {
-  display: flex;
-  gap: 0px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.story-card--intro .headshot {
-  float: none;
-  margin: 0;
-}
-
-.title-card--intro {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.title-card--intro .headshot {
-  float: none;
-  margin: 0;
-}
-
-.left-column {
-  grid-column: 1;
-  width: var(--edge-column-width);
-  pointer-events: none;
-}
-
-
-.button-frame {
-  border-radius: 0;
-  height: 100%; /* ✅ fill sidebar column */
-  justify-items: stretch; /* buttons expand */
-  padding: 5px;
-  display: grid;
-  align-content: start; /* ✅ pin to top */
-  gap: 8px;
-}
-
-/* --- Sidebar --- */
-.sidebar {
-  grid-column: 3;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 12px;
-  height: calc(100svh - 24px);
-  align-self: start;
-}
-
-.tree-section {
-  margin-top: 0px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  --tree-color: var(--accent-green);
-  --tree-opacity: .5;
-}
-
-.links-section {
-  margin-top: auto;
-}
-
-.navbtn {
-  appearance: none;
-  display: block;
-  text-decoration: none;
-  background: var(--card);
-  color: var(--accent-yellow);
-  width: 100%;
-  min-height: 2.8em;
-  padding: 10px 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: right;
-  cursor: pointer;
-  border: 1px solid #333;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  white-space: normal;
-  word-break: break-word;
-  /*transition: background 0.1s ease;*/
-  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
-  position: relative;
-}
-
-.navbtn:hover {
-  background: var(--card-dark);
-  color: var(--accent-green);
-}
-
-.navbtn:active {
-  background: var(--card-dark);
-}
-
-.navbtn[aria-current="page"] {
-  background: var(--accent-green);
-  color: #000;
-}
-
-.navbtn:focus {
-  outline: 2px solid var(--accent-yellow);
-  outline-offset: 2px;
-}
-
-/* --- Navigation separator --- */
-.nav-separator {
-  margin-bottom: 12px;
-  padding: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-align: center;
-  color: var(--accent-yellow);
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  border-top: 2px solid var(--accent-yellow);
-  border-bottom: 2px solid var(--accent-yellow);
-  background: rgba(255, 152, 0, 0.05);
-}
-
-/* --- Tree canvas --- */
-#tree-canvas {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* --- Links separator --- */
-.links-separator {
-  margin-bottom: 12px;
-  padding: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-align: center;
-  color: var(--accent-blue);
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  border-top: 2px solid var(--accent-blue);
-  border-bottom: 2px solid var(--accent-blue);
-  background: rgba(66, 133, 244, 0.05);
+/* --- Entries (projects, blog posts, CV items): just text with a line above --- */
+.entry {
+  padding: 30px 0;
+  border-top: 1px solid var(--rule);
 }
 
-/* --- Links frame --- */
+.entry > :first-child,
+.with-picture-text > :first-child {
+  margin-top: 0;
+}
+
+.entry > :last-child,
+.with-picture-text > :last-child {
+  margin-bottom: 0;
+}
+
+/* Projects and blog posts are numbered like the examples in a linguistics paper: (1), (2), (3)... */
+.numbered {
+  counter-reset: example;
+}
+
+.numbered > .entry:not(.private-demo) {
+  counter-increment: example;
+  position: relative;
+  padding-left: 62px;
+}
+
+.numbered > .entry:not(.private-demo)::before {
+  content: "(" counter(example) ")";
+  position: absolute;
+  left: 0;
+  top: 28px;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--dim);
+}
+
+/* Tags: small quiet words, no pills */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-green);
+}
+
+.tags + h3 {
+  margin-top: 0;
+}
+
+/* --- Project pictures --- */
+.with-picture {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.with-picture-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.with-picture .picture {
+  flex-shrink: 0;
+  width: 280px;
+}
+
+.picture {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-top: 6px;
+}
+
+/* --- CV: one plain column --- */
+#cv .entry {
+  padding: 10px 0;
+  border-top: none;
+}
+
+/* section names are small labels sitting on a line */
+#cv h2 {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+}
+
+#cv article > h2 {
+  margin-top: 54px;
+}
+
+#cv .entry > h2 {
+  margin-top: 34px;
+}
+
+#cv .page-title {
+  margin-bottom: 20px;
+}
+
+#cv h3 {
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+}
+
+#cv h3 + p {
+  margin-bottom: 0.5em;
+  color: var(--dim);
+}
+
+#cv p,
+#cv li {
+  font-size: clamp(0.95rem, 1.3vw, 1.02rem);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  padding: 72px 0 28px;
+  align-self: start;
+  text-align: right;
+}
+
+.nav-separator,
+.links-separator {
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: var(--dim);
+}
+
+.button-frame,
 .links-frame {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  justify-items: end;
   gap: 8px;
-  padding: 5px;
+}
+
+.navbtn,
+.linkbtn,
+.private-demo-btn {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbtn {
+  font-size: 0.95rem;
+  color: var(--accent-yellow);
+}
+
+.navbtn:hover {
+  color: var(--ink);
+}
+
+.navbtn[aria-current="page"] {
+  color: var(--accent-green);
+}
+
+/* Phonology joke: pages you could go to are in /slashes/ like underlying forms,
+   and the one you're actually on is in [brackets] like a surface form. */
+.button-frame .navbtn::before,
+.button-frame .navbtn::after {
+  content: "/";
+  opacity: 0.5;
+}
+
+.button-frame .navbtn[aria-current="page"]::before {
+  content: "[";
+}
+
+.button-frame .navbtn[aria-current="page"]::after {
+  content: "]";
 }
 
 .linkbtn {
-  appearance: none;
-  display: block;
-  background: var(--card);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
   color: var(--accent-blue);
-  width: 100%;
-  min-height: 1.8em;
-  padding: 6px 10px;
-  font-size: 9px;
-  font-weight: 500;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  border: 1px solid #444;
-  border-radius: 12px;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  white-space: normal;
-  word-break: break-word;
-  position: relative;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
 }
 
 .linkbtn:hover {
-  background: var(--card-dark);
-  color: var(--accent-purple);
-  border-color: var(--accent-purple);
+  color: var(--ink);
 }
 
-.linkbtn:active {
-  background: var(--card-dark);
+/* The prosodic tree fills whatever is left between the nav and the links */
+.tree-section {
+  flex-grow: 1;
+  position: relative;
+  margin: 28px 0;
+  overflow: hidden;
+  --tree-opacity: 0.6;
+  --tree-font-size: 15;
 }
 
-.linkbtn:focus {
-  outline: 2px solid var(--accent-blue);
-  outline-offset: 2px;
+/* on the ME page the big tree is right there, so the small one steps aside */
+body:has(#me:not([hidden])) .tree-section {
+  visibility: hidden;
 }
 
 /* --- Vertical name column --- */
 .name-column {
-  grid-column: 4;
+  grid-column: 3;
   display: flex;
   justify-content: center;
   align-items: center;
   writing-mode: vertical-rl;
   text-orientation: upright;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 28px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  font-family: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-display);
   color: var(--accent-purple);
   white-space: nowrap;
   position: sticky;
@@ -480,721 +437,143 @@ body {
   width: var(--edge-column-width);
 }
 
-.outline {
-  color: transparent;
-  -webkit-text-stroke: 2px var(--accent-purple);
-  text-stroke: 2px var(--accent-purple);
-}
-.spaceafter:after{
-  content:"\00a0";
-}
-
-/* --- Typography --- */
-h1,
-h2,
-h3 {
-  font-family: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
-  margin: 0;
-}
-
-h1 {
-  margin-top: 0.8em;
-  margin-bottom: 0.5em;
-  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  color: var(--accent-green);
-  text-shadow: 2px 2px 0 rgba(66, 133, 244, 0.12);
-}
-
-h2 {
-  margin-top: 1.5em;
-  margin-bottom: 0.4em;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  line-height: 1.3;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--accent-blue);
-  text-shadow: 1px 1px 0 rgba(156, 39, 176, 0.1);
-}
-
-h3 {
-  margin-top: 1.2em;
-  margin-bottom: 0.4em;
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
-  line-height: 1.4;
-  font-weight: 600;
-  letter-spacing: 0.005em;
-  color: var(--accent-purple);
-  text-shadow: 1px 1px 0 rgba(66, 133, 244, 0.1);
-}
-
-p {
-  margin: 0 0 1.2em;
-  color: var(--ink);
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
-  line-height: 1.5;
-}
-
-a {
-  color: var(--accent-yellow);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-
-a:hover {
-  color: var(--accent-purple);
-}
-
-a:focus {
-  outline: 2px solid var(--accent-blue);
-  outline-offset: 2px;
-}
-
-ul {
-  margin: 0 0 1.2em 1.5em;
-  padding: 0;
-}
-ul li {
-  margin: 0.4em 0;
-  color: var(--ink);
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
-  line-height: 1.4;
-}
-
-/* --- Footer --- */
-footer {
-  margin-top: 2.5em;
-  padding-top: 1.2em;
-  border-top: 1px solid #333;
-  font-size: 12px;
-  opacity: 0.6;
-  color: #888;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-}
-.headshot {
-  float: right;
-  max-width: 150px; /* adjust size */
-  margin: 0 0 1.2em 1.5em; /* spacing from text */
-  border: 2px solid #444;
-  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-}
-
-.project-card--media {
-  display: flex;
-  flex-direction: column;
-}
-
-.project-media-row {
-  display: flex;
-  gap: 1.5rem;
-  align-items: stretch;
-  flex: 1;
-}
-
-.project-media-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.project-media-img {
-  flex-shrink: 0;
-  width: 350px;
-  align-self: stretch;
-  object-fit: cover;
-  object-position: center;
-}
-
-.screenshot {
-  float: right;
-  max-width: 500px; /* adjust size */
-  margin: 0 0 1.2em 1.5em; /* spacing from text */
-  border: 2px solid #444;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-}
-/* --- Deprecated projects styling --- */
-.deprecated {
-  opacity: 0.65;
-  color: #888;
-  padding: 1.2em;
-  margin: 1.5em 0;
-  border-left: 3px solid #555;
-  background: rgba(80, 80, 80, 0.03);
-  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%);
-}
-.deprecated h3 {
-  color: #999;
-  margin-top: 0;
-}
-.deprecated a {
-  color: #aaa;
-  text-decoration-style: dotted;
-}
-
-/* --- CV Layout Styles --- */
-.cv-layout {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0;
-}
-
-.cv-header {
-  text-align: center;
-  margin-bottom: 2.5em;
-  padding-bottom: 1.5em;
-  border-bottom: 2px solid rgba(124, 179, 66, 0.3);
-}
-
-.cv-header h1 {
-  margin: 0 0 0.3em;
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  color: var(--accent-green);
-  letter-spacing: 0.02em;
-}
-
-.cv-contact {
-  margin: 0.5em 0;
-  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  color: rgba(232, 234, 237, 0.85);
-}
-
-.cv-contact a {
-  color: var(--accent-yellow);
-  text-decoration: none;
-}
-
-.cv-contact a:hover {
-  color: var(--accent-purple);
-  text-decoration: underline;
-}
-
-.cv-location {
-  margin: 0.3em 0 0;
-  font-size: clamp(0.9rem, 1.1vw, 1rem);
-  color: rgba(232, 234, 237, 0.7);
-}
-
-.cv-section {
-  margin-bottom: 2.5em;
-}
-
-.cv-section-title {
-  margin: 0 0 1em;
-  padding-bottom: 0.4em;
-  border-bottom: 1px solid rgba(66, 133, 244, 0.4);
-  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
-  color: var(--accent-blue);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-}
-
-.cv-entry {
-  margin-bottom: 1.5em;
-  padding-left: 0;
-}
-
-.cv-entry:last-child {
-  margin-bottom: 0;
-}
-
-.cv-entry-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 0.3em;
-  gap: 1em;
-  flex-wrap: wrap;
-}
-
-.cv-entry-header strong {
-  font-size: clamp(1.05rem, 1.3vw, 1.15rem);
-  color: var(--accent-purple);
-  font-family: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 600;
-}
-
-.cv-entry-header strong a {
-  color: var(--accent-purple);
-  text-decoration: none;
-}
-
-.cv-entry-header strong a:hover {
-  color: var(--accent-yellow);
-  text-decoration: underline;
-}
-
-.cv-date {
-  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
-  color: rgba(232, 234, 237, 0.6);
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  font-weight: 400;
-  white-space: nowrap;
-}
-
-.cv-entry-subheader {
-  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  color: rgba(232, 234, 237, 0.75);
-  font-style: italic;
-  margin-bottom: 0.5em;
-}
-
-.cv-list {
-  margin: 0.5em 0 0 1.5em;
-  padding: 0;
-  list-style-type: disc;
-}
-
-.cv-list li {
-  margin: 0.4em 0;
-  color: var(--ink);
-  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  line-height: 1.5;
-}
-
-.cv-coursework {
-  margin-bottom: 1.5em;
-}
-
-.cv-coursework:last-child {
-  margin-bottom: 0;
-}
-
-.cv-coursework h3 {
-  font-size: clamp(1.05rem, 1.3vw, 1.15rem);
-  color: var(--accent-purple);
-  margin: 0 0 0.5em;
-  font-weight: 600;
-}
-
-
-/* --- Responsive --- */
-
-/* Tablet styles (768px - 880px) */
-@media (max-width: 880px) and (min-width: 768px) {
-  .wrap {
-    grid-template-columns: minmax(0, 1fr) 200px;
-    grid-template-rows: auto;
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .left-column {
-    display: none;
-  }
-
-  .name-column {
-    display: none;
-  }
-
-  .content-frame {
-    grid-column: 1;
-    padding: 20px;
-  }
-
-  .sidebar {
-    grid-column: 2;
-    position: static;
-    width: 100%;
-    height: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
-  }
-
-  .story-grid.masonry {
-    column-count: 1;
-  }
-
-  .story-grid.grid-two {
-    grid-template-columns: 1fr;
-  }
-
-  .story-grid.grid-three {
-    grid-template-columns: 1fr;
-  }
-
-  /* Keep tree on tablets but make it smaller */
-  .tree-section {
-    max-height: 250px;
-    min-height: 150px;
-  }
-}
-
-/* Mobile styles (below 768px) */
-@media (max-width: 767px) {
-  .wrap {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .left-column {
-    display: none;
-  }
-
-  .name-column {
-    display: none;
-  }
-
-  .content-frame {
-    grid-column: 1;
-    grid-row: 2;
-    padding: 16px;
-    min-height: 50svh;
-  }
-
-  /* Make sidebar scrollable instead of fixed */
-  .sidebar {
-    grid-column: 1;
-    grid-row: 1;
-    position: static;
-    width: 100%;
-    height: auto;
-    flex-direction: column;
-    right: auto;
-    top: auto;
-    bottom: auto;
-  }
-
-  .links-section {
-    margin-top: 0;
-  }
-
-  /* Hide tree animation on small screens */
-  .tree-section {
-    display: none;
-  }
-
-  /* Stack navigation buttons horizontally on mobile */
-  .button-frame {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    height: auto;
-    align-content: center;
-  }
-
-  .navbtn {
-    min-height: 44px;
-    font-size: 12px;
-    padding: 10px 8px;
-    text-align: center;
-  }
-
-  /* Masonry to single column on mobile */
-  .story-grid.masonry {
-    column-count: 1;
-  }
-
-  .story-grid.grid-two,
-  .story-grid.grid-three {
-    grid-template-columns: 1fr;
-  }
-
-  /* Prevent span-2 items from forcing implicit columns in a 1-col grid */
-  .story-grid.grid-two .span-2,
-  .story-grid.grid-three .span-2,
-  .story-grid.grid-two .title-card,
-  .story-grid.grid-three .title-card {
-    grid-column: 1;
-  }
-
-  .story-grid.auto-fit {
-    grid-template-columns: 1fr;
-  }
-
-  /* Adjust headshot and screenshot sizes */
-  .headshot {
-    max-width: 120px;
-  }
-
-  .screenshot {
-    max-width: 100%;
-    float: none;
-    margin: 1em 0;
-  }
-
-  .project-media-row {
-    flex-direction: column;
-  }
-
-  .project-media-img {
-    width: 100%;
-    max-width: 100%;
-    align-self: auto;
-  }
-
-  /* Improve touch targets and layout for links */
-  .links-frame {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .linkbtn {
-    min-height: 44px;
-    padding: 10px 8px;
-    font-size: 11px;
-  }
-
-  /* Typography adjustments */
-  h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-  }
-
-  .title-card {
-    padding: 20px;
-  }
-
-  .title-card h1 {
-    font-size: clamp(1.5rem, 5vw, 2rem);
-  }
-
-  .story-card {
-    padding: 14px 16px;
-  }
-
-  /* Ensure proper wrapping for intro card */
-  .title-card--intro {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .title-card--intro .headshot {
-    max-width: 100px;
-    margin-bottom: 16px;
-  }
-
-  /* CV layout adjustments for mobile */
-  .cv-layout {
-    max-width: 100%;
-  }
-
-  .cv-header {
-    margin-bottom: 2em;
-    padding-bottom: 1em;
-  }
-
-  .cv-header h1 {
-    font-size: 1.75rem;
-  }
-
-  .cv-contact {
-    font-size: 0.9rem;
-  }
-
-  .cv-section {
-    margin-bottom: 2em;
-  }
-
-  .cv-section-title {
-    font-size: 1.3rem;
-  }
-
-  .cv-entry-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3em;
-  }
-
-  .cv-date {
-    font-size: 0.85rem;
-  }
-
-  .cv-list {
-    margin-left: 1.2em;
-  }
+.spaceafter:after {
+  content: "\00a0";
 }
 
 /* --- Blog index --- */
 .blog-tag-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  gap: 4px 16px;
+  margin-top: 18px;
 }
 
 .blog-tag-btn {
   appearance: none;
-  background: var(--card);
-  border: 1px solid rgba(124, 179, 66, 0.4);
-  color: var(--accent-green);
-  padding: 4px 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--dim);
   cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
-  transition: background 0.1s ease, color 0.1s ease;
 }
 
 .blog-tag-btn:hover {
-  background: rgba(124, 179, 66, 0.15);
+  color: var(--ink);
 }
 
 .blog-tag-btn.active {
-  background: var(--accent-green);
-  color: #000;
-  border-color: var(--accent-green);
-}
-
-.blog-posts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-  position: relative;
-  z-index: 1;
-}
-
-.blog-post-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  break-inside: avoid;
-  margin-bottom: 16px;
-  transition: border-color 0.15s ease;
-}
-
-.blog-post-card:hover {
-  border-color: var(--accent-green);
-  color: inherit;
-}
-
-.blog-post-card:hover h3 {
   color: var(--accent-green);
 }
 
-.post-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+.post-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
-.post-date {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  font-size: 0.78rem;
-  color: rgba(232, 234, 237, 0.5);
-  letter-spacing: 0.03em;
+.post-link:hover {
+  color: inherit;
 }
 
-.post-reading-time {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  font-size: 0.78rem;
+.post-link:hover h3 {
   color: var(--accent-yellow);
-  opacity: 0.65;
+}
+
+.post-card-meta,
+.post-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--dim);
+}
+
+.post-link h3 {
+  margin-top: 0;
+}
+
+.post-link .tags {
+  margin: 8px 0;
 }
 
 .post-excerpt {
-  margin-bottom: 0;
-  font-size: 0.95rem;
-  color: rgba(232, 234, 237, 0.7);
-  line-height: 1.5;
+  color: var(--dim);
   font-style: italic;
 }
 
 .blog-status {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  color: rgba(232, 234, 237, 0.45);
+  font-family: var(--font-mono);
   font-size: 0.88rem;
-  column-span: all;
+  color: var(--dim);
 }
 
 /* --- Post page --- */
-.post-header {
-  grid-column: 1 / -1;
+.post-header h1 {
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
 }
 
-.post-header-meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+.post-header .tags {
+  margin: 18px 0 0;
 }
 
 .post-body {
-  grid-column: 1 / -1;
+  max-width: 720px;
+  padding: 0 0 40px;
 }
 
-.post-body h2 {
-  margin-top: 1.8em;
+.post-body ol > li {
+  margin: 0.8em 0;
 }
 
-.post-body h3 {
-  margin-top: 1.5em;
+.post-body ol > li::marker {
+  font-family: var(--font-mono);
 }
 
 .post-body code {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-family: var(--font-mono);
   font-size: 0.87em;
-  background: rgba(124, 179, 66, 0.12);
   color: var(--accent-green);
-  padding: 0.15em 0.4em;
-  border-radius: 3px;
 }
 
 .post-body pre {
-  background: #0d0d0d;
-  border: 1px solid #2a2a2a;
-  padding: 16px 20px;
-  overflow-x: auto;
   margin: 1.5em 0;
-  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  padding: 16px 0 16px 18px;
+  border-left: 1px solid var(--rule);
+  overflow-x: auto;
 }
 
 .post-body pre code {
-  background: none;
-  padding: 0;
   color: inherit;
   font-size: 0.9rem;
-  border-radius: 0;
 }
 
 .post-body blockquote {
-  border-left: 3px solid var(--accent-blue);
   margin: 1.5em 0;
-  padding: 0.5em 1em 0.5em 1.2em;
-  background: rgba(66, 133, 244, 0.06);
-  color: rgba(232, 234, 237, 0.8);
+  padding-left: 18px;
+  border-left: 1px solid var(--dim);
+  color: var(--dim);
   font-style: italic;
-  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%);
-}
-
-.post-body blockquote p {
-  margin-bottom: 0;
 }
 
 .post-body img {
-  max-width: 100%;
-  height: auto;
-  border: 1px solid #333;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-  margin: 1em 0;
   display: block;
+  max-width: 100%;
+  max-height: 620px; /* so the tall diagrams still fit on a screen */
+  width: auto;
+  height: auto;
+  margin: 1.8em 0;
 }
 
 .post-body hr {
   border: none;
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid var(--rule);
   margin: 2em 0;
 }
 
@@ -1205,56 +584,48 @@ footer {
   font-size: 0.95rem;
 }
 
-.post-body th {
-  background: var(--card-dark);
-  color: var(--accent-green);
-  font-family: "JetBrains Mono", "Fira Code", monospace;
-  padding: 8px 12px;
-  text-align: left;
-  border: 1px solid #333;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
+.post-body th,
 .post-body td {
-  padding: 8px 12px;
-  border: 1px solid #2a2a2a;
-  color: var(--ink);
+  padding: 8px 12px 8px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
 }
 
-.post-body tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.02);
+.post-body th {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
+/* older post | ALL POSTS | newer post */
 .post-nav {
-  grid-column: 1 / -1;
   display: flex;
-  gap: 8px;
-  padding: 10px;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.post-nav .navbtn,
-.post-nav-btn {
+.post-nav .navbtn {
   flex: 1;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.8em;
 }
 
+.post-nav .navbtn:first-child {
+  text-align: left;
+}
+
+.post-nav .navbtn:last-child {
+  text-align: right;
+}
+
+/* placeholder when there's no older/newer post, keeps ALL POSTS in the middle */
 .post-nav-btn--empty {
-  opacity: 0.2;
-  pointer-events: none;
-  cursor: default;
-  background: transparent;
-  border-color: #2a2a2a;
+  visibility: hidden;
 }
 
 /* --- Glossary term tooltips --- */
 .term {
-  color: var(--accent-yellow);
   border-bottom: 1px dotted var(--accent-yellow);
   cursor: help;
 }
@@ -1262,87 +633,168 @@ footer {
 .term:hover,
 .term:focus,
 .term.is-active {
-  color: var(--accent-purple);
-  border-bottom-color: var(--accent-purple);
+  color: var(--accent-yellow);
   outline: none;
 }
 
-/* Single shared popover, positioned in JS and appended to <body> so it
-   always renders above page content and is never clipped by the
-   overflow:hidden panels the layout uses elsewhere. */
+/* Single shared popover, positioned in JS and appended to <body> */
 .term-popover {
   position: fixed;
   max-width: min(320px, 86vw);
-  background: var(--card);
-  border: 1px solid rgba(66, 133, 244, 0.4);
-  border-top: 2px solid var(--accent-blue);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(66, 133, 244, 0.2);
-  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   padding: 10px 14px;
-  color: var(--ink);
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #161616;
+  border: 1px solid #3a3a3a;
   font-size: 0.82rem;
   line-height: 1.45;
-  text-align: left;
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
   pointer-events: none;
   z-index: 9999;
 }
 
 .term-popover.is-visible {
   opacity: 1;
-  transform: translateY(0);
-}
-
-@media (max-width: 767px) {
-  .term-popover {
-    max-width: min(260px, 78vw);
-    font-size: 0.8rem;
-  }
-}
-
-/* Mobile blog adjustments */
-@media (max-width: 767px) {
-  .post-nav {
-    flex-direction: column;
-  }
-
-  .blog-posts-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* --- Private demo (password-gated) --- */
 .private-demo-form {
   display: flex;
-  gap: 8px;
-  align-items: stretch;
+  gap: 16px;
+  align-items: center;
 }
 
 .private-demo-key {
   flex: 1;
   min-width: 0;
-  padding: 10px;
+  max-width: 280px;
+  padding: 8px 0;
   color: var(--ink);
-  background: var(--bg);
-  border: 1px solid #333;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--dim);
   font-size: 14px;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-family: var(--font-mono);
 }
 
 .private-demo-key:focus {
-  outline: 2px solid var(--accent-yellow);
-  outline-offset: 2px;
-}
-
-.private-demo-key:not([hidden]) + .private-demo-btn {
-  width: auto;
-  flex: none;
-  padding: 10px 14px;
+  outline: none;
+  border-bottom-color: var(--accent-yellow);
 }
 
 .private-demo-btn {
-  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+/* --- Responsive --- */
+
+/* Narrower screens: no name column, single file */
+@media (max-width: 880px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr) 130px;
+    gap: 24px;
+    padding: 0 20px 0 24px;
+  }
+
+  .name-column {
+    display: none;
+  }
+}
+
+/* Phones (below 768px): navigation above the page, links below it */
+@media (max-width: 767px) {
+  .wrap {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 0;
+    padding: 0 20px;
+  }
+
+  /* the sidebar comes apart */
+  .sidebar {
+    display: contents;
+    text-align: left;
+  }
+
+  .nav-section {
+    grid-row: 1;
+    padding-top: 22px;
+    text-align: left;
+  }
+
+  .page {
+    grid-row: 2;
+    padding: 44px 0 64px;
+  }
+
+  .links-section {
+    grid-row: 3;
+    padding: 22px 0 28px;
+    border-top: 1px solid var(--rule);
+    text-align: left;
+  }
+
+  /* the sidebar tree is hidden on phones (the ME page still has the big one) */
+  .tree-section {
+    display: none;
+  }
+
+  .button-frame,
+  .links-frame {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+  }
+
+  /* comfortable to tap */
+  .navbtn,
+  .linkbtn {
+    padding: 10px 0;
+  }
+
+  .page-title {
+    margin-bottom: 40px;
+  }
+
+  .page-title--intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .headshot {
+    max-width: 110px;
+  }
+
+  .tree-hero {
+    height: 320px;
+    margin-top: 28px;
+    --tree-font-size: 17;
+  }
+
+  .numbered > .entry:not(.private-demo) {
+    padding-left: 44px;
+  }
+
+  .with-picture {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .with-picture .picture {
+    width: 100%;
+  }
+
+  .post-nav {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .post-nav .navbtn {
+    text-align: left;
+  }
+
+  .post-nav-btn--empty {
+    display: none;
+  }
 }

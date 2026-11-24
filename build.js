@@ -1,3 +1,7 @@
+// Turns the markdown files in posts/src/ into blog post pages:
+//   posts/src/my-post.md  ->  posts/my-post/index.html
+// and writes posts/manifest.js, the list of posts the BLOG page on the home page reads.
+// Run it with `npm run build` after adding or editing a post.
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
@@ -5,6 +9,11 @@ const { marked } = require('marked');
 
 const SRC = path.join(__dirname, 'posts', 'src');
 const OUT = path.join(__dirname, 'posts');
+const SITE = 'https://prosodic.net';
+
+// Bump this (and the matching ?v= numbers in index.html) whenever style.css,
+// print.css, script.js or tree.js change, so browsers don't keep using old cached copies.
+const ASSET_VERSION = 7;
 
 function readingTime(text) {
   return Math.max(1, Math.ceil(text.trim().split(/\s+/).length / 200));
@@ -49,8 +58,8 @@ function applyTerms(content, terms, slug) {
   });
 }
 
-function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) {
-  const tagsHtml = tags.map(t => `<span class="tech-badge">${escapeHtml(t)}</span>`).join('');
+function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content, prev, next }) {
+  const tagsHtml = tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
 
   const prevHtml = prev
     ? `<a class="navbtn post-nav-btn" href="../${prev.slug}/">&#8592; ${escapeHtml(prev.title)}</a>`
@@ -59,37 +68,51 @@ function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) 
     ? `<a class="navbtn post-nav-btn" href="../${next.slug}/">${escapeHtml(next.title)} &#8594;</a>`
     : `<span class="navbtn post-nav-btn post-nav-btn--empty"></span>`;
 
+  const url = `${SITE}/posts/${slug}/`;
+  // The excerpt doubles as the description search engines and link previews show
+  const description = excerpt.replace(/^"|"$/g, '');
+  // Only posts with code blocks need the syntax highlighter
+  const hasCode = content.includes('<pre><code');
+
+  // Keep the sidebar below the same as the one in index.html
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a0a" />
     <title>${escapeHtml(title)} — Samuel Lederer</title>
+    ${description ? `<meta name="description" content="${escapeHtml(description)}" />` : ''}
+    <meta name="author" content="Samuel Lederer" />
+    <link rel="canonical" href="${url}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${escapeHtml(title)}" />
+    ${description ? `<meta property="og:description" content="${escapeHtml(description)}" />` : ''}
     <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Fira+Code&family=JetBrains+Mono&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../style.css" />
-    <link rel="stylesheet" href="../../print.css" media="print" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../style.css?v=${ASSET_VERSION}" />
+    <link rel="stylesheet" href="../../print.css?v=${ASSET_VERSION}" media="print" />
+    ${hasCode ? '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />' : ''}
   </head>
   <body>
     <div class="wrap">
-      <div class="left-column" aria-hidden="true"></div>
-      <main id="content" class="content-frame" tabindex="-1">
-        <article class="story-grid auto-fit">
-          <header class="title-card post-header">
+      <main id="content" class="page" tabindex="-1">
+        <article class="post">
+          <header class="page-title post-header">
             <div class="post-header-meta">
               <time class="post-date" datetime="${date}">${formatDate(date)}</time>
               <span class="post-reading-time">${readingTime} min read</span>
             </div>
             <h1>${escapeHtml(title)}</h1>
-            ${tags.length ? `<div class="tech-stack">${tagsHtml}</div>` : ''}
+            ${tags.length ? `<div class="tags">${tagsHtml}</div>` : ''}
           </header>
-          <section class="story-card post-body">
+          <section class="post-body">
             ${content}
           </section>
-          <nav class="story-card post-nav" aria-label="Post navigation">
+          <nav class="entry post-nav" aria-label="Post navigation">
             ${prevHtml}
             <a class="navbtn" href="../../#blog">ALL POSTS</a>
             ${nextHtml}
@@ -103,26 +126,28 @@ function buildPostHtml({ title, date, tags, readingTime, content, prev, next }) 
             <a class="navbtn" href="../../">ME</a>
             <a class="navbtn" href="../../#projects">PROJECTS</a>
             <a class="navbtn" href="../../#cv">CV</a>
-            <a class="navbtn" href="../../#blog">BLOG</a>
+            <a class="navbtn" href="../../#blog" aria-current="page">BLOG</a>
           </nav>
         </div>
         <div class="tree-section">
-          <canvas id="tree-canvas"></canvas>
+          <canvas class="tree-canvas"></canvas>
         </div>
         <div class="links-section">
-          <div class="links-separator">LINKS</div>
+          <div class="links-separator">LINKS/CONTACT</div>
           <nav class="links-frame" aria-label="External links">
             <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer" class="linkbtn">GITHUB</a>
             <a href="https://www.linkedin.com/in/lederersamuel/" target="_blank" rel="noopener noreferrer" class="linkbtn">LINKEDIN</a>
-            <a href="mailto:slederer@pm.me" class="linkbtn">EMAIL</a>
+            <a href="mailto:slederer+website@pm.me" class="linkbtn">EMAIL</a>
+            <button class="linkbtn" id="personal-website-link">WEBSITE</button>
           </nav>
         </div>
       </aside>
-      <div class="name-column"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
+      <div class="name-column" aria-hidden="true"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
     </div>
-    <script src="../../script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+    <script src="../../script.js?v=${ASSET_VERSION}"></script>
+    <script src="../../tree.js?v=${ASSET_VERSION}"></script>
+    ${hasCode ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>` : ''}
   </body>
 </html>`;
 }
@@ -170,6 +195,5 @@ posts.forEach((post, i) => {
 });
 
 const manifest = posts.map(({ _content, terms, ...p }) => p);
-fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8');
 fs.writeFileSync(path.join(OUT, 'manifest.js'), `window.__blogPosts__ = ${JSON.stringify(manifest)};`, 'utf-8');
-console.log(`  wrote posts/manifest.json + manifest.js (${manifest.length} post${manifest.length !== 1 ? 's' : ''})`);
+console.log(`  wrote posts/manifest.js (${manifest.length} post${manifest.length !== 1 ? 's' : ''})`);
