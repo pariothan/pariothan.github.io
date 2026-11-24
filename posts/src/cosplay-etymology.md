@@ -4,6 +4,7 @@ date: 2024-01-26
 tags: [linguistics, morphology, etymology, contact-linguistics, japanese, pop-culture, english, chinese]
 excerpt: "\"No, 'cosplay' is not trivial or incidental. Only contact linguistics can explain it.\""
 terms:
+  portmanteau: "A word made by blending parts of two other words, like \"brunch\" from \"breakfast\" and \"lunch.\""
   mora: "A theoretical timing unit of speech. Syllables are either short (one mora) or long (two or more mora)."
   derivational morphology: "The set of processes by which languages form new words, typically by combining roots and affixes."
   contact linguistics: "The study of how languages influence each other through prolonged contact, either between speakers of both or within multilingual speakers and communities."
@@ -25,17 +26,16 @@ No, 'cosplay' is not trivial or incidental.
 To answer this question, we need to look at Chinese {{compounding}} {{derivational morphology}}. Derivational Morphology is the process by which languages form new words. Here's some basic facts about Chinese words we'll need:
 
 1. Chinese words are one or two syllables, and not more.
- - In Old Chinese, they were always one. In modern Chinese, they can be two. Some loaned nouns get to three or more, but it's very uncommon.
+   - In Old Chinese, they were always one. In modern Chinese, they can be two. Some loaned nouns get to three or more, but it's very uncommon.
 2. Chinese words are frequently loaned into other East Asian languages. They can be written with the same characters but often very different pronunciations.
-- This can come from either the native word being assigned to the Chinese character, or the Chinese phonological form being loaned. (But it will still change over time to be different from how it was in the Chinese variety of origin!)
+   - This can come from either the native word being assigned to the Chinese character, or the Chinese phonological form being loaned. (But it will still change over time to be different from how it was in the Chinese variety of origin!)
 3. Chinese syllables are typically two {{mora}}.
- - A {{mora}} is a theoretical timing unit of speech. Syllables are nearly always said to be either short (at one mora), or long (at least two mora). 
- - Typically, when people observe that some languages seem to be "faster" than others, this is because those languages are made up of mostly short syllables, like Spanish or Japanese. 
-  - English has a heavily mixed syllable set of short and long syllables.
- - An easy way to understand mora would be checking how long it takes to say "dad" and "daddy." While most people assume that "daddy" would take longer to say, as it has two syllables, "dad" takes longer to say, because it has one additional mora. Things with more mora take more time to say!
-- (Mora are represented with the Greek letter μ.)
-![Mora diagram comparing 'daddy' (2 mora) and 'dad' (3 mora)](../../assets/images/posts/cosplay-etymology/mora-daddy-dad.png)
-
+   - A {{mora}} is a theoretical timing unit of speech. Syllables are nearly always said to be either short (at one mora), or long (at least two mora). 
+   - Typically, when people observe that some languages seem to be "faster" than others, this is because those languages are made up of mostly short syllables, like Spanish or Japanese. 
+     - English has a heavily mixed syllable set of short and long syllables.
+   - An easy way to understand mora would be checking how long it takes to say "dad" and "daddy." While most people assume that "daddy" would take longer to say, as it has two syllables, "dad" takes longer to say, because it has one additional mora. Things with more mora take more time to say!
+   - (Mora are represented with the Greek letter μ.)
+     ![Mora diagram comparing 'daddy' (2 mora) and 'dad' (3 mora)](../../assets/images/posts/cosplay-etymology/mora-daddy-dad.png)
 4. Chinese words are typically formed by compounding one syllable from two other words together. The compounding process can happen multiple times to form a word, meaning that a single word can be composed of more than two underlying words. But only two syllables can be represented in the end, since Chinese words can't be composed of more than two syllables.
 
 Here's a fun example of how "Chinese style" as a single word can be derived despite the surface form only having two syllables: one meaning "country" and one meaning "wind":
