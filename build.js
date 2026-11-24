@@ -13,11 +13,7 @@ const SITE = 'https://prosodic.net';
 
 // Bump this (and the matching ?v= numbers in index.html) whenever style.css,
 // print.css, script.js or tree.js change, so browsers don't keep using old cached copies.
-const ASSET_VERSION = 7;
-
-function readingTime(text) {
-  return Math.max(1, Math.ceil(text.trim().split(/\s+/).length / 200));
-}
+const ASSET_VERSION = 8;
 
 function toISODate(d) {
   if (d instanceof Date) return d.toISOString().slice(0, 10);
@@ -58,7 +54,7 @@ function applyTerms(content, terms, slug) {
   });
 }
 
-function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content, prev, next }) {
+function buildPostHtml({ slug, title, date, tags, excerpt, content, prev, next }) {
   const tagsHtml = tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
 
   const prevHtml = prev
@@ -74,7 +70,8 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
   // Only posts with code blocks need the syntax highlighter
   const hasCode = content.includes('<pre><code');
 
-  // Keep the sidebar below the same as the one in index.html
+  // Keep the name at the top and the side column below the same as the ones in index.html.
+  // Here the name is a link back home, and the post title is the page's main heading.
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -98,13 +95,19 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
     ${hasCode ? '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />' : ''}
   </head>
   <body>
-    <div class="wrap">
+    <div class="site">
+      <header class="top">
+        <a href="../../"><img src="../../assets/images/headshot.webp" alt="Samuel Lederer headshot" class="headshot" width="300" height="347" /></a>
+        <div>
+          <p class="site-name"><a href="../../"><span class="kanji" aria-hidden="true">颯</span>Samuel Lederer</a></p>
+          <p class="tagline">If you seek info on me this is a place</p>
+        </div>
+      </header>
       <main id="content" class="page" tabindex="-1">
-        <article class="post">
-          <header class="page-title post-header">
+        <article class="post panel">
+          <header class="post-header">
             <div class="post-header-meta">
               <time class="post-date" datetime="${date}">${formatDate(date)}</time>
-              <span class="post-reading-time">${readingTime} min read</span>
             </div>
             <h1>${escapeHtml(title)}</h1>
             ${tags.length ? `<div class="tags">${tagsHtml}</div>` : ''}
@@ -120,7 +123,7 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
         </article>
       </main>
       <aside class="sidebar" aria-label="Sidebar">
-        <div class="nav-section">
+        <div class="nav-section panel">
           <div class="nav-separator">NAVIGATION</div>
           <nav class="button-frame" aria-label="Section navigation">
             <a class="navbtn" href="../../">ME</a>
@@ -129,10 +132,10 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
             <a class="navbtn" href="../../#blog" aria-current="page">BLOG</a>
           </nav>
         </div>
-        <div class="tree-section">
+        <div class="tree-section panel">
           <canvas class="tree-canvas"></canvas>
         </div>
-        <div class="links-section">
+        <div class="links-section panel">
           <div class="links-separator">LINKS/CONTACT</div>
           <nav class="links-frame" aria-label="External links">
             <a href="https://github.com/pariothan" target="_blank" rel="noopener noreferrer" class="linkbtn">GITHUB</a>
@@ -142,7 +145,6 @@ function buildPostHtml({ slug, title, date, tags, excerpt, readingTime, content,
           </nav>
         </div>
       </aside>
-      <div class="name-column" aria-hidden="true"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
     </div>
     <script src="../../script.js?v=${ASSET_VERSION}"></script>
     <script src="../../tree.js?v=${ASSET_VERSION}"></script>
@@ -170,7 +172,6 @@ const posts = files.map(file => {
     date: data.date ? toISODate(data.date) : new Date().toISOString().slice(0, 10),
     tags,
     excerpt: data.excerpt || '',
-    readingTime: readingTime(content),
     terms: data.terms || null,
     _content: content,
   };

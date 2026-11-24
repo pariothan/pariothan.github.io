@@ -1,16 +1,21 @@
-/* The idea: as little as possible. No boxes, no frames, no decoration.
-   Text on a dark screen, a thin line where one is needed, and the tree. */
+/* The idea: one narrow column in the middle of a dark screen.
+   The name runs across the top, everything sits in small panels with two cut corners
+   (like the headshot), and the tree gets a tall thin strip of its own down the side. */
 
 :root {
   --bg: #0a0a0a;
+  --panel: #0d0d0e;                  /* the inside of a panel */
+  --edge: #2b2b2d;                   /* the one-pixel line around a panel */
   --ink: #e8eaed;
   --dim: rgba(232, 234, 237, 0.55);  /* dates, labels, small print */
-  --rule: #262626;                   /* thin dividing lines */
+  --rule: #262626;                   /* thin dividing lines inside a panel */
   --accent-green: #7cb342;
   --accent-blue: #4285f4;
   --accent-purple: #ab47bc;
   --accent-yellow: #ff9800;
-  --edge-column-width: 56px;
+  --side-width: 180px;
+  --gap: 12px;
+  --cut: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
   --font-display: "Quantico", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
@@ -53,39 +58,39 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(2.2rem, 4.6vw, 3.4rem);
-  line-height: 1.1;
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
+  line-height: 1.15;
   letter-spacing: 0.01em;
   color: var(--accent-green);
 }
 
 h2 {
-  margin: 2em 0 0.5em;
-  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  margin: 1.8em 0 0.5em;
+  font-size: 1.3rem;
   line-height: 1.3;
   color: var(--accent-blue);
 }
 
 h3 {
   margin: 1.4em 0 0.4em;
-  font-size: clamp(1.15rem, 1.9vw, 1.4rem);
+  font-size: 1.12rem;
   line-height: 1.3;
   color: var(--ink);
 }
 
 p,
 li {
-  font-size: clamp(1rem, 1.4vw, 1.08rem);
-  line-height: 1.6;
+  font-size: 0.97rem;
+  line-height: 1.55;
 }
 
 p {
-  margin: 0 0 1.1em;
+  margin: 0 0 1em;
 }
 
 ul,
 ol {
-  margin: 0 0 1.1em 1.4em;
+  margin: 0 0 1em 1.4em;
   padding: 0;
 }
 
@@ -113,92 +118,141 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
-/* --- Layout: the page | navigation | name --- */
-.wrap {
-  min-height: 100svh;
+/* --- Layout: the name on top of the page, with the side column running the full height next to both --- */
+.site {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px var(--edge-column-width);
-  gap: 32px;
-  padding: 0 12px 0 clamp(24px, 7vw, 110px);
-  max-width: 1500px;
+  grid-template-columns: minmax(0, 1fr) var(--side-width);
+  grid-template-rows: auto 1fr;
+  gap: 0 var(--gap);
+  align-items: start;
+  width: min(980px, 100%);
   margin: 0 auto;
+  padding: 0 14px 60px;
+}
+
+.top {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 40px 6px 30px;
 }
 
 .page {
   grid-column: 1;
-  padding: 64px 0 120px;
+  grid-row: 2;
+  min-width: 0;
 }
 
 .page:focus {
   outline: none;
 }
 
-/* Text gets a readable width. The ME page is let off, for the tree. */
-.view,
-.post {
-  max-width: 800px;
-}
-
-#me {
-  max-width: none;
-}
-
-/* --- Page titles --- */
-.page-title {
-  margin-bottom: 56px;
-}
-
-.page-title h2 {
-  margin: 0.5em 0 0;
-  font-weight: 400;
-  font-size: clamp(1.15rem, 2vw, 1.5rem);
-  color: var(--dim);
-}
-
-.page-title p {
-  margin: 0.8em 0 0;
-  color: var(--dim);
-}
-
-/* The one on the ME page, with the headshot */
-.page-title--intro {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-/* the one thing that keeps its cut corners */
+/* --- The name --- */
+/* cut corners: the headshot had them first, the panels copy it */
 .headshot {
   flex-shrink: 0;
-  max-width: 140px;
+  width: 96px;
   height: auto;
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 
-/* --- ME page: the big prosodic tree --- */
-.tree-hero {
-  position: relative;
-  height: clamp(340px, calc(100svh - 360px), 760px);
-  max-width: 1100px;
-  margin-top: 40px;
-  --tree-opacity: 0.95;
-  --tree-font-size: 24;
+.site-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.4vw, 2.6rem); /* small enough that the whole name stays on one line beside the headshot */
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--accent-green);
+  text-shadow: 0 0 28px rgba(124, 179, 66, 0.35);
 }
 
-.tree-canvas {
+/* on blog post pages the name is a link back home */
+.site-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-name .kanji {
+  margin-right: 0.3em;
+  color: var(--accent-purple);
+  text-shadow: 0 0 28px rgba(171, 71, 188, 0.45);
+}
+
+.tagline {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.3;
+  color: var(--dim);
+}
+
+/* --- Panels: a one-pixel edge with two corners cut --- */
+/* The panel itself is painted in the edge colour, and ::before fills all but one pixel of it. */
+.panel {
+  position: relative;
+  background: var(--edge);
+  clip-path: var(--cut);
+}
+
+.panel::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+  inset: 1px;
+  z-index: -1;
+  background: var(--panel);
+  clip-path: var(--cut);
+}
+
+.view,
+.post {
+  margin-bottom: var(--gap);
+  padding: 16px 22px 20px;
+}
+
+/* Arriving by a link like prosodic.net/#cv, the browser wants to scroll that section to the top
+   of the window, which would hide the name. A margin this big keeps the page at the very top. */
+.view {
+  scroll-margin-top: 100vh;
+}
+
+.view > p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Panel titles --- */
+.page-title {
+  margin-bottom: 14px;
+}
+
+.page-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--accent-green);
+}
+
+.page-title p {
+  margin: 0.5em 0 0;
+  color: var(--dim);
+}
+
+/* the hello panel keeps some height while it has nothing written in it yet */
+#me {
+  min-height: 150px;
 }
 
 /* --- Entries (projects, blog posts, CV items): just text with a line above --- */
 .entry {
-  padding: 30px 0;
+  padding: 18px 0;
   border-top: 1px solid var(--rule);
+}
+
+.entry:last-child {
+  padding-bottom: 0;
 }
 
 .entry > :first-child,
@@ -209,27 +263,6 @@ button:focus-visible {
 .entry > :last-child,
 .with-picture-text > :last-child {
   margin-bottom: 0;
-}
-
-/* Projects and blog posts are numbered like the examples in a linguistics paper: (1), (2), (3)... */
-.numbered {
-  counter-reset: example;
-}
-
-.numbered > .entry:not(.private-demo) {
-  counter-increment: example;
-  position: relative;
-  padding-left: 62px;
-}
-
-.numbered > .entry:not(.private-demo)::before {
-  content: "(" counter(example) ")";
-  position: absolute;
-  left: 0;
-  top: 28px;
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  color: var(--dim);
 }
 
 /* Tags: small quiet words, no pills */
@@ -255,7 +288,7 @@ button:focus-visible {
 /* --- Project pictures --- */
 .with-picture {
   display: flex;
-  gap: 32px;
+  gap: 20px;
   align-items: flex-start;
 }
 
@@ -266,7 +299,13 @@ button:focus-visible {
 
 .with-picture .picture {
   flex-shrink: 0;
-  width: 280px;
+  width: 190px;
+}
+
+/* a picture that is a drawing, not a screenshot: a bit bigger, with a line around it */
+.with-picture .picture--drawn {
+  width: 250px;
+  border: 1px solid var(--rule);
 }
 
 .picture {
@@ -283,7 +322,8 @@ button:focus-visible {
 }
 
 /* section names are small labels sitting on a line */
-#cv h2 {
+#cv article > h2,
+#cv .entry > h2 {
   margin: 0 0 10px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--rule);
@@ -295,19 +335,15 @@ button:focus-visible {
 }
 
 #cv article > h2 {
-  margin-top: 54px;
+  margin-top: 40px;
 }
 
 #cv .entry > h2 {
-  margin-top: 34px;
-}
-
-#cv .page-title {
-  margin-bottom: 20px;
+  margin-top: 22px;
 }
 
 #cv h3 {
-  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-size: 1.05rem;
 }
 
 #cv h3 + p {
@@ -317,36 +353,44 @@ button:focus-visible {
 
 #cv p,
 #cv li {
-  font-size: clamp(0.95rem, 1.3vw, 1.02rem);
+  font-size: 0.91rem;
 }
 
-/* --- Sidebar --- */
+/* --- Side column: navigation, the tree, links --- */
+/* It stays on screen while the page scrolls, and is as tall as the window,
+   so the tree in the middle gets whatever height is left over. */
 .sidebar {
   grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
   flex-direction: column;
+  gap: var(--gap);
   position: sticky;
-  top: 0;
-  height: 100svh;
-  padding: 72px 0 28px;
-  align-self: start;
+  top: 14px;
+  height: calc(100svh - 28px);
+  margin-top: 14px;
   text-align: right;
+}
+
+.nav-section,
+.links-section {
+  padding: 14px 16px 16px;
 }
 
 .nav-separator,
 .links-separator {
   margin-bottom: 12px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  color: var(--dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--accent-blue);
+  text-shadow: 0 0 18px rgba(66, 133, 244, 0.5);
 }
 
 .button-frame,
 .links-frame {
   display: grid;
-  justify-items: end;
-  gap: 8px;
+  gap: 2px;
 }
 
 .navbtn,
@@ -374,6 +418,41 @@ button:focus-visible {
   color: var(--accent-green);
 }
 
+.linkbtn {
+  color: var(--accent-blue);
+}
+
+/* Navigation and links share one row shape: only the colour differs */
+.button-frame .navbtn,
+.links-frame .linkbtn {
+  display: block;
+  width: 100%;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  text-align: right;
+  border-right: 2px solid var(--rule);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.button-frame .navbtn:hover {
+  color: var(--accent-yellow);
+  background: rgba(255, 152, 0, 0.08);
+  border-color: var(--accent-yellow);
+}
+
+.links-frame .linkbtn:hover {
+  color: var(--accent-blue);
+  background: rgba(66, 133, 244, 0.1);
+  border-color: var(--accent-blue);
+}
+
+.button-frame .navbtn[aria-current="page"] {
+  color: var(--accent-green);
+  background: rgba(124, 179, 66, 0.08);
+  border-color: var(--accent-green);
+}
+
 /* Phonology joke: pages you could go to are in /slashes/ like underlying forms,
    and the one you're actually on is in [brackets] like a surface form. */
 .button-frame .navbtn::before,
@@ -390,55 +469,21 @@ button:focus-visible {
   content: "]";
 }
 
-.linkbtn {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  color: var(--accent-blue);
-}
-
-.linkbtn:hover {
-  color: var(--ink);
-}
-
 /* The prosodic tree fills whatever is left between the nav and the links */
 .tree-section {
-  flex-grow: 1;
-  position: relative;
-  margin: 28px 0;
+  flex: 1;
+  min-height: 160px;
   overflow: hidden;
-  --tree-opacity: 0.6;
+  --tree-opacity: 0.75;
   --tree-font-size: 15;
 }
 
-/* on the ME page the big tree is right there, so the small one steps aside */
-body:has(#me:not([hidden])) .tree-section {
-  visibility: hidden;
-}
-
-/* --- Vertical name column --- */
-.name-column {
-  grid-column: 3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font-weight: 700;
-  font-size: 28px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-family: var(--font-display);
-  color: var(--accent-purple);
-  white-space: nowrap;
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  align-self: start;
-  width: var(--edge-column-width);
-}
-
-.spaceafter:after {
-  content: "\00a0";
+.tree-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* --- Blog index --- */
@@ -446,7 +491,11 @@ body:has(#me:not([hidden])) .tree-section {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 16px;
-  margin-top: 18px;
+  margin-top: 12px;
+}
+
+.blog-tag-filters:empty {
+  display: none;
 }
 
 .blog-tag-btn {
@@ -489,9 +538,9 @@ body:has(#me:not([hidden])) .tree-section {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--dim);
 }
 
@@ -510,22 +559,21 @@ body:has(#me:not([hidden])) .tree-section {
 
 .blog-status {
   font-family: var(--font-mono);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: var(--dim);
 }
 
 /* --- Post page --- */
-.post-header h1 {
-  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+.post-header {
+  margin-bottom: 24px;
 }
 
 .post-header .tags {
-  margin: 18px 0 0;
+  margin: 14px 0 0;
 }
 
 .post-body {
-  max-width: 720px;
-  padding: 0 0 40px;
+  padding: 0 0 28px;
 }
 
 .post-body ol > li {
@@ -551,7 +599,7 @@ body:has(#me:not([hidden])) .tree-section {
 
 .post-body pre code {
   color: inherit;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .post-body blockquote {
@@ -581,7 +629,7 @@ body:has(#me:not([hidden])) .tree-section {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5em 0;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .post-body th,
@@ -688,100 +736,115 @@ body:has(#me:not([hidden])) .tree-section {
 
 /* --- Responsive --- */
 
-/* Narrower screens: no name column, single file */
-@media (max-width: 880px) {
-  .wrap {
-    grid-template-columns: minmax(0, 1fr) 130px;
-    gap: 24px;
-    padding: 0 20px 0 24px;
+/* A short window has no room to keep all three side panels on screen at once,
+   so the side column stops following and scrolls away with the page. */
+@media (max-height: 640px) and (min-width: 768px) {
+  .sidebar {
+    position: static;
+    height: auto;
   }
 
-  .name-column {
-    display: none;
+  .tree-section {
+    flex: none;
+    height: 260px;
   }
 }
 
-/* Phones (below 768px): navigation above the page, links below it */
+/* Phones (below 768px): one column. Name, navigation, the tree (home page only), the page, links. */
 @media (max-width: 767px) {
-  .wrap {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    gap: 0;
-    padding: 0 20px;
+  .site {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    padding: 0 12px 36px;
   }
 
-  /* the sidebar comes apart */
+  .top {
+    gap: 16px;
+    padding: 22px 4px 18px;
+  }
+
+  .headshot {
+    width: 72px;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  /* the side column comes apart, and its three panels take their own places in the single column */
   .sidebar {
     display: contents;
     text-align: left;
   }
 
   .nav-section {
-    grid-row: 1;
-    padding-top: 22px;
+    grid-column: 1;
+    grid-row: 2;
+    margin-bottom: var(--gap);
     text-align: left;
+  }
+
+  .tree-section {
+    grid-column: 1;
+    grid-row: 3;
+    height: 220px;
+    margin-bottom: var(--gap);
+  }
+
+  /* only the home page has room for the tree on a phone */
+  body:not([data-view="me"]) .tree-section {
+    display: none;
   }
 
   .page {
-    grid-row: 2;
-    padding: 44px 0 64px;
+    grid-row: 4;
   }
 
   .links-section {
-    grid-row: 3;
-    padding: 22px 0 28px;
-    border-top: 1px solid var(--rule);
+    grid-column: 1;
+    grid-row: 5;
     text-align: left;
   }
 
-  /* the sidebar tree is hidden on phones (the ME page still has the big one) */
-  .tree-section {
-    display: none;
+  .nav-section,
+  .links-section {
+    padding: 12px 14px 12px;
+  }
+
+  .nav-separator,
+  .links-separator {
+    margin-bottom: 8px;
   }
 
   .button-frame,
   .links-frame {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 20px;
+    gap: 4px 6px;
   }
 
-  /* comfortable to tap */
-  .navbtn,
-  .linkbtn {
-    padding: 10px 0;
+  /* the rows turn into a line of buttons, comfortable to tap, with the bar underneath */
+  .button-frame .navbtn,
+  .links-frame .linkbtn {
+    width: auto;
+    padding: 8px 10px;
+    text-align: left;
+    border-right: 0;
+    border-bottom: 2px solid var(--rule);
   }
 
-  .page-title {
-    margin-bottom: 40px;
-  }
-
-  .page-title--intro {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-
-  .headshot {
-    max-width: 110px;
-  }
-
-  .tree-hero {
-    height: 320px;
-    margin-top: 28px;
-    --tree-font-size: 17;
-  }
-
-  .numbered > .entry:not(.private-demo) {
-    padding-left: 44px;
+  .view,
+  .post {
+    padding: 14px 16px 18px;
   }
 
   .with-picture {
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
   }
 
-  .with-picture .picture {
+  .with-picture .picture,
+  .with-picture .picture--drawn {
     width: 100%;
   }
 
@@ -791,6 +854,7 @@ body:has(#me:not([hidden])) .tree-section {
   }
 
   .post-nav .navbtn {
+    padding: 8px 0;
     text-align: left;
   }
 

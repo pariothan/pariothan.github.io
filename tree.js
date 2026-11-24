@@ -1,7 +1,7 @@
 // --- Prosodic Tree Animation ---
 // Grows a prosodic tree (φ → ω → Ft → σ → μ → tones), then runs a few tone rules
-// over it. It regrows every time you switch pages. The same tree is drawn on every
-// <canvas class="tree-canvas">: the small one in the sidebar and the big one on the ME page.
+// over it. It regrows every time you switch pages. It is drawn on every
+// <canvas class="tree-canvas"> on the page; right now that is just the one in the side column.
 (function() {
   // One "view" per canvas. width/height are in CSS pixels (the canvas itself is
   // bigger on retina screens); opacity and font size come from style.css.

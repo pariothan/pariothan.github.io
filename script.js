@@ -1,6 +1,9 @@
 // --- Page switching ---
-// The four "pages" are sections of index.html; the nav buttons show one and hide the rest.
+// The "pages" are sections of index.html, and the nav buttons choose which ones show.
+// ME is the home page: the hello, the projects and the blog list, one under the other.
+// PROJECTS, CV and BLOG each show their own section alone.
 const VALID_VIEWS = new Set(['me', 'projects', 'cv', 'blog']);
+const HOME_SECTIONS = ['me', 'projects', 'blog'];
 const content = document.getElementById('content');
 
 // --- Blog ---
@@ -54,7 +57,6 @@ function renderBlogPosts() {
       <a class="entry post-link" href="./posts/${post.slug}/">
         <div class="post-card-meta">
           <time class="post-date" datetime="${post.date}">${date}</time>
-          <span class="post-reading-time">${post.readingTime}&nbsp;min&nbsp;read</span>
         </div>
         <h3>${escapeHtml(post.title)}</h3>
         ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ''}
@@ -65,10 +67,10 @@ function renderBlogPosts() {
 
 function render(view) {
   if (!VALID_VIEWS.has(view)) view = 'me';
-  const target = document.getElementById(view);
-  if (!target) return; // blog post pages have no views to switch
-  document.querySelectorAll('.view').forEach(s => { s.hidden = true; });
-  target.hidden = false;
+  if (!document.getElementById(view)) return; // blog post pages have no views to switch
+  const showing = view === 'me' ? HOME_SECTIONS : [view];
+  document.querySelectorAll('.view').forEach(s => { s.hidden = !showing.includes(s.id); });
+  document.body.dataset.view = view; // style.css uses this to show the tree on phones only on the home page
   document.querySelectorAll('.navbtn').forEach(link => {
     if (link.getAttribute('href') === '#' + view) {
       link.setAttribute('aria-current', 'page');
@@ -76,7 +78,7 @@ function render(view) {
       link.removeAttribute('aria-current');
     }
   });
-  if (view === 'blog') renderBlogPosts();
+  if (showing.includes('blog')) renderBlogPosts();
 }
 
 document.querySelectorAll('.navbtn').forEach(link => {

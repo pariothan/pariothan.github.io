@@ -7,6 +7,7 @@
 * {
   background: none !important;
   color: #000 !important;
+  text-shadow: none !important;
 }
 
 html,
@@ -17,9 +18,8 @@ body {
 }
 
 /* --- Hide everything that isn't the CV (or the blog post, on a post page) --- */
-.name-column,
+.top,
 .sidebar,
-.tree-hero,
 #me,
 #projects,
 #blog {
@@ -30,20 +30,22 @@ body {
   display: block !important;
 }
 
-.wrap {
+.site {
   display: block !important;
+  width: auto !important;
   padding: 0 !important;
   margin: 0 !important;
 }
 
-.page {
+/* panels turn back into plain paper: no edge, no cut corners, no padding */
+.panel {
+  clip-path: none !important;
   padding: 0 !important;
+  margin: 0 !important;
 }
 
-.view,
-.post,
-.post-body {
-  max-width: none !important;
+.panel::before {
+  display: none !important;
 }
 
 /* --- Typography --- */
@@ -53,20 +55,29 @@ h3 {
   font-family: Georgia, "Times New Roman", serif !important;
 }
 
-h1 {
+/* the name at the top of the CV, and the title of a blog post */
+h1,
+.page-title h2 {
   font-size: 20pt !important;
   margin: 0 0 4pt !important;
 }
 
-.page-title {
+.page-title,
+.post-header {
   margin-bottom: 12pt !important;
   padding-bottom: 8pt;
   border-bottom: 2px solid #000;
   text-align: center;
 }
 
+.post-header-meta,
+.post-header .tags {
+  justify-content: center;
+}
+
 /* section names */
-#cv h2 {
+#cv article > h2,
+#cv .entry > h2 {
   margin: 16pt 0 8pt !important;
   padding-bottom: 4pt !important;
   border-bottom: 2px solid #000 !important;

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treditor — Syntax Tree Builder</title>
+<meta name="description" content="An intuitive drag-and-drop syntax tree builder for any theory — with optional semantics, grammar checking, transformations and animated derivations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23476dd6' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M16 6 7 26M16 6l9 20M16 6v20'/%3E%3C/g%3E%3Ccircle cx='16' cy='6' r='4' fill='%23476dd6'/%3E%3C/svg%3E">
+</head>
+<body>
+<header id="top">
+  <div class="brand" title="Treditor — syntax tree builder">
+    <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M16 6 7 26M16 6l9 20M16 6v20"/></g><circle cx="16" cy="6" r="4" fill="currentColor"/></svg>
+    <span>Treditor</span>
+  </div>
+  <button id="byline" class="byline" title="About the maker">App from <b id="bylineName">Samuel Lederer</b></button>
+  <label class="mode-pick theory-name" title="Mode — switch theory / template (everything stays editable)"><select id="modeSel" aria-label="Mode"></select></label>
+  <div class="seg view-seg" id="viewSeg" title="Ctrl+1 tree · Ctrl+2 theory · Ctrl+3 model">
+    <button data-view="tree" class="on">Tree</button><button data-view="theory">Theory</button><button data-view="model" class="need-sem">Model</button>
+  </div>
+  <div class="spacer"></div>
+  <div class="btns">
+    <button id="btnPanels" class="only-narrow" title="Show panels">☰</button>
+    <button id="btnUndo" class="icon-btn" title="Undo (Ctrl+Z)"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M6 4 2.5 7.5 6 11M3 7.5h6.5a3.5 3.5 0 0 1 0 7H8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button id="btnRedo" class="icon-btn" title="Redo (Ctrl+Shift+Z)"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M10 4l3.5 3.5L10 11M13 7.5H6.5a3.5 3.5 0 0 0 0 7H8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <span class="hsep"></span>
+    <div class="menu-wrap">
+      <button id="btnFile" title="New, open, save, share">File ▾</button>
+      <div class="menu" id="fileMenu" hidden>
+        <button id="btnNew" title="Start over with an empty canvas">New<kbd></kbd></button>
+        <button id="btnOpen" title="Open a saved .treditor.json file">Open…</button>
+        <button id="btnSave" title="Download your work as a file">Save<kbd>⌘S</kbd></button>
+        <button id="btnShare" title="Copy a link that contains your whole tree">Copy share link</button>
+        <button id="btnImportTex" title="Paste forest / qtree / tikz-qtree code">Import LaTeX…</button>
+      </div>
+    </div>
+    <div class="menu-wrap">
+      <button id="btnExport" title="Export as image or LaTeX">Export ▾</button>
+      <div class="menu" id="exportMenu" hidden>
+        <button data-exp="png">PNG image</button>
+        <button data-exp="svg">SVG vector image</button>
+        <button data-exp="forest">LaTeX — forest</button>
+        <button data-exp="qtree">LaTeX — qtree</button>
+        <button data-exp="bracket">Bracket notation</button>
+        <button data-exp="forestsem" class="need-sem">LaTeX — forest + types/denotations</button>
+        <button data-exp="deriv" class="need-deriv">LaTeX — whole derivation</button>
+        <button data-exp="theory" class="need-adv">Theory (.json)</button>
+      </div>
+    </div>
+    <div class="menu-wrap">
+      <button id="btnFeatures" title="Turn advanced features on or off">Features ▾</button>
+      <div class="menu feat-menu" id="featMenu" hidden>
+        
+        <label class="feat"><input type="checkbox" data-feature="sem"><span><b>Semantics</b><small>types, λ-terms, composition rules, models, truth values</small></span></label>
+        <label class="feat"><input type="checkbox" data-feature="gram"><span><b>Grammar &amp; lexicon</b><small>check trees against phrase-structure rules, parse sentences</small></span></label>
+        <label class="feat"><input type="checkbox" data-feature="tx"><span><b>Transformations</b><small>tree-rewriting rules (passive, De Morgan, …)</small></span></label>
+        <label class="feat"><input type="checkbox" data-feature="avm"><span><b>Feature structures (AVMs)</b><small>typed AVMs on nodes, tags, type signature — for HPSG, LFG, …</small></span></label>
+        <label class="feat"><input type="checkbox" data-feature="deriv"><span><b>Derivation timeline</b><small>record steps and replay them as an animation</small></span></label>
+        <hr>
+        <label class="field">Theory
+          <select id="theorySel" title="Load a preset theory — everything in it stays editable"></select></label>
+        <p class="small muted xhint" id="theoryDesc"></p>
+      </div>
+    </div>
+    <button id="btnCmd" title="Command palette — every action by keyboard (Ctrl/⌘+K)">⌘K</button>
+    <button id="btnLearn" class="accent" title="Short guided lessons">Learn</button>
+    <button id="btnHelp" title="Shortcuts &amp; notation (?)">?</button>
+    <button id="btnContact" title="About the maker">Contact</button>
+  </div>
+  <input type="file" id="fileIn" accept=".json,application/json" hidden>
+</header>
+
+<main id="main">
+  <!-- LEFT -->
+  <aside id="left" class="panel">
+    <nav class="tabs" role="tablist">
+      <button data-tab="build" class="on">Build</button>
+      <button data-tab="hpsg" class="need-hpsg">HPSG</button>
+      <button data-tab="theory" class="need-adv">Theory</button>
+      <button data-tab="transform" class="need-tx">Transform</button>
+      <button data-tab="model" class="need-sem">Model</button>
+    </nav>
+
+    <section class="tab" id="tab-build">
+      <div class="group need-gram">
+        <h3>Parse with the grammar</h3>
+        <div class="row">
+          <input id="parseIn" placeholder="the gray cat loves every dog" autocomplete="off">
+          <button id="parseBtn">Parse</button>
+        </div>
+        <div id="parseOut" class="muted small"></div>
+      </div>
+
+      <div class="group">
+        <h3>Labels <button class="linkbtn" id="catEditBtn" title="Edit the list of labels">edit</button></h3>
+        <div id="palCats" class="chips"></div>
+        <textarea id="catText" data-th="categories" rows="6" spellcheck="false" hidden placeholder="One label per line, optional #color"></textarea>
+        <p class="hint-line xhint" id="chipHint"></p>
+      </div>
+
+      <div class="group">
+        <h3>Templates <button class="linkbtn" id="tplEditBtn" title="Edit your templates">edit</button></h3>
+        <div id="palStruct" class="chips"></div>
+        <textarea id="tplText" data-th="templates" rows="9" spellcheck="false" hidden></textarea>
+        <label class="row small muted" style="margin-top:6px">Head for $X <input id="xHead" value="V" maxlength="6" style="width:60px"></label>
+        <p class="hint-line xhint">Faster: type a label like <b>VP</b> on the canvas and press <kbd>↓</kbd>. <kbd>Tab</kbd> jumps between the slots.</p>
+      </div>
+
+      <div class="group need-gram">
+        <h3>Lexicon <span class="hint">drag a word to insert [Cat word]</span></h3>
+        <input id="lexFilter" placeholder="filter…" class="small-in">
+        <div id="palLex" class="chips"></div>
+      </div>
+
+      <details class="group">
+        <summary>Bottom-up from a sentence</summary>
+        <div class="row">
+          <input id="wordsIn" placeholder="the cat chased a mouse" autocomplete="off">
+          <button id="wordsBtn" title="Add each word as a node, then group them">Add words</button>
+        </div>
+        <p class="hint-line xhint">Then drag a box around words and type a label to group them.</p>
+      </details>
+
+      <details class="group">
+        <summary>Examples</summary>
+        <div id="examples" class="list"></div>
+      </details>
+
+      <details class="group">
+        <summary>Options</summary>
+        <h4 class="opt-h">Drag to transform</h4>
+        <label class="field">Leaves behind
+          <select data-th="leave"><option value="trace">a trace</option><option value="copy">an unpronounced copy</option><option value="nothing">nothing</option><option value="custom">a custom placeholder</option></select></label>
+        <label class="field">Trace label <input data-th="traceLabel" spellcheck="false"></label>
+        <label class="field">Custom placeholder <input data-th="leaveLabel" spellcheck="false" placeholder="∅"></label>
+        <label class="field">Index moved phrases
+          <select data-th="moveIndex"><option value="number">1, 2, 3</option><option value="letter">i, j, k</option><option value="none">don’t index</option></select></label>
+        <label class="check"><input type="checkbox" data-th="cyclicIndex"> Number chains in cyclic (derivation) order</label>
+        <label class="field">Arrow style
+          <select data-disp="arrowStyle"><option value="square">squared lanes</option><option value="curve">smooth curves</option></select></label>
+        <h4 class="opt-h">Display</h4>
+        <label class="field">Merge label (Ctrl+M)
+          <select data-th="mergeLabel"><option value="first">label of first selected</option><option value="second">label of second selected</option><option value="blank">blank</option></select></label>
+        <label class="field">Bar levels
+          <select data-disp="bars"><option value="bar">bar over the label</option><option value="prime">prime (X′)</option></select></label>
+        <label class="check"><input type="checkbox" data-disp="labelColors"> Colour labels by category</label>
+        <label class="field">Tab adds a daughter
+          <select data-disp="tabSide"><option value="right">on the right (after the others)</option><option value="left">on the left (before the others)</option></select></label>
+        <label class="check"><input type="checkbox" data-disp="italicWords"> Words in italics</label>
+        <label class="check need-sem"><input type="checkbox" data-th="qrBinder"> Adjunction with movement inserts a binder index (H&amp;K)</label>
+      </details>
+    </section>
+
+    <section class="tab" id="tab-hpsg" hidden>
+      <div class="group">
+        <h3>View</h3>
+        <div class="seg" id="avmViewSeg"><button data-avmview="written" title="Show each AVM exactly as written">As written</button><button data-avmview="compact" title="Expanded through the type hierarchy, then trimmed to what is informative — like a textbook">Textbook</button><button data-avmview="full" title="Every appropriate feature of every type">Fully specified</button></div>
+        <div class="grid2" style="margin-top:6px">
+          <label class="field">Always fold <input data-th="avmFold" placeholder="GAP, MOD" spellcheck="false"></label>
+          <label class="field">Hide <input data-th="avmHide" placeholder="PHON" spellcheck="false"></label>
+        </div>
+        <p class="hint-line">Click any feature name on the canvas to fold or unfold it.</p>
+      </div>
+      <div class="group">
+        <h3>Build</h3>
+        <div class="row wrap">
+          <button id="hpLex" title="Give every word in the tree its lexical feature structure">Lexicalize words</button>
+          <button id="hpBuild" class="accent" title="Lexicalize, then build every phrase bottom-up with the schemata and principles">Build tree</button>
+          <button id="hpBuildNode" title="Build the selected node from its daughters">Build selected</button>
+          <button id="hpDefaults" title="Give every node without a feature structure the default for its label (Theory → Default AVMs)">Defaults → empty nodes</button>
+        </div>
+        <div id="hpReport" class="small" style="margin-top:6px"></div>
+        <details style="margin-top:6px"><summary class="small muted">Principles &amp; options</summary>
+          <div id="hpPrinciples"></div>
+          <label class="check"><input type="checkbox" data-th="hpsgLabels"> Label nodes from their feature structures</label>
+          <label class="check"><input type="checkbox" data-th="hpsgHeads"> Mark head daughters (H)</label>
+        </details>
+      </div>
+      <div class="group">
+        <h3>Lexicon <span class="hint" id="hpCount"></span></h3>
+        <input id="hpSearch" class="small-in" placeholder="search words, lexemes, rules…" spellcheck="false">
+        <div id="hpWords" class="hp-words"></div>
+      </div>
+      <div class="group">
+        <h3>Types</h3>
+        <div class="row"><input id="hpTypeSearch" placeholder="look up a type" list="hpTypeList" spellcheck="false"><button id="hpTypes" title="Browse the whole hierarchy">Hierarchy ⤢</button></div>
+        <datalist id="hpTypeList"></datalist>
+        <div id="hpTypeInfo"></div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-theory" hidden>
+      <div class="group">
+        <label class="field">Name <input id="th-name"></label>
+        <p id="th-desc" class="muted small xhint"></p>
+        <div class="row wrap">
+          <button id="thSave" title="Keep this theory in your browser's list">Save to my theories</button>
+          <button id="thImport">Import…</button>
+          <button id="thReset" title="Discard your edits to this preset">Reset</button>
+        </div>
+        <div id="thErrors"></div>
+      </div>
+      <details class="group need-gram" open>
+        <summary>Grammar <span class="hint">X -> Y Z | W,  (opt), X*, X+</span></summary>
+        <textarea data-th="grammar" rows="6" spellcheck="false"></textarea>
+      </details>
+      <details class="group need-lex" open>
+        <summary>Lexicon <span class="hint">word : Cat : type : λ-term</span></summary>
+        <textarea data-th="lexicon" rows="8" spellcheck="false"></textarea>
+      </details>
+      <details class="group need-avm" open>
+        <summary>Types &amp; constraints <span class="hint">type := super &amp; super &amp; [ … ].</span></summary>
+        <textarea data-th="signature" rows="12" spellcheck="false" placeholder="verb := agr-pos &amp; [AUX bool / -]."></textarea>
+        <label class="check"><input type="checkbox" data-th="avmAutoFill"> Fully specify automatically (when a type is set or an example loads)</label>
+        <label class="check"><input type="checkbox" data-th="hpsg"> This is an HPSG theory (show the HPSG tab, lexicon, lexical rules, build tools)</label>
+      </details>
+      <details class="group need-hpsg">
+        <summary>HPSG lexicon <span class="hint">name := lexical-type &amp; [ … ].</span></summary>
+        <textarea data-th="hpsgLex" rows="10" spellcheck="false"></textarea>
+      </details>
+      <details class="group need-hpsg">
+        <summary>Lexical rules <span class="hint">Name (i|d|p, morph): [in] =&gt; [out]</span></summary>
+        <textarea data-th="hpsgRules" rows="8" spellcheck="false"></textarea>
+      </details>
+      <details class="group need-sem" open>
+        <summary>Composition rules <span class="hint">Name {label=re; fixed}: types => template</span></summary>
+        <textarea data-th="composition" rows="5" spellcheck="false"></textarea>
+        <p class="muted small xhint">Patterns: types with variables (<code>&lt;a,b&gt;, a</code>), <code>idx</code> for an index node, <code>*</code> for anything. Template: λ-term with <code>#0 #1</code> for the matched daughters and <code>$i</code> for the index. Rules are tried top to bottom; daughters in any order unless <code>fixed</code>.</p>
+      </details>
+      <details class="group need-sem">
+        <summary>Types &amp; variables</summary>
+        <label class="field">Base types <input data-th="baseTypes"></label>
+        <label class="field">Variable conventions <span class="hint">names : type</span>
+          <textarea data-th="varTypes" rows="3" spellcheck="false"></textarea></label>
+        <label class="field">Type notation
+          <select data-disp="typeStyle"><option value="angle">⟨e,t⟩</option><option value="arrow">e→t</option></select></label>
+        <label class="field">λ symbol <input data-disp="lambda" maxlength="3"></label>
+        <label class="check"><input type="checkbox" data-disp="uncurry"> Print f(a)(b) as f(a, b)</label>
+      </details>
+      <details class="group need-sem">
+        <summary>Traces &amp; indices</summary>
+        <label class="field">Trace / pronoun pattern <input data-th="traceRegex" spellcheck="false"></label>
+        <label class="field">…interpreted as <input data-th="traceTerm" spellcheck="false"></label>
+        <label class="field">Index-node pattern <input data-th="indexRegex" spellcheck="false"></label>
+        <label class="field">Ignore in labels (regex) <input data-th="labelStrip" spellcheck="false"></label>
+        <label class="field">Leaves not in lexicon
+          <select data-th="leafFallback"><option value="none">have no meaning</option><option value="constant">are constants</option><option value="term">are read as λ-terms</option></select></label>
+      </details>
+    </section>
+
+    <section class="tab" id="tab-transform" hidden>
+      <div class="group">
+        <h3>Transformations <span class="hint">Name: [pattern] => [result]</span></h3>
+        <textarea data-th="rewrite" rows="7" spellcheck="false"></textarea>
+        <p class="muted small xhint"><code>?x</code> any subtree · <code>?x*</code> any run of sisters · <code>$X</code> any label · <code>_</code> anything · <code>&lt;?x&gt;</code> silent copy · <code>{manual}</code> after the name keeps a rule out of Normalize.</p>
+      </div>
+      <div class="group">
+        <div class="row wrap">
+          <button id="rwNormalize" class="accent" title="Apply rules anywhere until none match, recording every step">Normalize</button>
+          <button id="rwOnce" title="Apply the first rule that matches anywhere">Apply first match</button>
+        </div>
+        <div id="rwList" class="list"></div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-model" hidden>
+      <div class="group">
+        <div id="modelEd"></div>
+        <details class="me-text"><summary>Edit as text</summary>
+          <textarea data-th="model" rows="9" spellcheck="false"></textarea>
+        </details>
+      </div>
+      <div class="group">
+        <h3>λ-calculator</h3>
+        <textarea id="calcIn" rows="2" spellcheck="false" placeholder="(λx.λy.loves(y,x))(mary)(john)"></textarea>
+        <div class="row small muted xhint">Type <code>\</code> for λ, <code>-&gt;</code> →, <code>&amp;</code> ∧, <code>|</code> ∨, <code>~</code> ¬, <code>forall</code>, <code>exists</code>, <code>iota</code></div>
+        <div id="calcOut"></div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- CENTER -->
+  <section id="center">
+    <div id="canvasbar">
+      <div class="seg" title="What dragging a node does (hold Shift while dropping for the other one)">
+        <button data-dmode="rearrange" title="Dragging just moves nodes around">Drag to rearrange</button>
+        <button data-dmode="transform" title="Dragging is syntactic movement">Drag to transform</button>
+      </div>
+      <label class="leaves" id="leaveWrap" title="What a transformation leaves in the original position" hidden>leaves
+        <select id="leaveSel"><option value="trace">a trace</option><option value="copy">an unpronounced copy</option><option value="nothing">nothing</option><option value="custom">custom…</option></select>
+      </label>
+      <div class="menu-wrap">
+        <button id="btnDisplay" title="What the tree shows and how it is laid out">Display ▾</button>
+        <div class="menu disp-menu" id="dispMenu" hidden>
+          <label class="check"><input type="checkbox" data-disp="arrows"> Arrows</label>
+          <label class="check"><input type="checkbox" data-disp="alignLeaves"> Line up words at the bottom</label>
+          <label class="check"><input type="checkbox" data-disp="compact"> Compact spacing</label>
+          <label class="check"><input type="checkbox" data-disp="italicWords"> Words in italics</label>
+          <label class="check"><input type="checkbox" data-disp="labelColors"> Colour labels by category</label>
+          <label class="field">Branches <select data-disp="edge"><option value="straight">straight</option><option value="elbow">square</option><option value="curve">curved</option></select></label>
+          <label class="field">Bar levels <select data-disp="bars"><option value="bar">bar over the label</option><option value="prime">prime (X′)</option></select></label>
+          <div class="need-sem"><hr><label class="check"><input type="checkbox" data-disp="showTypes"> Semantic types</label>
+          <label class="check"><input type="checkbox" data-disp="showDen"> Denotations ⟦·⟧</label>
+          <label class="check"><input type="checkbox" data-disp="showVals"> Values in the model</label></div>
+          <div class="need-avm"><hr><label class="check"><input type="checkbox" data-disp="showAvm"> Feature structures (AVMs)</label></div>
+          <div class="need-gram"><hr><label class="check"><input type="checkbox" data-disp="checkGrammar"> Flag nodes the grammar doesn’t allow</label></div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <button id="btnCompose" class="accent need-sem" title="Animate the bottom-up semantic composition">▶ Compose</button>
+      <div class="zoom">
+        <button id="zOut" title="Zoom out (Ctrl + scroll)">−</button>
+        <button id="zPct" class="zpct" title="Click: 100% · Ctrl+0 fits">100%</button>
+        <button id="zIn" title="Zoom in (Ctrl + scroll)">+</button>
+        <button id="zFit" title="Fit to screen (F / Ctrl+0)">Fit</button>
+      </div>
+    </div>
+    <div id="canvasWrap" tabindex="0">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="arrowhead"/></marker>
+          <marker id="arrowHead2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="arrowhead2"/></marker>
+        </defs>
+        <g id="vp"><g id="gEdges"></g><g id="gArrows"></g><g id="gNodes"></g><g id="gHandles"></g><g id="gDrop"></g></g>
+      </svg>
+      <div id="emptyHint">
+        <div class="start-card">
+          <button id="startTop" class="accent big" title="Type the top label, then Tab = daughter, Shift+Tab = back up, ↓ = templates">Start typing ⏎</button>
+          <div class="start-alt">
+            <button id="startBrackets" title="Type labelled bracket notation in the bar below">Brackets</button>
+            <button id="startExample" title="Load an example tree">Example</button>
+            <button id="startLearn" class="xhint" title="Short guided tour">Tour</button>
+          </div>
+          <div class="keys-hint xhint"><span><kbd>Tab</kbd> daughter</span><span><kbd>⇧Tab</kbd> back up</span><span><kbd>⇧⏎</kbd> sister</span><span><kbd>↓</kbd> templates</span><span><kbd>⌘K</kbd> commands</span></div>
+          <details class="start-more xhint"><summary>From a sentence (bottom-up)</summary>
+            <div class="row"><input id="startWords" placeholder="the cat chased a mouse" autocomplete="off"><button id="startWordsBtn">Add words</button></div>
+          </details>
+        </div>
+      </div>
+      <input id="inlineEdit" autocomplete="off" spellcheck="false" hidden>
+      <div id="suggest" hidden></div>
+      <datalist id="labelList"></datalist>
+      <div id="nodebar" hidden></div>
+      <div id="findBar" hidden>
+        <input id="fFind" placeholder="Find label or word" spellcheck="false">
+        <input id="fRepl" placeholder="Replace with" spellcheck="false">
+        <button id="fCase" title="Match case">Aa</button><button id="fWhole" title="Whole label only">[ab]</button><button id="fRe" title="Regular expression ($1 in the replacement)">.*</button>
+        <select id="fScope" title="What to search"><option value="all">labels &amp; words</option><option value="labels">labels</option><option value="words">words</option></select>
+        <span id="fCount"></span>
+        <button id="fPrev" title="Previous (Shift+Enter)">↑</button><button id="fNext" title="Next (Enter)">↓</button>
+        <button id="fSel" title="Select every match">Select all</button><button id="fOne" title="Replace this one (Enter in the replace box)">Replace</button><button id="fAll" class="accent" title="Replace all (Ctrl+Enter)">All</button>
+        <button id="fClose" title="Close (Esc)">×</button>
+      </div>
+      <div id="caption" hidden></div>
+      <div id="pickBanner" hidden></div>
+      <div id="lessonCard" hidden></div>
+    </div>
+    <div id="statusbar"><span id="sbPath"></span><span class="spacer"></span><span id="sbInfo"></span></div>
+    <div id="workspace" class="ws" hidden></div>
+    <div id="modelspace" class="ws mw" hidden></div>
+    <div id="textbar">
+      <div class="bwrap"><div id="bracketHL" aria-hidden="true"></div><textarea id="bracketIn" rows="1" spellcheck="false" placeholder="Bracket notation: [S [NP Kim] [VP [V sleeps]]] — or paste LaTeX (forest / qtree)"></textarea></div>
+      <div id="bracketErr" class="err small"></div>
+    </div>
+    <div id="timeline" class="need-deriv">
+      <button id="tlRec" title="Record every edit as a derivation step">● Rec</button>
+      <button id="tlSnap" title="Add the current tree as a step">+ Step</button>
+      <button id="tlPrev" title="Previous step">◀</button>
+      <button id="tlPlay" title="Play the derivation as an animation">▶ Play</button>
+      <button id="tlNext" title="Next step">▶|</button>
+      <label class="speed" title="Animation speed">⏱ <input id="tlSpeed" type="range" min="0.25" max="3" step="0.25" value="1"></label>
+      <div id="tlSteps"></div>
+      <button id="tlClear" title="Clear the derivation">Clear</button>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <aside id="right" class="panel">
+    <div id="inspector"></div>
+  </aside>
+</main>
+
+<div id="ctxmenu" class="menu" hidden></div>
+<div id="palette" hidden><div class="pal-box"><div id="palTitle"></div><input id="palIn" autocomplete="off" spellcheck="false"><div id="palList"></div><div class="pal-foot xhint">↑↓ choose · Enter run · Esc close</div></div></div>
+<div id="ghost" hidden></div>
+<div id="modal" hidden><div class="modal-box"><button class="x" id="modalX" aria-label="Close">×</button><div id="modalBody"></div></div></div>
+<div id="toast" hidden></div>
+
+<script src="js/logic.js"></script>
+<script src="js/tree.js"></script>
+<script src="js/semantics.js"></script>
+<script src="js/theories.js"></script>
+<script src="js/modeled.js"></script>
+<script src="js/theoryws.js"></script>
+<script src="js/avm.js"></script>
+<script src="js/tfs.js"></script>
+<script src="js/contact.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

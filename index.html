@@ -40,31 +40,48 @@
     />
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=7" />
-    <link rel="stylesheet" href="print.css?v=7" media="print" />
+    <link rel="stylesheet" href="style.css?v=8" />
+    <link rel="stylesheet" href="print.css?v=8" media="print" />
   </head>
   <body>
-    <div class="wrap">
+    <div class="site">
+      <header class="top">
+        <img src="./assets/images/headshot.webp" alt="Samuel Lederer headshot" class="headshot" width="300" height="347" />
+        <div>
+          <h1 class="site-name"><span class="kanji" aria-hidden="true">颯</span>Samuel Lederer <em>(he/him)</em></h1>
+          <p class="tagline">If you seek info on me this is a place</p>
+        </div>
+      </header>
+
       <main id="content" class="page" tabindex="-1">
 
-        <section id="me" class="view">
-          <article>
-            <section class="page-title page-title--intro">
-              <img src="./assets/images/headshot.webp" alt="Samuel Lederer headshot" class="headshot" width="300" height="347" />
-              <div>
-                <h1>Samuel Lederer <em>(he/him)</em></h1>
-                <h2>If you seek info on me this is a place</h2>
-              </div>
-            </section>
-          </article>
-          <!-- the big prosodic tree (tree.js draws it) -->
-          <div class="tree-hero" aria-hidden="true"><canvas class="tree-canvas"></canvas></div>
+        <!-- The home page (ME) shows this, the projects and the blog list, one under the other.
+             PROJECTS and BLOG show their own section alone, and CV is a page of its own. script.js does the switching. -->
+        <section id="me" class="view panel">
+          <!-- The hello goes here. Until it's written, the panel is left as empty space.
+               A heading goes in <div class="page-title"><h2>…</h2></div>, and the text in <p>…</p> after it. -->
         </section>
 
-        <section id="projects" class="view" hidden>
-          <article class="numbered">
+        <section id="projects" class="view panel">
+          <article>
             <section class="page-title">
-              <h1>I do these for fun, but you can look</h1>
+              <h2>I do these for fun, but you can look</h2>
+            </section>
+
+            <section class="entry">
+              <div class="with-picture">
+                <div class="with-picture-text">
+                  <div class="tags">
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">Syntax</span>
+                    <span class="tag">Semantics</span>
+                    <span class="tag">Linguistics</span>
+                  </div>
+                  <h3><a href="./projects/treditor/" target="_blank" rel="noopener noreferrer">Treditor</a></h3>
+                  <!-- the description of Treditor goes here, in a <p>…</p> -->
+                </div>
+                <img src="./assets/images/treditor.svg" alt="A syntax tree for 'what did Lee see' with a movement arrow, drawn in Treditor's style" class="picture picture--drawn" width="560" height="420" loading="lazy" />
+              </div>
             </section>
 
             <section class="entry">
@@ -151,20 +168,20 @@
           </article>
         </section>
 
-        <section id="blog" class="view" hidden>
+        <section id="blog" class="view panel">
           <article>
             <section class="page-title">
-              <h1>I wrote some things</h1>
+              <h2>I wrote some things</h2>
               <div id="blog-tag-filters" class="blog-tag-filters" role="group" aria-label="Filter posts"></div>
             </section>
           </article>
-          <div id="blog-posts" class="numbered"></div>
+          <div id="blog-posts"></div>
         </section>
 
-        <section id="cv" class="view" hidden>
+        <section id="cv" class="view panel" hidden>
           <article>
             <section class="page-title">
-              <h1>Samuel Lederer</h1>
+              <h2>Samuel Lederer</h2>
               <p><a href="mailto:slederer@pm.me">slederer@pm.me</a> | Seattle, WA 98105</p>
             </section>
 
@@ -327,7 +344,7 @@
       </main>
 
       <aside class="sidebar" aria-label="Sidebar">
-        <div class="nav-section">
+        <div class="nav-section panel">
           <div class="nav-separator">NAVIGATION</div>
 
           <nav class="button-frame" aria-label="Section navigation">
@@ -338,11 +355,11 @@
           </nav>
         </div>
 
-        <div class="tree-section">
+        <div class="tree-section panel">
           <canvas class="tree-canvas"></canvas>
         </div>
 
-        <div class="links-section">
+        <div class="links-section panel">
           <div class="links-separator">LINKS/CONTACT</div>
 
           <nav class="links-frame" aria-label="External links">
@@ -361,14 +378,12 @@
           </nav>
         </div>
       </aside>
-
-      <div class="name-column" aria-hidden="true"><span class="spaceafter">颯</span><span>SAMUEL LEDERER</span></div>
     </div>
 
     <!-- Blog post manifest (generated by build.js) -->
-    <script src="./posts/manifest.js?v=7"></script>
+    <script src="./posts/manifest.js?v=8"></script>
     <!-- Main JavaScript -->
-    <script src="script.js?v=7"></script>
-    <script src="tree.js?v=7"></script>
+    <script src="script.js?v=8"></script>
+    <script src="tree.js?v=8"></script>
   </body>
 </html>
