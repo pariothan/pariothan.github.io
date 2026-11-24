@@ -13,7 +13,7 @@ const SITE = 'https://prosodic.net';
 
 // Bump this (and the matching ?v= numbers in index.html) whenever style.css,
 // print.css, script.js or tree.js change, so browsers don't keep using old cached copies.
-const ASSET_VERSION = 8;
+const ASSET_VERSION = 9;
 
 function toISODate(d) {
   if (d instanceof Date) return d.toISOString().slice(0, 10);

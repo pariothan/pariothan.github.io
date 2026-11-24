@@ -3,7 +3,7 @@
 Plain HTML, CSS and JavaScript, served by GitHub Pages straight from this repo.
 
 - `index.html` is the whole main site. The hello, PROJECTS, BLOG and CV are sections of that one file. The home page (ME) shows the hello, the projects and the blog list one under the other; PROJECTS, BLOG and CV each show their own section alone. `script.js` does the switching.
-- `style.css` is the look of everything: the name across the top, the cut-corner panels, and the side column. `print.css` makes printing the page give you just the CV.
+- `style.css` is the look of everything: the grid background, the name banner across the top, the cut-corner panels, and the side column. `print.css` makes printing the page give you just the CV.
 - `tree.js` is the prosodic tree that grows in the tall panel in the side column.
 - `projects/` holds the projects, each one its own separate little site.
 - `posts/src/` holds blog posts as markdown.
